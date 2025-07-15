@@ -1,0 +1,1536 @@
+common:
+  back: Back
+  cancel: Cancel
+  confirm: Confirm
+  create: Create
+  delete: Delete
+  edit: Edit
+  save: Save
+  update: Update
+  generate: Generate
+  view: View
+  reset: Reset
+  noData: No Data
+  search: Search
+  actions: Actions
+  anonymous: Anonymous
+  operation: Operation
+  operations: Operations
+  detail: Detail
+  submit: Submit
+  never: Never
+  noNotes: No Notes
+  all: All
+  notSet: Not Set
+  batchDelete: Batch Delete
+  yes: Yes
+  no: No
+  close: Close
+  filter: Filter
+  advancedFilter: Advanced Filter
+  collapseFilter: Collapse Filter
+  startDate: Start Date
+  endDate: End Date
+  notSpecified: Not Specified
+  or: Or
+  form:
+    submit: Submit
+    reset: Reset
+    save: Save
+    cancel: Cancel
+    search: Search
+    filter: Filter
+    clear: Clear
+    required: Required
+    optional: Optional
+    selectPlaceholder: Please select
+    inputPlaceholder: Please input
+    datePlaceholder: Please select date
+    dateRangePlaceholder: Please select date range
+    success: Operation successful
+    error: Operation failed
+    confirmDelete: Confirm delete?
+    confirmAction: Confirm action?
+    yes: Yes
+    no: No
+    numberRequired: Please input a number
+    invalidFormat: Invalid format
+    invalidYearRange: Invalid year range
+    lengthLimit: Length must be between {min} and {max}
+  button:
+    add: Add
+    edit: Edit
+    delete: Delete
+    view: View
+    search: Search
+    filter: Filter
+    reset: Reset
+    submit: Submit
+    save: Save
+    cancel: Cancel
+    confirm: Confirm
+    back: Back
+    next: Next
+    previous: Previous
+    more: More
+    refresh: Refresh
+    export: Export
+    import: Import
+    upload: Upload
+    download: Download
+  table:
+    noData: No data
+    loading: Loading...
+    total: "Total {total} items"
+    action: Action
+    filter: Filter
+    search: Search
+    reset: Reset
+    page: "Page {page}"
+    pageSize: "{size} items per page"
+
+order:
+  orderManagement: Order Management
+  orderList: Order List
+  createOrder: Create Order
+  editOrder: Edit Order
+  orderDetail: Order Details
+  orderDetails: Order Details
+  statisticsTitle: Order Statistics
+  deleteConfirmTitle: Confirm Delete Order
+  deleteConfirmContent: Are you sure you want to delete order {number}?
+  batchDeleteConfirmTitle: Confirm Batch Delete
+  batchDeleteConfirmContent: Are you sure you want to delete {count} selected orders?
+  deleteSuccess: Order deleted successfully
+  batchDeleteSuccess: Batch delete successful
+  createSuccess: Order created successfully
+  updateSuccess: Order updated successfully
+  fetchFailed: Failed to fetch order
+  invalidId: Invalid order ID
+  noOrdersSelected: No orders selected
+  noOrderData: No order data
+  exportOrders: Export Orders
+  importOrders: Import Orders
+  batchDelete: Batch Delete
+  selectedCount: Selected {count} items
+  searchPlaceholder: Search order number, customer, etc.
+  filterPaymentStatus: Payment Status
+  filterServiceType: Service Type
+  selectCustomer: Select Customer
+  inputLanguage: Input Language
+  dateRange: Date Range
+  selectServiceTime: Select Service Time
+  historyVersions: Has {count} historical versions
+  
+  # Menu Related
+  menu:
+    pureOrder: Order Management
+    pureOrde: Order Management
+    orderList: Order List
+    statisticsTitle: Order Statistics
+  
+  # Customer Information Related
+  customer_type: Customer Type
+  delivery_address: Delivery Address
+  order_address: Order Address
+  follow_up_record: Follow-up Record
+  
+  # Order History Related
+  historyRecords: History Records
+  changeLog: Change Log
+  versionCompare: Version Compare
+  versionNumber: Version Number
+  modifiedBy: Modified By
+  modifiedAt: Modified At
+  changeType: Change Type
+  changeDetails: Change Details
+  created: Created
+  updated: Updated
+  restored: Restored
+  noChangeDetails: No Change Details
+  compare: Compare
+  restore: Restore
+  historyVersion: History Version
+  currentVersion: Current Version
+  field: Field
+  from: From
+  to: To
+  version: Version
+  by: By
+  historyLoadFailed: Failed to load history records
+  versionLoadFailed: Failed to load version data
+  confirmRestoreVersion: Are you sure you want to restore the order to this version? This operation will overwrite the current order data.
+  restoreVersion: Restore Version
+  restoreVersionSuccess: Version restored successfully
+  restoreVersionFailed: Failed to restore version
+  
+  # Customer/Member Order Integration
+  customerOrders: Customer Orders
+  memberOrders: Member Orders
+  customerOrdersLoadFailed: Failed to load customer orders
+  memberOrdersLoadFailed: Failed to load member orders
+  
+  # Batch Update Related
+  batchUpdate: Batch Update
+  batchUpdateTitle: Batch Update Orders
+  selectedOrdersInfo: Selected {count} orders
+  selectFieldsToUpdate: Select Fields to Update
+  fieldsToUpdate: Update Fields
+  updateResult: Update Result
+  batchUpdateSuccess: Batch update successful
+  batchUpdatePartial: Partial update successful, {success} succeeded, {failed} failed
+  batchUpdateFailed: Batch update failed
+  updateAgain: Update Again
+  noFieldsSelected: No fields selected
+  orderId: Order ID
+  
+  # Batch Export Related
+  exportSelected: Export Selected
+  exportAllSuccess: Export all orders successful
+  exportSelectedSuccess: Export {count} selected orders successful
+  exportFailed: Export failed
+  
+  # Batch Delete Related
+  batchDeletePartial: Partial delete successful, {success} succeeded, {failed} failed
+  batchDeleteFailed: Batch delete failed
+  
+  # Import Related
+  importDialogTitle: Import Orders
+  importDialogDescription: Please upload an Excel file that matches the template format. You can click "Download Template" to get the standard import template.
+  downloadTemplate: Download Template
+  downloadTemplateFailed: Failed to download template
+  selectFile: Select File
+  dragFileHere: Drag file here
+  uploadProgress: Upload Progress
+  uploadingFile: "Uploading file: {name}"
+  importSuccess: Orders imported successfully
+  importFailed: Failed to import orders
+  importResult: Import Result
+  successCount: Success Count
+  failedCount: Failed Count
+  totalCount: Total Count
+  errorDetails: Error Details
+  rowNumber: Row Number
+  errorMessage: Error Message
+  resetUpload: Reset Upload
+  noFileSelected: No file selected
+  invalidFileType: Invalid file type, please upload Excel file (.xlsx or .xls)
+  fileTooLarge: File is too large, please upload a file smaller than 10MB
+  confirmCancelUpload: Confirm cancel upload? The ongoing upload will be interrupted.
+  
+  # Chart and Statistics Related
+  orderTrendChart: Order Trend Analysis
+  orderStatusDistribution: Order Payment Status Distribution
+  serviceTypeDistribution: Service Type Distribution
+  period: Period
+  dailyPeriod: Daily
+  weeklyPeriod: Weekly
+  monthlyPeriod: Monthly
+  quarterlyPeriod: Quarterly
+  yearlyPeriod: Yearly
+  weekLabel: "Week {week}"
+  monthLabel: "Month {month}"
+  loadingChart: Loading chart...
+  fetchChartDataFailed: Failed to fetch chart data
+  totalOrders: Total Orders
+  totalAmount: Total Amount
+  totalProfit: Total Profit
+  avgProfitRate: Average Profit Rate
+  orderCount: Order Count
+  orderAmount: Order Amount
+  chartProfit: Chart Profit
+  chartProfitRate: Chart Profit Rate
+
+  # Order Basic Fields
+  orderNumber: Order Number
+  customer: Customer
+  contactPerson: Contact Person
+  createdAt: Created At
+  serviceType: Service Type
+  language: Language
+  amount: Amount
+  paymentStatus: Payment Status
+  orderDate: Order Date
+  serviceTime: Service Time
+  customerCount: Customer Count
+  translationCount: Translation Count
+  projectLocation: Project Location
+  sourcePlatform: Source Platform
+  customerType: Customer Type
+
+  # Service Types
+  serviceTypeDocument: Document Translation
+  serviceTypeInterpretation: Interpretation Service
+  serviceTypeProofreading: Proofreading Service
+  serviceTypeLocalization: Localization Service
+  serviceTypeOther: Other Service
+
+  # Payment Status
+  paymentStatusPaid: Paid
+  paymentStatusUnpaid: Unpaid
+  paymentStatusPartial: Partial Payment
+  paymentStatusRefunded: Refunded
+  paymentStatusCancelled: Cancelled
+
+  # Invoice Status
+  invoiceStatusIssued: Issued
+  invoiceStatusPending: Pending
+  invoiceStatusNotRequired: Not Required
+
+  # Tab Titles
+  basicInfo: Basic Information
+  priceAndPayment: Price and Payment
+  additionalInfo: Additional Information
+  remarksAndRecords: Remarks and Records
+
+  # Order Detail Fields
+  translator: Translator
+  customerPrice: Customer Price
+  customerTotalAmount: Customer Total Amount
+  translatorFee: Translator Fee
+  translatorPrice: Translator Price
+  translatorPaymentStatus: Translator Payment Status
+  translatorPaymentMethod: Translator Payment Method
+  projectFee: Project Fee
+  profitInfo: Profit Information
+  profit: Profit
+  profitRate: Profit Rate
+  paymentInfo: Payment Information
+  paymentDate: Payment Date
+  paymentMethod: Payment Method
+  paymentRemarks: Payment Remarks
+  projectManager: Project Manager
+  invoiceStatus: Invoice Status
+  invoiceInfo: Invoice Information
+  projectDetails: Project Details
+  costDetails: Cost Details
+  refundAmount: Refund Amount
+  refundReason: Refund Reason
+  contractNumber: Contract Number
+  contractInfo: Contract Information
+  contractRemarks: Contract Remarks
+  deliveryAddress: Delivery Address
+  orderAddress: Order Address
+  remarks: Remarks
+  followUpRecord: Follow-up Record
+  
+  # Form Groups
+  formBasicInfo: Basic Information
+  formPriceInfo: Price Information
+  formPaymentInfo: Payment Information
+  formInvoiceInfo: Invoice Information
+  formContractInfo: Contract Information
+  formRemarks: Remarks
+
+login:
+  title: Login
+  username: Username
+  password: Password
+  remember: Remember me
+  login: Login
+  logout: Logout
+  logoutSuccess: Logout successful
+  logoutFailed: Logout failed
+  loginSuccess: Login successful
+  loginFailed: Login failed
+  usernameRequired: Please input your username
+  passwordRequired: Please input your password
+  invalidCredentials: Invalid username or password
+  pureUsername: Username
+  purePassword: Password
+  pureLogin: Login
+  pureUsernameReg: Please input your username
+  pureLoginSuccess: Login successful
+  pureLoginFail: Login failed
+
+tenant:
+  management: Tenant Management
+  list: Tenant List
+  create: Create Tenant
+  edit: Edit Tenant
+  detail: Tenant Detail
+  view: View
+  delete: Delete
+  suspend: Suspend
+  activate: Activate
+  search: Search
+  cancel: Cancel
+  backToList: Back to List
+  name: Name
+  status: Status
+  statusAll: All Status
+  statusActive: Active
+  statusSuspended: Suspended
+  statusDeleted: Deleted
+  statusInactive: Inactive
+  contactName: Contact Name
+  contactEmail: Contact Email
+  contactPhone: Contact Phone
+  createdAt: Created At
+  updatedAt: Updated At
+  actions: Actions
+  id: ID
+  userCount: User Count
+  adminCount: Admin Count
+  basicInfo: Basic Information
+  quotaInfo: Quota Information
+  userInfo: User Information
+  quotaUsage: Quota Usage
+  maxUsers: Max Users
+  maxAdmins: Max Admins
+  maxStorageMb: Max Storage (MB)
+  tenantUsers: Tenant Users
+  username: Username
+  email: Email
+  nickName: Nickname
+  role: Role
+  roleAdmin: Admin
+  roleUser: User
+  isActive: Is Active
+  isActiveTrue: Yes
+  isActiveFalse: No
+  dateJoined: Date Joined
+  noData: No Data
+  quotaManagement: Quota Management
+  createSuccess: Tenant Created Successfully
+  createFailed: Failed to Create Tenant
+  updateSuccess: Tenant Updated Successfully
+  updateFailed: Failed to Update Tenant
+  deleteSuccess: Tenant Deleted Successfully
+  deleteFailed: Failed to Delete Tenant
+  suspendSuccess: Tenant Suspended Successfully
+  suspendFailed: Failed to Suspend Tenant
+  activateSuccess: Tenant Activated Successfully
+  activateFailed: Failed to Activate Tenant
+  quotaUpdateSuccess: Quota Updated Successfully
+  quotaUpdateFailed: Failed to Update Quota
+  confirmDelete: Confirm Delete
+  confirmDeleteMessage: Are you sure you want to delete tenant {name}?
+  confirmSuspend: Confirm Suspend
+  confirmSuspendMessage: Are you sure you want to suspend tenant {name}?
+  confirmActivate: Confirm Activate
+  confirmActivateMessage: Are you sure you want to activate tenant {name}?
+  editBtn: Edit
+  createTenant: Create Tenant
+  editTenant: Edit Tenant
+
+menu:
+  management: Menu Management
+  list: Menu List
+  create: Create Menu
+  edit: Edit Menu
+  delete: Delete
+  view: View
+  title: Menu Management
+  search: Search
+  refresh: Refresh
+  import: Import
+  export: Export
+  batchDelete: Batch Delete
+  menuTree: Menu Tree
+  allMenus: All Menus
+  id: ID
+  name: Name
+  path: Path
+  component: Component
+  code: Code
+  rank: Rank
+  isActive: Status
+  actions: Actions
+  statusAll: All Status
+  statusActive: Active
+  statusInactive: Inactive
+  parentId: Parent Menu
+  editBtn: Edit
+  deactivate: Deactivate
+  activate: Activate
+  enable: Enable
+  disable: Disable
+  addChildMenu: Add Child Menu
+  redirect: Redirect
+  createMenu: Create Menu
+  editMenu: Edit Menu
+  cancel: Cancel
+  save: Save
+  confirmDelete: Confirm Delete
+  confirmDeleteMessage: Are you sure you want to delete menu {name}?
+  confirmBatchDelete: Confirm Batch Delete
+  confirmBatchDeleteMessage: Are you sure you want to delete the selected {count} menus?
+  confirmStatusChange: Confirm {action}
+  confirmStatusChangeMessage: Are you sure you want to {action} menu {name}?
+  createSuccess: Menu created successfully
+  createFailed: Failed to create menu
+  updateSuccess: Menu updated successfully
+  updateFailed: Failed to update menu
+  deleteSuccess: Menu deleted successfully
+  deleteFailed: Failed to delete menu
+  batchDeleteSuccess: Batch delete successful
+  batchDeleteFailed: Batch delete failed
+  statusChangeSuccess: Menu status changed successfully
+  statusChangeFailed: Failed to change menu status
+  userMenuSetting: User Menu Setting
+  setUserMenu: Set Menu
+  preview: Preview
+  basicInfo: Basic Information
+  routeConfig: Route Configuration
+  displaySettings: Display Settings
+  permissionSettings: Permission Settings
+  advancedSettings: Advanced Settings
+  nameRequired: Please enter menu name
+  codeRequired: Please enter menu code
+  pathRequired: Please enter path
+  rankRequired: Please enter rank value
+  activePath: Active Path
+  frameSrc: Frame Source
+  frameLoading: Frame Loading
+  icon: Icon
+  selectIcon: Select Icon
+  extraIcon: Extra Icon
+  showLink: Show Link
+  showParent: Show Parent
+  keepAlive: Keep Alive
+  hiddenTag: Hidden Tag
+  roles: Roles
+  auths: Authorizations
+  dynamicLevel: Dynamic Level
+  transitionName: Transition Name
+  enterTransition: Enter Transition
+  leaveTransition: Leave Transition
+  remarks: Remarks
+  exportSuccess: Menu configuration exported successfully
+  exportFailed: Failed to export menu configuration
+  importSuccess: Menu configuration imported successfully
+  importFailed: Failed to import menu configuration
+  enableSuccess: Menu enabled successfully
+  enableFailed: Failed to enable menu
+  disableSuccess: Menu disabled successfully
+  disableFailed: Failed to disable menu
+  orderUpdateSuccess: Menu order updated successfully
+  orderUpdateFailed: Failed to update menu order
+  selectMenusFirst: Please select menus first
+
+cms:
+  management: CMS Management
+  articleManagement: Article Management
+  categoryManagement: Category Management
+  tagManagement: Tag Management
+  commentManagement: Comment Management
+  menu:
+    cmsManagement: CMS Management
+    articleList: Article List
+    articleCreate: Create Article
+    articleEdit: Edit Article
+    articleDetail: Article Detail
+    articleVersion: Article Version
+    categoryManagement: Category Management
+    categoryList: Category List
+    categoryEdit: Edit Category
+    categoryDetail: Category Detail
+    tagManagement: Tag Management
+    tagList: Tag List
+    tagCreate: Create Tag
+    tagEdit: Edit Tag
+    commentManagement: Comment Management
+    commentList: Comment List
+    commentCreate: Create Comment
+    commentEdit: Edit Comment
+    commentDetail: Comment Detail
+  tag:
+    createTag: Create Tag
+    editTag: Edit Tag
+    tagManagement: Tag Management
+    searchPlaceholder: Search tags by name or description
+    isActive: Status
+    statusAll: All Status
+    statusActive: Active
+    statusInactive: Inactive
+    id: ID
+    name: Name
+    slug: Slug
+    slugTip: Slug can only contain lowercase letters, numbers, and hyphens, used for URLs
+    generateSlug: Auto-generate slug from name
+    nameLength: Name length should be between {min} and {max} characters
+    nameRequired: Please enter tag name
+    slugInvalid: Invalid slug format, only lowercase letters, numbers, and hyphens are allowed
+    description: Description
+    keyword: Keyword
+    articleCount: Articles
+    createdAt: Created At
+    actions: Actions
+    basicInfo: Basic Info
+    advancedSettings: Advanced Settings
+    color: Color
+    colorTip: Color for displaying the tag, use the color picker or enter a HEX value
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete tag {name}?
+    fetchListFailed: Failed to fetch tag list
+    createSuccess: Tag created successfully
+    createFailed: Failed to create tag
+    updateSuccess: Tag updated successfully
+    updateFailed: Failed to update tag
+    deleteSuccess: Tag deleted successfully
+    deleteFailed: Failed to delete tag
+    formDataError: Failed to get form data
+    idNotFound: Tag ID not found
+  
+  comment:
+    createComment: Create Comment
+    editComment: Edit Comment
+    article: Article
+    parent: Parent Comment
+    content: Content
+    contentPlaceholder: Enter comment content
+    selectArticle: Select an article
+    selectParentComment: Select a parent comment
+    guestInfo: Guest Information
+    guestName: Guest Name
+    guestEmail: Guest Email
+    guestWebsite: Guest Website
+    status: Status
+    isPinned: Is Pinned
+    guest: Guest
+    statusAll: All Status
+    statusPending: Pending
+    statusApproved: Approved
+    statusSpam: Spam
+    statusTrash: Trash
+    commentManagement: Comment Management
+    replyComment: Reply Comment
+    keyword: Keyword
+    searchPlaceholder: Enter comment content or author
+    articleIdPlaceholder: Enter article ID
+    dateRange: Date Range
+    startDate: Start Date
+    endDate: End Date
+    batchApprove: Batch Approve
+    batchMarkAsSpam: Mark as Spam
+    batchReject: Batch Reject
+    batchDelete: Batch Delete
+    createTime: Create Time
+    anonymous: Anonymous
+    byUser: By user {user}
+    byGuest: By guest {name}
+    confirmApprove: Confirm Approve
+    confirmApproveMessage: Are you sure you want to approve this comment?
+    confirmReject: Confirm Reject
+    confirmRejectMessage: Are you sure you want to reject this comment?
+    confirmMarkAsSpam: Confirm Mark as Spam
+    confirmMarkAsSpamMessage: Are you sure you want to mark this comment as spam?
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete this comment?
+    deleteSuccess: Comment deleted successfully
+    deleteFailed: Failed to delete comment
+    selectCommentsFirst: Please select comments first
+    confirmBatchAction: Confirm {action}
+    confirmBatchActionMessage: Are you sure you want to perform this action on {count} comments?
+    batchActionSuccess: Batch action completed successfully
+    batchActionFailed: Failed to complete batch action
+    selectCommentsToDelete: Please select comments to delete
+    confirmBatchDelete: Confirm Batch Delete
+    confirmBatchDeleteMessage: Are you sure you want to delete {count} selected comments?
+    batchDeleteSuccess: Batch delete successful
+    batchDeleteFailed: Failed to batch delete
+    fetchListFailed: Failed to fetch comment list
+  
+  article:
+    title: Title
+    titleRequired: Please enter article title
+    titleLength: Title should be 2-200 characters
+    titlePlaceholder: Enter article title
+    slug: Slug
+    slugPlaceholder: URL slug, leave empty to generate automatically
+    excerpt: Excerpt
+    excerptPlaceholder: Enter article excerpt
+    content: Content
+    contentRequired: Please enter article content
+    contentPlaceholder: Enter article content
+    editorTip: Supports Markdown format, consider using a professional editor and pasting content here
+    settings: Article Settings
+    status: Status
+    statusDraft: Draft
+    statusPending: Pending
+    statusPublished: Published
+    statusArchived: Archived
+    contentType: Content Type
+    contentTypeMarkdown: Markdown
+    contentTypeHtml: HTML
+    visibility: Visibility
+    visibilityPublic: Public
+    visibilityPrivate: Private
+    visibilityPassword: Password Protected
+    visibilityRequired: Please select visibility
+    password: Access Password
+    passwordRequired: Please set access password
+    passwordPlaceholder: Please set access password
+    featured: Featured
+    pinned: Pinned
+    allowComment: Allow Comments
+    categories: Categories
+    categoriesPlaceholder: Please select article categories
+    categoriesAvailable: categories available
+    noCategories: No categories
+    tags: Tags
+    tagsPlaceholder: Please select article tags
+    tagsAvailable: tags available
+    noTags: No tags
+    coverImage: Cover Image
+    uploadCover: Upload Cover Image
+    coverUploadSuccess: Cover image uploaded successfully
+    coverUploadFailed: Failed to upload cover image
+    uploading: Uploading...
+    imageTypeError: Only image files can be uploaded
+    imageSizeError: Image size cannot exceed 5MB
+    coverImageTip: Supports JPG, PNG, GIF formats, recommended size 1200x630 pixels, max 5MB
+    noCover: No cover image
+    summary: Summary
+    author: Author
+    category: Category
+    publishTime: Publish Time
+    createTime: Create Time
+    updateTime: Update Time
+    viewCount: View Count
+    commentCount: Comment Count
+    likeCount: Like Count
+    wordCount: Word Count
+    isTop: Is Top
+    isRecommend: Is Recommend
+    isOriginal: Is Original
+    source: Source
+    sourceUrl: Source URL
+    keyword: Keyword
+    description: Description
+    versionHistory: Version History
+    versionList: Version List
+    versionNumber: Version Number
+    versionCreatedAt: Created At
+    versionCreatedBy: Created By
+    compareVersions: Compare Versions
+    restoreVersion: Restore Version
+    noVersions: No Versions
+    versionDetail: Version Detail
+    versionDiff: Version Comparison
+    oldVersion: Old Version
+    currentVersion: Current Version
+    latest: Latest
+    featuredTooltip: Featured article
+    pinnedTooltip: Pinned article
+    noExcerpt: No excerpt available
+    mainContent: Main Content
+    statistics: Statistics
+    searchPlaceholder: Search by title, content or author
+    dateRange: Date Range
+    startDate: Start Date
+    endDate: End Date
+    batchDelete: Batch Delete
+    statusAll: All Status
+    featuredAll: All Featured Status
+    featuredTrue: Featured
+    featuredFalse: Not Featured
+    pinnedAll: All Pinned Status
+    pinnedTrue: Pinned
+    pinnedFalse: Not Pinned
+    createArticle: Create Article
+    editArticle: Edit Article
+    deleteArticle: Delete Article
+    publishArticle: Publish Article
+    unpublishArticle: Unpublish Article
+    archiveArticle: Archive Article
+    restoreArticle: Restore Article
+    previewArticle: Preview Article
+    saveAsDraft: Save as Draft
+    publish: Publish
+    unpublish: Unpublish
+    archive: Archive
+    restore: Restore
+    preview: Preview
+    selectCategory: Select Category
+    selectTags: Select Tags
+    uploadCoverImage: Upload Cover Image
+    removeCoverImage: Remove Cover Image
+    categoryPlaceholder: Please select category
+    tagPlaceholder: Please select tags
+    statusPlaceholder: Please select status
+    batchPublish: Batch Publish
+    batchUnpublish: Batch Unpublish
+    batchArchive: Batch Archive
+    batchRestore: Batch Restore
+    confirmDelete: Confirm Delete
+    confirmPublish: Confirm Publish
+    confirmUnpublish: Confirm Unpublish
+    confirmArchive: Confirm Archive
+    confirmRestore: Confirm Restore
+    deleteSuccess: Delete Successful
+    publishSuccess: Publish Successful
+    unpublishSuccess: Unpublish Successful
+    archiveSuccess: Archive Successful
+    restoreSuccess: Restore Successful
+    saveSuccess: Save Successful
+    saveFail: Save Failed
+    uploadSuccess: Upload Successful
+    uploadFail: Upload Failed
+    pleaseEnterTitle: Please enter title
+    pleaseEnterContent: Please enter content
+    pleaseEnterSummary: Please enter summary
+    pleaseSelectCategory: Please select category
+    pleaseSelectTags: Please select tags
+    pleaseUploadCoverImage: Please upload cover image
+    categoryRequired: Category is required
+    tagsRequired: Tags are required
+    coverImageRequired: Cover image is required
+    fetchListFailed: Failed to fetch article list
+    selectArticlesToDelete: Please select articles to delete
+    confirmBatchDelete: Confirm Batch Delete
+    confirmBatchDeleteMessage: Are you sure you want to delete {count} selected articles?
+    batchDeleteSuccess: Batch delete successful
+    batchDeleteFailed: Failed to batch delete
+    confirmPublishMessage: Are you sure you want to publish article "{title}"?
+    publishFailed: Failed to publish
+    confirmDeleteMessage: Are you sure you want to delete article "{title}"?
+    deleteFailed: Failed to delete
+    createSuccess: Article created successfully
+    createFailed: Failed to create article
+    updateSuccess: Article updated successfully
+    updateFailed: Failed to update article
+    fetchDetailFailed: Failed to get article details
+    fetchCategoriesTagsFailed: Failed to load categories and tags
+  
+  category:
+    editCategory: Edit Category
+    basicInfo: Basic Information
+    name: Name
+    slug: Slug
+    parent: Parent Category
+    noParent: No Parent
+    description: Description
+    advancedSettings: Advanced Settings
+    icon: Icon
+    sortOrder: Sort Order
+    isActive: Active
+    nameRequired: Name is required
+    slugInvalid: Invalid slug format
+    updateSuccess: Category updated successfully
+    updateFailed: Failed to update category
+    categoryDetail: Category Detail
+    id: ID
+    level: Level
+    path: Path
+    statusActive: Active
+    statusInactive: Inactive
+    articleCount: Articles
+    createdAt: Created At
+    updatedAt: Updated At
+    children: Children
+    actions: Actions
+    fetchListFailed: Failed to fetch category list
+    categoryTree: Category Tree
+
+menus:
+  pureHome: Home
+  pureLogin: Login
+  purePermission: Permission
+  purePermissionPage: Page Permission
+  purePermissionButton: Button Permission
+  purePermissionButtonRouter: Router Button Permission
+  purePermissionButtonLogin: Login Button Permission
+  pureTenant: Tenant Management
+  pureTenantList: Tenant List
+  pureAdminUser: Admin Management
+  pureCustomer: Customer Management
+  pureMember: Member Management
+  pureMenu: Menu Management
+  pureDashboard: Dashboard
+  pureCms: Content Management
+  pureCmsArticle: Article Management
+  pureCmsCategory: Category Management
+  pureCmsTag: Tag Management
+  pureCmsComment: Comment Management
+  pureOrder: Order Management
+  pureMenuList: Menu List
+  pureAdminUserManagement: Admin User Management
+  pureAdminUserList: Admin User List
+  pureFourZeroFour: 404 Page
+  pureAbnormal: Error Pages
+  pureFourZeroThree: 403 Page
+  pureFiveZeroZero: 500 Page
+
+adminUser:
+  management: Admin User Management
+  list: Admin User List
+  create: Create Admin
+  createSuperAdmin: Create Super Admin
+  edit: Edit Admin
+  editBtn: Edit
+  detail: Admin Details
+  view: View
+  delete: Delete
+  suspend: Suspend
+  activate: Activate
+  deactivate: Deactivate
+  search: Search
+  searchPlaceholder: Search username or email
+  cancel: Cancel
+  backToList: Back to List
+  username: Username
+  usernamePlaceholder: Please enter username
+  usernameRequired: Username is required
+  usernameLength: Username should be 3-30 characters
+  email: Email
+  emailPlaceholder: Please enter email
+  emailRequired: Email is required
+  emailInvalid: Please enter a valid email
+  nickName: Nickname
+  nickNamePlaceholder: Please enter nickname
+  phone: Phone
+  phonePlaceholder: Please enter phone number
+  firstName: First Name
+  firstNamePlaceholder: Please enter first name
+  lastName: Last Name
+  lastNamePlaceholder: Please enter last name
+  isActive: Active
+  avatar: Avatar
+  uploadAvatar: Upload Avatar
+  update: Update
+  tenant: Tenant
+  tenantPlaceholder: Please select tenant
+  password: Password
+  passwordPlaceholder: Please enter password
+  passwordRequired: Password is required
+  passwordLength: Password should be at least 8 characters
+  confirmPassword: Confirm Password
+  confirmPasswordPlaceholder: Please enter password again
+  confirmPasswordRequired: Please confirm password
+  passwordMismatch: Passwords do not match
+  formValidationFailed: Form validation failed
+  close: Close
+  status: Status
+  statusAll: All Status
+  statusActive: Active
+  statusSuspended: Suspended
+  statusDeleted: Deleted
+  statusInactive: Inactive
+  roles: Roles
+  role: Role
+  superAdmin: Super Admin
+  tenantAdmin: Tenant Admin
+  createdAt: Created At
+  updatedAt: Updated At
+  actions: Actions
+  id: ID
+  grantSuperAdmin: Grant Super Admin
+  revokeSuperAdmin: Revoke Super Admin
+  confirmDelete: Confirm Delete
+  confirmDeleteMessage: Are you sure you want to delete admin {name}?
+  confirmActivate: Confirm Activate
+  confirmActivateMessage: Are you sure you want to activate admin {name}?
+  confirmDeactivate: Confirm Deactivate
+  confirmDeactivateMessage: Are you sure you want to deactivate admin {name}?
+  confirmGrantSuperAdmin: Confirm Grant
+  confirmGrantSuperAdminMessage: Are you sure you want to grant {name} super admin privileges?
+  confirmRevokeSuperAdmin: Confirm Revoke
+  confirmRevokeSuperAdminMessage: Are you sure you want to revoke super admin privileges from {name}?
+  createSuccess: Admin created successfully
+  createFailed: Failed to create admin
+  updateSuccess: Admin updated successfully
+  updateFailed: Failed to update admin
+  deleteSuccess: Admin deleted successfully
+  deleteFailed: Failed to delete admin
+  activateSuccess: Admin activated successfully
+  activateFailed: Failed to activate admin
+  deactivateSuccess: Admin deactivated successfully
+  deactivateFailed: Failed to deactivate admin
+  grantSuperAdminSuccess: Super admin privileges granted successfully
+  grantSuperAdminFailed: Failed to grant super admin privileges
+  revokeSuperAdminSuccess: Super admin privileges revoked successfully
+  revokeSuperAdminFailed: Failed to revoke super admin privileges
+  profile: Profile
+  createAdminUser: Create Admin User
+  editAdminUser: Edit Admin User
+  viewAdminUser: View Admin User
+  selectTenantTitle: Select Tenant
+
+buttons:
+  pureClickCollapse: Click to Collapse
+  pureOpenSystemSet: Open System Settings
+  pureLoginOut: Logout
+  pureReload: Reload
+  pureCloseCurrentTab: Close Current Tab
+  pureCloseLeftTabs: Close Left Tabs
+  pureCloseRightTabs: Close Right Tabs
+  pureCloseOtherTabs: Close Other Tabs
+  pureCloseAllTabs: Close All Tabs
+  pureContentFullScreen: Content Fullscreen
+  pureBackTop: Back to Top
+  pureOpenText: Enable
+  pureCloseText: Disable
+  pureClickExpand: Click to expand
+  pureConfirm: Confirm
+  more: More
+  edit: Edit
+  delete: Delete
+  search: Search
+  reset: Reset
+  confirm: Confirm
+  cancel: Cancel
+  submit: Submit
+  back: Back
+
+panel:
+  pureSystemSet: System Settings
+  pureCloseSystemSet: Close System Settings
+  pureClearCacheAndToLogin: Clear Cache and Login Again
+  pureOverallStyle: Overall Style
+  pureOverallStyleLight: Light Mode
+  pureOverallStyleLightTip: Light background color scheme
+  pureOverallStyleDark: Dark Mode
+  pureOverallStyleDarkTip: Dark background color scheme
+  pureOverallStyleSystem: Follow System
+  pureOverallStyleSystemTip: Follow system appearance settings
+  pureThemeColor: Theme Color
+  pureLayoutModel: Layout Mode
+  pureVerticalTip: Vertical menu layout
+  pureHorizontalTip: Horizontal menu layout
+  pureMixTip: Mixed menu layout
+  pureTagsStyle: Tabs Style
+  pureTagsStyleSmart: Smart Mode
+  pureTagsStyleSmartTip: Dynamic tabs mode
+  pureTagsStyleCard: Card Mode
+  pureTagsStyleCardTip: Card tabs mode
+  pureTagsStyleChrome: Browser Mode
+  pureTagsStyleChromeTip: Browser tabs mode
+  pureInterfaceDisplay: Interface Display
+  pureGreyModel: Grey Mode
+  pureWeakModel: Color Weak Mode
+  pureHiddenTags: Hide Tabs
+  pureHiddenFooter: Hide Footer
+  pureMultiTagsCache: Persistent Tabs
+  pureClearCache: Clear Cache
+  pureStretch: Layout Stretch
+  pureStretchFixed: Fixed Stretch
+  pureStretchFixedTip: Fixed aspect ratio stretch
+  pureStretchCustom: Custom Stretch
+  pureStretchCustomTip: Custom aspect ratio stretch
+
+status:
+  pureNotify: Notifications
+  pureMessage: Messages
+  pureTodo: To-Do
+  pureNoNotify: No notifications
+
+dashboard:
+  title: Dashboard
+  tenantChartsTitle: Tenant Statistics
+  userChartsTitle: User Statistics
+  to: to
+  startDate: Start Date
+  endDate: End Date
+  daily: Daily
+  weekly: Weekly
+  monthly: Monthly
+  quarterly: Quarterly
+  yearly: Yearly
+  tenantTrend: Tenant Count Trend
+  noData: No Data
+  tenantStatusDistribution: Tenant Status Distribution
+  tenantCreationRate: Tenant Creation Rate
+  loading: Loading...
+  tenantTotal: Total Tenants
+  growthRate: Growth Rate
+  avgGrowth: Average Growth
+  month: Month
+  tenantCount: Tenant Count
+  newTenants: New Tenants
+  average: Average
+  updatingCharts: Updating chart data...
+  userRoleDistribution: User Role Distribution
+  activeUsersChart: Active Users Statistics
+  userTotal: Total Users
+  activeUsers: Active Users
+  inactiveUsers: Inactive Users
+  adminCount: Admin Count
+  normalUserCount: Normal User Count
+  userCreationRate: User Creation Rate
+  newUsers: New Users
+  fetchDataFailed: Failed to fetch data
+  refresh: Refresh
+  periodSelector: Time Period
+  dateRangeSelector: Date Range
+  statusActive: Active
+  statusSuspended: Suspended
+  statusDeleted: Deleted
+  statusInactive: Inactive
+
+仪表盘: Dashboard
+
+error:
+  404: Page Not Found
+  403: Forbidden
+  500: Server Error
+  backHome: Back to Home
+  notFound: Page Not Found
+  notFoundMessage: Sorry, the page you visited does not exist
+  forbidden: Forbidden
+  forbiddenMessage: Sorry, you don't have permission to access this page
+  serverError: Server Error
+  serverErrorMessage: Sorry, server error occurred
+
+components:
+  svg-icon:
+    loading: Loading
+    noData: No Data
+    failed: Failed to Load
+
+user:
+  management: User Management
+  list: User List
+  create: Create User
+  edit: Edit User
+  detail: User Detail
+  profile: Profile
+  username: Username
+  email: Email
+  nickName: Nickname
+  role: Role
+  roleAdmin: Admin
+  roleUser: User
+  isActive: Active
+  isActiveTrue: Yes
+  isActiveFalse: No
+  dateJoined: Date Joined
+  lastLogin: Last Login
+  actions: Actions
+  view: View
+  delete: Delete
+  suspend: Suspend
+  activate: Activate
+  search: Search
+  cancel: Cancel
+  backToList: Back to List
+  createSuccess: User created successfully
+  updateSuccess: User updated successfully
+  deleteSuccess: User deleted successfully
+  suspendSuccess: User suspended successfully
+  activateSuccess: User activated successfully
+
+el:
+  colorpicker:
+    confirm: Confirm
+    clear: Clear
+  datepicker:
+    now: Now
+    today: Today
+    cancel: Cancel
+    clear: Clear
+    confirm: Confirm
+    selectDate: Select date
+    selectTime: Select time
+    startDate: Start date
+    startTime: Start time
+    endDate: End date
+    endTime: End time
+    prevYear: Previous year
+    nextYear: Next year
+    prevMonth: Previous month
+    nextMonth: Next month
+    year: Year
+    month1: January
+    month2: February
+    month3: March
+    month4: April
+    month5: May
+    month6: June
+    month7: July
+    month8: August
+    month9: September
+    month10: October
+    month11: November
+    month12: December
+    weeks:
+      sun: Sun
+      mon: Mon
+      tue: Tue
+      wed: Wed
+      thu: Thu
+      fri: Fri
+      sat: Sat
+    months:
+      jan: Jan
+      feb: Feb
+      mar: Mar
+      apr: Apr
+      may: May
+      jun: Jun
+      jul: Jul
+      aug: Aug
+      sep: Sep
+      oct: Oct
+      nov: Nov
+      dec: Dec
+  pagination:
+    goto: Go to
+    pagesize: / page
+    total: Total {total}
+    pageClassifier: ""
+    deprecationWarning: Deprecated usage, please use v-model binding pagination attributes
+  cascader:
+    noMatch: No matching data
+    loading: Loading
+    placeholder: Select
+    noData: No data
+  table:
+    emptyText: No Data
+    confirmFilter: Filter
+    resetFilter: Reset
+    clearFilter: All
+    sumText: Sum
+  select:
+    loading: Loading
+    noMatch: No matching data
+    noData: No data
+    placeholder: Select
+  messagebox:
+    title: Message
+    confirm: OK
+    cancel: Cancel
+    error: Illegal input
+  upload:
+    deleteTip: press delete to remove
+    delete: Delete
+    preview: Preview
+    continue: Continue
+  dialog:
+    close: Close
+  drawer:
+    close: Close
+  radio:
+    value: Value
+    label: Label
+
+layout:
+  header:
+    profile: Profile
+    logout: Logout
+    settings: Settings
+    darkMode: Dark Mode
+    lightMode: Light Mode
+    fullScreen: Full Screen
+    exitFullScreen: Exit Full Screen
+    language: Language
+    search: Search
+    notifications: Notifications
+    noNotifications: No Notifications
+    viewAll: View All
+    welcome: Welcome Back
+  sidebar:
+    collapse: Collapse Menu
+    expand: Expand Menu
+  footer:
+    copyright: Copyright
+    version: Version
+
+labels:
+  allRole: All Roles
+
+customer:
+  management: Customer Management
+  list: Customer List
+  create: Create Customer
+  edit: Edit Customer
+  detail: Customer Detail
+  view: View Customer
+  delete: Delete Customer
+  search: Search Customer
+  filter: Filter Customer
+  cancel: Cancel
+  backToList: Back to List
+  name: Customer Name
+  type: Customer Type
+  typeCompany: Company
+  typeEnterprise: Enterprise
+  typeGovernment: Government
+  typeEducation: Education
+  typeNonprofit: Non-profit
+  typeIndividual: Individual
+  customerList: Customer List
+  createCustomer: Create Customer
+  editCustomer: Edit Customer
+  viewCustomer: View Customer
+  searchPlaceholder: Search by name, contact or phone
+  batchDelete: Batch Delete
+  id: ID
+  menu:
+    customerManagement: Customer Management
+    customerList: Customer List
+    customerCreate: Create Customer
+    customerEdit: Edit Customer
+    customerDetail: Customer Detail
+  valueLevel: Value Level
+  valuePlatinum: Platinum
+  valueGold: Gold
+  valueSilver: Silver
+  valueBronze: Bronze
+  status: Status
+  statusAll: All Status
+  statusActive: Active
+  statusInactive: Inactive
+  statusProspect: Prospect
+  statusChurned: Churned
+  statusLost: Lost
+  industry: Industry
+  registrationNumber: Registration Number
+  taxId: Tax ID
+  address: Address
+  city: City
+  province: Province
+  postalCode: Postal Code
+  country: Country
+  website: Website
+  description: Description
+  annualRevenue: Annual Revenue
+  employeeCount: Employee Count
+  foundedYear: Founded Year
+  createdAt: Created At
+  updatedAt: Updated At
+  memberCount: Contact Count
+  tenantCount: Tenant Count
+  actions: Actions
+  basicInfo: Basic Information
+  contactInfo: Contact Information
+  additionalInfo: Additional Information
+  memberRelations: Contact Relations
+  tenantRelations: Tenant Relations
+  statistics: Statistics
+  noData: No Data
+  createSuccess: Customer Created Successfully
+  createFailed: Failed to Create Customer
+  updateSuccess: Customer Updated Successfully
+  updateFailed: Failed to Update Customer
+  deleteSuccess: Customer Deleted Successfully
+  deleteFailed: Failed to Delete Customer
+  fetchFailed: Failed to fetch customer list
+  confirmDelete: Confirm Delete
+  confirmDeleteMessage: Are you sure you want to delete customer {name}?
+  editBtn: Edit
+  
+  # Customer-Member Relations
+  memberRelation:
+    title: Contact Relations
+    create: Add Contact
+    edit: Edit Contact
+    delete: Delete Contact
+    view: View Contact
+    name: Name
+    email: Email
+    phone: Phone
+    position: Position
+    role: Role
+    department: Department
+    isPrimary: Is Primary Contact
+    isPrimaryTrue: Yes
+    isPrimaryFalse: No
+    notes: Notes
+    setPrimary: Set as Primary Contact
+    createSuccess: Contact Added Successfully
+    createFailed: Failed to Add Contact
+    updateSuccess: Contact Updated Successfully
+    updateFailed: Failed to Update Contact
+    deleteSuccess: Contact Deleted Successfully
+    deleteFailed: Failed to Delete Contact
+    setPrimarySuccess: Set as Primary Contact Successfully
+    setPrimaryFailed: Failed to Set as Primary Contact
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete contact {name}?
+  
+  # Customer-Tenant Relations
+  tenantRelation:
+    title: Tenant Relations
+    create: Add Tenant Relation
+    edit: Edit Tenant Relation
+    delete: Delete Tenant Relation
+    view: View Tenant Relation
+    tenant: Tenant
+    relationType: Relation Type
+    relationTypeOwner: Owner
+    relationTypePartner: Partner
+    relationTypeReseller: Reseller
+    relationTypeAffiliate: Affiliate
+    isPrimary: Is Primary Relation
+    isPrimaryTrue: Yes
+    isPrimaryFalse: No
+    startDate: Start Date
+    endDate: End Date
+    contractId: Contract ID
+    notes: Notes
+    setPrimary: Set as Primary Relation
+    createSuccess: Tenant Relation Added Successfully
+    createFailed: Failed to Add Tenant Relation
+    updateSuccess: Tenant Relation Updated Successfully
+    updateFailed: Failed to Update Tenant Relation
+    deleteSuccess: Tenant Relation Deleted Successfully
+    deleteFailed: Failed to Delete Tenant Relation
+    setPrimarySuccess: Set as Primary Relation Successfully
+    setPrimaryFailed: Failed to Set as Primary Relation
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete relation with tenant {name}?
+  
+  # Bulk Operations
+  bulk:
+    title: Bulk Operations
+    create: Bulk Create
+    update: Bulk Update
+    delete: Bulk Delete
+    select: Selected {count} items
+    createSuccess: Successfully created {count} customers
+    updateSuccess: Successfully updated {count} customers
+    deleteSuccess: Successfully deleted {count} customers
+    createFailed: Bulk Create Failed
+    updateFailed: Bulk Update Failed
+    deleteFailed: Bulk Delete Failed
+    confirmDelete: Confirm Bulk Delete
+    confirmDeleteMessage: Are you sure you want to delete {count} selected customers?
+    import: Import Customers
+    export: Export Customers
+    template: Download Template
+    uploadSuccess: File Uploaded Successfully
+    uploadFailed: File Upload Failed
+    importSuccess: Import Successful
+    importFailed: Import Failed
+    exportSuccess: Export Successful
+    exportFailed: Export Failed
+
+  # Member Relations
+  member:
+    title: Member Relations
+    list: Member List
+    addMember: Add Member
+    editRelation: Edit Member Relation
+    viewRelation: View Member Relation
+    deleteRelation: Delete Member Relation
+    batchDeleteRelation: Batch Delete Member Relations
+    memberInfo: Member Information
+    memberSelect: Select Member
+    memberSelectPlaceholder: Please select a member
+    memberRequired: Please select a member
+    role: Role
+    rolePlaceholder: Please enter role
+    roleRequired: Role is required
+    department: Department
+    departmentPlaceholder: Please enter department
+    isPrimary: Primary Contact
+    notes: Notes
+    notesPlaceholder: Please enter notes
+    searchPlaceholder: Search by name, email or role
+    createSuccess: Member relation added successfully
+    updateSuccess: Member relation updated successfully
+    deleteSuccess: Member relation deleted successfully
+    batchDeleteSuccess: Member relations deleted successfully
+    saveError: Failed to save member relation
+    deleteError: Failed to delete member relation
+    searchMemberFailed: Failed to search members
+    deleteRelationConfirm: Are you sure you want to delete relation with member {username}?
+    batchDeleteRelationConfirm: Are you sure you want to delete {count} selected member relations?
+
+member:
+  memberManagement: Member Management
+  memberList: Member List
+  createMember: Create Member
+  editMember: Edit Member
+  memberDetail: Member Detail
+  deleteTitle: Confirm Delete Member
+  deleteConfirm: Are you sure you want to delete member {name}?
+  deleteSuccess: Member deleted successfully
+  bulkDeleteTitle: Confirm Bulk Delete
+  bulkDeleteConfirm: Are you sure you want to delete {count} selected members?
+  bulkDeleteSuccess: Members deleted successfully
+  createSuccess: Member created successfully
+  updateSuccess: Member updated successfully
+  id: ID
+  username: Username
+  usernamePlaceholder: Please enter username
+  usernameRequired: Username is required
+  usernameLength: Username should be between 3-30 characters
+  name: Name
+  namePlaceholder: Please enter name
+  nameRequired: Name is required
+  nameLength: Name should be between 2-50 characters
+  nickName: Nickname
+  nickNamePlaceholder: Please enter nickname
+  firstName: First Name
+  firstNamePlaceholder: Please enter first name
+  lastName: Last Name
+  lastNamePlaceholder: Please enter last name
+  email: Email
+  emailPlaceholder: Please enter email
+  emailRequired: Email is required
+  emailInvalid: Invalid email format
+  phone: Phone
+  phonePlaceholder: Please enter phone number
+  phoneInvalid: Invalid phone format
+  password: Password
+  passwordPlaceholder: Please enter password
+  passwordRequired: Password is required
+  passwordLength: Password must be at least 8 characters
+  confirmPassword: Confirm Password
+  confirmPasswordPlaceholder: Please confirm password
+  confirmPasswordRequired: Please confirm your password
+  passwordMismatch: Passwords do not match
+  status: Status
+  statusPlaceholder: Please select status
+  statusRequired: Status is required
+  statusActive: Active
+  statusInactive: Inactive
+  statusLocked: Locked
+  statusPending: Pending
+  statusFilterPlaceholder: Filter by status
+  tenant: Tenant
+  tenantPlaceholder: Please select tenant
+  tenantRequired: Tenant is required
+  tenantFilterPlaceholder: Filter by tenant
+  notes: Notes
+  notesPlaceholder: Please enter notes
+  notesLength: Notes cannot exceed 500 characters
+  createdAt: Created At
+  updatedAt: Updated At
+  lastLogin: Last Login
+  searchPlaceholder: Search members (username, name, email)
+  bulkDelete: Bulk Delete
+  invalidId: Invalid member ID
+  notFound: Member not found
+  basicInfo: Basic Information
+  avatar: Avatar
+  clickToUpload: Click to upload
+  avatarTypeError: Avatar must be an image (JPEG/PNG/GIF)
+  avatarSizeError: Avatar size cannot exceed 2MB
+  avatarUploadSuccess: Avatar uploaded successfully
+  customerRelations: Customer Relations
+  customerType: Customer Type
+  addRelation: Add Relation
+  editRelation: Edit Relation
+  deleteRelation: Delete Relation
+  deleteRelationTitle: Confirm Delete Relation
+  deleteRelationConfirm: Are you sure you want to delete relation with customer {name}?
+  deleteRelationSuccess: Relation deleted successfully
+  createRelationSuccess: Relation created successfully
+  updateRelationSuccess: Relation updated successfully
+  noRelations: No customer relations
+  customer: Customer
+  customerPlaceholder: Please select customer
+  customerRequired: Customer is required
+  role: Role
+  rolePlaceholder: Please enter role
+  roleRequired: Role is required
+  roleLength: Role cannot exceed 50 characters
+  department: Department
+  departmentPlaceholder: Please enter department
+  departmentLength: Department cannot exceed 100 characters
+  isPrimaryCustomer: Is Primary Customer
+  setPrimary: Set as Primary
+  setPrimaryTitle: Confirm Set Primary Customer
+  setPrimaryConfirm: Are you sure you want to set {name} as primary customer?
+  setPrimarySuccess: Primary customer set successfully
+  relationNotesPlaceholder: Please enter relation notes
+  passwordManagement: Password Management
+  resetPassword: Reset Password
+  resetPasswordTitle: Reset Password
+  resetPasswordConfirm: Please enter new password
+  resetPasswordSuccess: Password reset successfully
+  newPasswordPlaceholder: Please enter new password

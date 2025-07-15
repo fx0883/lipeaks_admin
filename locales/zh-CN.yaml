@@ -1,0 +1,1535 @@
+common:
+  back: 返回
+  cancel: 取消
+  confirm: 确认
+  create: 创建
+  delete: 删除
+  edit: 编辑
+  save: 保存
+  update: 更新
+  generate: 生成
+  view: 查看
+  reset: 重置
+  noData: 暂无数据
+  search: 搜索
+  actions: 操作
+  anonymous: 匿名
+  operation: 操作
+  operations: 操作
+  detail: 详情
+  submit: 提交
+  never: 从不
+  noNotes: 无备注
+  all: 全部
+  notSet: 未设置
+  batchDelete: 批量删除
+  yes: 是
+  no: 否
+  close: 关闭
+  filter: 筛选
+  advancedFilter: 高级筛选
+  collapseFilter: 收起筛选
+  startDate: 开始日期
+  endDate: 结束日期
+  notSpecified: 未指定
+  or: 或者
+  form:
+    submit: 提交
+    reset: 重置
+    save: 保存
+    cancel: 取消
+    search: 搜索
+    filter: 筛选
+    clear: 清空
+    required: 必填项
+    optional: 选填项
+    selectPlaceholder: 请选择
+    inputPlaceholder: 请输入
+    datePlaceholder: 请选择日期
+    dateRangePlaceholder: 请选择日期范围
+    success: 操作成功
+    error: 操作失败
+    confirmDelete: 确认删除？
+    confirmAction: 确认操作？
+    yes: 是
+    no: 否
+    numberRequired: 请输入数字
+    invalidFormat: 格式无效
+    invalidYearRange: 年份范围无效
+    lengthLimit: 长度必须在{min}到{max}之间
+  button:
+    add: 添加
+    edit: 编辑
+    delete: 删除
+    view: 查看
+    search: 搜索
+    filter: 筛选
+    reset: 重置
+    submit: 提交
+    save: 保存
+    cancel: 取消
+    confirm: 确认
+    back: 返回
+    next: 下一步
+    previous: 上一步
+    more: 更多
+    refresh: 刷新
+    export: 导出
+    import: 导入
+    upload: 上传
+    download: 下载
+  table:
+    noData: 暂无数据
+    loading: 加载中...
+    total: "共 {total} 条"
+    action: 操作
+    filter: 筛选
+    search: 搜索
+    reset: 重置
+    page: "第 {page} 页"
+    pageSize: "每页 {size} 条"
+
+order:
+  orderManagement: 订单管理
+  orderList: 订单列表
+  createOrder: 创建订单
+  editOrder: 编辑订单
+  orderDetail: 订单详情
+  orderDetails: 订单详情
+  statisticsTitle: 订单统计
+  deleteConfirmTitle: 确认删除订单
+  deleteConfirmContent: 确认要删除订单 {number} 吗？
+  batchDeleteConfirmTitle: 确认批量删除
+  batchDeleteConfirmContent: 确认要删除选中的 {count} 个订单吗？
+  deleteSuccess: 订单删除成功
+  batchDeleteSuccess: 批量删除成功
+  createSuccess: 订单创建成功
+  updateSuccess: 订单更新成功
+  fetchFailed: 获取订单失败
+  invalidId: 无效的订单ID
+  noOrdersSelected: 未选中任何订单
+  noOrderData: 无订单数据
+  exportOrders: 导出订单
+  importOrders: 导入订单
+  batchDelete: 批量删除
+  selectedCount: 已选中 {count} 项
+  searchPlaceholder: 搜索订单编号、客户等
+  filterPaymentStatus: 支付状态
+  filterServiceType: 服务类型
+  selectCustomer: 选择客户
+  selectContact: 选择联系人
+  inputLanguage: 输入语种
+  dateRange: 日期范围
+  serviceTimeRange: 服务时间范围
+  selectServiceTime: 选择服务时间
+  historyVersions: 有 {count} 个历史版本
+  
+  # 菜单相关
+  menu:
+    pureOrder: 订单管理
+    pureOrde: 订单管理
+    orderList: 订单列表
+    statisticsTitle: 订单统计
+  
+  # 客户信息相关
+  customer_type: 客户类型
+  delivery_address: 收件地址
+  order_address: 订单地址
+  follow_up_record: 回访记录
+  
+  # 订单历史相关翻译
+  historyRecords: 历史记录
+  changeLog: 变更日志
+  versionCompare: 版本对比
+  versionNumber: 版本号
+  modifiedBy: 修改人
+  modifiedAt: 修改时间
+  changeType: 变更类型
+  changeDetails: 变更详情
+  created: 创建
+  updated: 更新
+  restored: 恢复
+  noChangeDetails: 无变更详情
+  compare: 对比
+  restore: 恢复
+  historyVersion: 历史版本
+  currentVersion: 当前版本
+  field: 字段
+  from: 从
+  to: 到
+  version: 版本
+  by: 由
+  historyLoadFailed: 加载历史记录失败
+  versionLoadFailed: 加载版本数据失败
+  confirmRestoreVersion: 确定要将订单恢复到此版本吗？此操作会覆盖当前订单数据。
+  restoreVersion: 恢复版本
+  restoreVersionSuccess: 恢复版本成功
+  restoreVersionFailed: 恢复版本失败
+  
+  # 客户/联系人订单关联
+  customerOrders: 客户订单
+  memberOrders: 会员订单
+  customerOrdersLoadFailed: 加载客户订单失败
+  memberOrdersLoadFailed: 加载会员订单失败
+  
+  # 批量更新相关
+  batchUpdate: 批量更新
+  batchUpdateTitle: 批量更新订单
+  selectedOrdersInfo: 已选中 {count} 个订单
+  selectFieldsToUpdate: 选择要更新的字段
+  fieldsToUpdate: 更新字段
+  updateResult: 更新结果
+  batchUpdateSuccess: 批量更新成功
+  batchUpdatePartial: 部分更新成功，成功 {success} 个，失败 {failed} 个
+  batchUpdateFailed: 批量更新失败
+  updateAgain: 再次更新
+  noFieldsSelected: 未选择任何字段
+  orderId: 订单ID
+  
+  # 批量导出相关
+  exportSelected: 导出选中
+  exportAllSuccess: 导出所有订单成功
+  exportSelectedSuccess: 导出选中的 {count} 个订单成功
+  exportFailed: 导出失败
+  
+  # 批量删除相关
+  batchDeletePartial: 部分删除成功，成功 {success} 个，失败 {failed} 个
+  batchDeleteFailed: 批量删除失败
+  
+  # 图表和统计相关
+  orderTrendChart: 订单趋势分析
+  orderStatusDistribution: 订单支付状态分布
+  serviceTypeDistribution: 服务类型分布
+  period: 周期
+  dailyPeriod: 日报
+  weeklyPeriod: 周报
+  monthlyPeriod: 月报
+  quarterlyPeriod: 季报
+  yearlyPeriod: 年报
+  weekLabel: 第{week}周
+  monthLabel: "{month}月"
+  loadingChart: 加载图表中...
+  fetchChartDataFailed: 获取图表数据失败
+  totalOrders: 订单总数
+  totalAmount: 订单总金额
+  totalProfit: 总利润
+  avgProfitRate: 平均利润率
+  orderCount: 订单数量
+  orderAmount: 订单金额
+  chartProfit: 图表利润
+  chartProfitRate: 图表利润率
+
+  # 订单基本字段
+  orderNumber: 订单编号
+  customer: 客户
+  customerContact: 客户联系人
+  contactPerson: 联系人
+  createdAt: 创建时间
+  serviceType: 服务类型
+  language: 语种
+  amount: 金额
+  paymentStatus: 支付状态
+  orderDate: 下单日期
+  serviceTime: 服务时间
+  customerCount: 客户数量
+  translationCount: 翻译数量
+  projectLocation: 项目地点
+  sourcePlatform: 来源平台
+  customerType: 客户类型
+
+  # 服务类型
+  serviceTypeDocument: 文档翻译
+  serviceTypeInterpretation: 口译服务
+  serviceTypeProofreading: 校对服务
+  serviceTypeLocalization: 本地化服务
+  serviceTypeOther: 其他服务
+
+  # 支付状态
+  paymentStatusPaid: 已支付
+  paymentStatusUnpaid: 未支付
+  paymentStatusPartial: 部分支付
+  paymentStatusRefunded: 已退款
+  paymentStatusCancelled: 已取消
+
+  # 发票状态
+  invoiceStatusIssued: 已开具
+  invoiceStatusPending: 待开具
+  invoiceStatusNotRequired: 无需开具
+
+  # 标签页标题
+  basicInfo: 基本信息
+  priceAndPayment: 价格和支付信息
+  additionalInfo: 附加信息
+  remarksAndRecords: 备注和记录
+
+  # 订单详细字段
+  translator: 译员
+  customerPrice: 客户单价
+  customerTotalAmount: 客户总价
+  translatorFee: 译员费用
+  translatorPrice: 译员单价
+  translatorPaymentStatus: 译员支付状态
+  translatorPaymentMethod: 译员支付方式
+  projectFee: 项目费用
+  profitInfo: 利润信息
+  profit: 毛利
+  profitRate: 毛利率
+  paymentInfo: 支付信息
+  paymentDate: 支付日期
+  paymentMethod: 支付方式
+  paymentRemarks: 支付备注
+  projectManager: 项目负责人
+  invoiceStatus: 发票状态
+  invoiceInfo: 发票信息
+  projectDetails: 项目明细
+  costDetails: 费用明细
+  refundAmount: 退款金额
+  refundReason: 退款原因
+  contractNumber: 合同编号
+  contractInfo: 合同信息
+  contractRemarks: 合同备注
+  deliveryAddress: 收件地址
+  orderAddress: 订单地址
+  remarks: 备注
+  followUpRecord: 回访记录
+  
+  # 表单分组
+  formBasicInfo: 基本信息
+  formPriceInfo: 价格信息
+  formPaymentInfo: 支付信息
+  formInvoiceInfo: 发票信息
+  formContractInfo: 合同信息
+  formRemarks: 备注信息
+
+  importDialogTitle: 导入订单
+  importDialogDescription: 请上传符合模板格式的Excel文件。您可以点击"下载模板"按钮获取标准导入模板。
+  downloadTemplate: 下载模板
+  downloadTemplateFailed: 下载模板失败
+  selectFile: 选择文件
+  dragFileHere: 拖拽文件到此处
+  uploadProgress: 上传进度
+  uploadingFile: 正在上传文件：{name}
+  importSuccess: 订单导入成功
+  importFailed: 订单导入失败
+  importResult: 导入结果
+  successCount: 成功数量
+  failedCount: 失败数量
+  totalCount: 总数量
+  errorDetails: 错误详情
+  rowNumber: 行号
+  errorMessage: 错误信息
+  resetUpload: 重新上传
+  noFileSelected: 未选择文件
+  invalidFileType: 文件类型无效，请上传Excel文件(.xlsx或.xls)
+  fileTooLarge: 文件过大，请上传小于10MB的文件
+  confirmCancelUpload: 确认取消上传？正在进行的上传将被中断。
+
+login:
+  title: 登录
+  username: 用户名
+  password: 密码
+  remember: 记住我
+  login: 登录
+  logout: 退出登录
+  logoutSuccess: 退出登录成功
+  logoutFailed: 退出登录失败
+  loginSuccess: 登录成功
+  loginFailed: 登录失败
+  usernameRequired: 请输入用户名
+  passwordRequired: 请输入密码
+  invalidCredentials: 用户名或密码错误
+  pureUsername: 用户名
+  purePassword: 密码
+  pureLogin: 登录
+  pureUsernameReg: 请输入用户名
+  pureLoginSuccess: 登录成功
+  pureLoginFail: 登录失败
+
+tenant:
+  management: 租户管理
+  list: 租户列表
+  create: 创建租户
+  edit: 编辑租户
+  detail: 租户详情
+  view: 查看
+  delete: 删除
+  suspend: 暂停
+  activate: 激活
+  search: 搜索
+  cancel: 取消
+  backToList: 返回列表
+  name: 名称
+  status: 状态
+  statusAll: 所有状态
+  statusActive: 活跃
+  statusSuspended: 已暂停
+  statusDeleted: 已删除
+  statusInactive: 未激活
+  contactName: 联系人
+  contactEmail: 联系邮箱
+  contactPhone: 联系电话
+  createdAt: 创建时间
+  updatedAt: 更新时间
+  actions: 操作
+  id: ID
+  userCount: 用户数量
+  adminCount: 管理员数量
+  basicInfo: 基本信息
+  quotaInfo: 配额信息
+  userInfo: 用户信息
+  quotaUsage: 配额使用情况
+  maxUsers: 最大用户数
+  maxAdmins: 最大管理员数
+  maxStorageMb: 最大存储空间(MB)
+  tenantUsers: 租户用户
+  username: 用户名
+  email: 邮箱
+  nickName: 昵称
+  role: 角色
+  roleAdmin: 管理员
+  roleUser: 普通用户
+  isActive: 是否激活
+  isActiveTrue: 是
+  isActiveFalse: 否
+  dateJoined: 加入日期
+  noData: 暂无数据
+  quotaManagement: 配额管理
+  createSuccess: 租户创建成功
+  createFailed: 租户创建失败
+  updateSuccess: 租户更新成功
+  updateFailed: 租户更新失败
+  deleteSuccess: 租户删除成功
+  deleteFailed: 租户删除失败
+  suspendSuccess: 租户暂停成功
+  suspendFailed: 租户暂停失败
+  activateSuccess: 租户激活成功
+  activateFailed: 租户激活失败
+  quotaUpdateSuccess: 配额更新成功
+  quotaUpdateFailed: 配额更新失败
+  confirmDelete: 确认删除
+  confirmDeleteMessage: 确定要删除租户 {name} 吗？
+  confirmSuspend: 确认暂停
+  confirmSuspendMessage: 确定要暂停租户 {name} 吗？
+  confirmActivate: 确认激活
+  confirmActivateMessage: 确定要激活租户 {name} 吗？
+  editBtn: 编辑
+  createTenant: 创建租户
+  editTenant: 编辑租户
+
+menu:
+  management: 菜单管理
+  list: 菜单列表
+  create: 创建菜单
+  edit: 编辑菜单
+  delete: 删除
+  view: 查看
+  title: 菜单管理
+  search: 搜索
+  refresh: 刷新
+  import: 导入
+  export: 导出
+  batchDelete: 批量删除
+  menuTree: 菜单树
+  allMenus: 所有菜单
+  id: ID
+  name: 名称
+  path: 路径
+  component: 组件
+  code: 代码
+  rank: 排序
+  isActive: 状态
+  actions: 操作
+  statusAll: 所有状态
+  statusActive: 激活
+  statusInactive: 未激活
+  parentId: 父菜单
+  editBtn: 编辑
+  deactivate: 停用
+  activate: 激活
+  enable: 启用
+  disable: 禁用
+  addChildMenu: 添加子菜单
+  redirect: 重定向
+  createMenu: 创建菜单
+  editMenu: 编辑菜单
+  cancel: 取消
+  save: 保存
+  confirmDelete: 确认删除
+  confirmDeleteMessage: 确定要删除菜单 {name} 吗？
+  confirmBatchDelete: 确认批量删除
+  confirmBatchDeleteMessage: 确定要删除选中的 {count} 个菜单吗？
+  confirmStatusChange: 确认{action}
+  confirmStatusChangeMessage: 确定要{action}菜单 {name} 吗？
+  createSuccess: 创建菜单成功
+  createFailed: 创建菜单失败
+  updateSuccess: 更新菜单成功
+  updateFailed: 更新菜单失败
+  deleteSuccess: 删除菜单成功
+  deleteFailed: 删除菜单失败
+  batchDeleteSuccess: 批量删除菜单成功
+  batchDeleteFailed: 批量删除菜单失败
+  statusChangeSuccess: 菜单状态更改成功
+  statusChangeFailed: 菜单状态更改失败
+  userMenuSetting: 用户菜单设置
+  setUserMenu: 设置菜单
+  preview: 预览
+  basicInfo: 基本信息
+  routeConfig: 路由配置
+  displaySettings: 显示设置
+  permissionSettings: 权限设置
+  advancedSettings: 高级设置
+  nameRequired: 请输入菜单名称
+  codeRequired: 请输入菜单代码
+  pathRequired: 请输入路径
+  rankRequired: 请输入排序值
+  activePath: 激活路径
+  frameSrc: 框架源
+  frameLoading: 框架加载
+  icon: 图标
+  selectIcon: 选择图标
+  extraIcon: 附加图标
+  showLink: 显示链接
+  showParent: 显示父级
+  keepAlive: 保持活跃
+  hiddenTag: 隐藏标签
+  roles: 角色
+  auths: 权限
+  dynamicLevel: 动态等级
+  transitionName: 过渡名称
+  enterTransition: 进入过渡
+  leaveTransition: 离开过渡
+  remarks: 备注
+  exportSuccess: 导出菜单配置成功
+  exportFailed: 导出菜单配置失败
+  importSuccess: 导入菜单配置成功
+  importFailed: 导入菜单配置失败
+  enableSuccess: 启用菜单成功
+  enableFailed: 启用菜单失败
+  disableSuccess: 禁用菜单成功
+  disableFailed: 禁用菜单失败
+  orderUpdateSuccess: 菜单顺序更新成功
+  orderUpdateFailed: 菜单顺序更新失败
+  selectMenusFirst: 请先选择菜单
+
+cms:
+  management: CMS管理
+  articleManagement: 文章管理
+  categoryManagement: 分类管理
+  tagManagement: 标签管理
+  commentManagement: 评论管理
+  menu:
+    cmsManagement: CMS管理
+    articleManagement: 文章管理
+    articleList: 文章列表
+    articleCreate: 创建文章
+    articleEdit: 编辑文章
+    articleDetail: 文章详情
+    articleVersion: 文章版本
+    categoryManagement: 分类管理
+    categoryList: 分类列表
+    categoryEdit: 编辑分类
+    categoryDetail: 分类详情
+    tagManagement: 标签管理
+    tagList: 标签列表
+    tagCreate: 创建标签
+    tagEdit: 编辑标签
+    commentManagement: 评论管理
+    commentList: 评论列表
+    commentCreate: 创建评论
+    commentEdit: 编辑评论
+    commentDetail: 评论详情
+  tag:
+    createTag: 创建标签
+    editTag: 编辑标签
+    tagManagement: 标签管理
+    searchPlaceholder: 搜索标签名称或描述
+    isActive: 状态
+    statusAll: 所有状态
+    statusActive: 已激活
+    statusInactive: 未激活
+    id: ID
+    name: 名称
+    slug: 别名
+    slugTip: 别名只能包含小写字母、数字和连字符，用于URL
+    generateSlug: 根据名称自动生成别名
+    nameLength: 名称长度应在{min}到{max}个字符之间
+    nameRequired: 请输入标签名称
+    slugInvalid: 别名格式不正确，只能包含小写字母、数字和连字符
+    description: 描述
+    keyword: 关键词
+    articleCount: 文章数
+    createdAt: 创建时间
+    actions: 操作
+    basicInfo: 基本信息
+    advancedSettings: 高级设置
+    color: 颜色
+    colorTip: 标签显示的颜色，可以使用颜色选择器或输入HEX值
+    confirmDelete: 确认删除
+    confirmDeleteMessage: 确定要删除标签 {name} 吗？
+    fetchListFailed: 获取标签列表失败
+    createSuccess: 创建标签成功
+    createFailed: 创建标签失败
+    updateSuccess: 更新标签成功
+    updateFailed: 更新标签失败
+    deleteSuccess: 删除标签成功
+    deleteFailed: 删除标签失败
+    formDataError: 获取表单数据失败
+    idNotFound: 标签ID不存在
+  
+  comment:
+    createComment: 创建评论
+    editComment: 编辑评论
+    article: 文章
+    parent: 父评论
+    content: 内容
+    contentPlaceholder: 输入评论内容
+    selectArticle: 选择文章
+    selectParentComment: 选择父评论
+    guestInfo: 访客信息
+    guestName: 访客姓名
+    guestEmail: 访客邮箱
+    guestWebsite: 访客网站
+    status: 状态
+    isPinned: 是否置顶
+    guest: 访客
+    statusAll: 所有状态
+    statusPending: 待审核
+    statusApproved: 已批准
+    statusSpam: 垃圾评论
+    statusTrash: 已删除
+    commentManagement: 评论管理
+    replyComment: 回复评论
+    keyword: 关键词
+    searchPlaceholder: 输入评论内容或作者
+    articleIdPlaceholder: 输入文章ID
+    dateRange: 日期范围
+    startDate: 开始日期
+    endDate: 结束日期
+    batchApprove: 批量批准
+    batchMarkAsSpam: 标记为垃圾
+    batchReject: 批量拒绝
+    batchDelete: 批量删除
+    createTime: 创建时间
+    anonymous: 匿名
+    byUser: 用户 {user}
+    byGuest: 访客 {name}
+    confirmApprove: 确认批准
+    confirmApproveMessage: 确定要批准此评论吗？
+    confirmReject: 确认拒绝
+    confirmRejectMessage: 确定要拒绝此评论吗？
+    confirmMarkAsSpam: 确认标记为垃圾
+    confirmMarkAsSpamMessage: 确定要将此评论标记为垃圾吗？
+    confirmDelete: 确认删除
+    confirmDeleteMessage: 确定要删除此评论吗？
+    deleteSuccess: 删除评论成功
+    deleteFailed: 删除评论失败
+    selectCommentsFirst: 请先选择评论
+    confirmBatchAction: 确认{action}
+    confirmBatchActionMessage: 确定要对 {count} 条评论执行此操作吗？
+    batchActionSuccess: 批量操作成功
+    batchActionFailed: 批量操作失败
+    selectCommentsToDelete: 请选择要删除的评论
+    confirmBatchDelete: 确认批量删除
+    confirmBatchDeleteMessage: 确定要删除选中的 {count} 条评论吗？
+    batchDeleteSuccess: 批量删除成功
+    batchDeleteFailed: 批量删除失败
+    fetchListFailed: 获取评论列表失败
+  
+  article:
+    title: 标题
+    titleRequired: 请输入文章标题
+    titleLength: 标题长度应为2-200个字符
+    titlePlaceholder: 请输入文章标题
+    slug: 别名(Slug)
+    slugPlaceholder: 文章的URL别名，留空将自动生成
+    excerpt: 摘要
+    excerptPlaceholder: 请输入文章摘要
+    content: 内容
+    contentRequired: 请输入文章内容
+    contentPlaceholder: 请输入文章内容
+    editorTip: 支持Markdown格式，建议使用专业的编辑器编写内容后粘贴到此处
+    settings: 文章设置
+    status: 状态
+    statusDraft: 草稿
+    statusPending: 待审核
+    statusPublished: 已发布
+    statusArchived: 已归档
+    contentType: 内容类型
+    contentTypeMarkdown: Markdown
+    contentTypeHtml: HTML
+    visibility: 可见性
+    visibilityPublic: 公开
+    visibilityPrivate: 私密
+    visibilityPassword: 密码保护
+    visibilityRequired: 请选择可见性
+    password: 访问密码
+    passwordRequired: 请设置访问密码
+    passwordPlaceholder: 请设置访问密码
+    featured: 推荐
+    pinned: 置顶
+    allowComment: 允许评论
+    categories: 分类
+    categoriesPlaceholder: 请选择文章分类
+    categoriesAvailable: 个分类可用
+    noCategories: 暂无分类
+    tags: 标签
+    tagsPlaceholder: 请选择文章标签
+    tagsAvailable: 个标签可用
+    noTags: 暂无标签
+    author: 作者
+    createTime: 创建时间
+    updateTime: 更新时间
+    publishTime: 发布时间
+    summary: 摘要
+    category: 分类
+    tag: 标签
+    viewCount: 浏览次数
+    commentCount: 评论数
+    likeCount: 点赞数
+    wordCount: 字数统计
+    coverImage: 封面图片
+    uploadCover: 上传封面图片
+    coverUploadSuccess: 封面图片上传成功
+    coverUploadFailed: 封面图片上传失败
+    uploading: 上传中...
+    imageTypeError: 只能上传图片文件
+    imageSizeError: 图片大小不能超过5MB
+    coverImageTip: 支持JPG、PNG、GIF等格式，建议尺寸1200x630像素，最大5MB
+    noCover: 无封面图片
+    isTop: 是否置顶
+    isRecommend: 是否推荐
+    isOriginal: 是否原创
+    source: 来源
+    sourceUrl: 来源链接
+    keyword: 关键词
+    description: 描述
+    versionHistory: 版本历史
+    versionList: 版本列表
+    versionNumber: 版本号
+    versionCreatedAt: 创建时间
+    versionCreatedBy: 创建人
+    compareVersions: 比较版本
+    restoreVersion: 恢复版本
+    noVersions: 无版本
+    versionDetail: 版本详情
+    versionDiff: 版本比较
+    oldVersion: 旧版本
+    currentVersion: 当前版本
+    latest: 最新
+    featuredTooltip: 精选文章
+    pinnedTooltip: 置顶文章
+    noExcerpt: 无摘要
+    mainContent: 主要内容
+    statistics: 统计信息
+    searchPlaceholder: 按标题、内容或作者搜索
+    dateRange: 日期范围
+    startDate: 开始日期
+    endDate: 结束日期
+    batchDelete: 批量删除
+    statusAll: 所有状态
+    featuredAll: 所有特色状态
+    featuredTrue: 特色文章
+    featuredFalse: 非特色文章
+    pinnedAll: 所有置顶状态
+    pinnedTrue: 已置顶
+    pinnedFalse: 未置顶
+    articleManagement: 文章管理
+    createArticle: 创建文章
+    editArticle: 编辑文章
+    deleteArticle: 删除文章
+    publishArticle: 发布文章
+    unpublishArticle: 取消发布
+    archiveArticle: 归档文章
+    restoreArticle: 恢复文章
+    previewArticle: 预览文章
+    saveAsDraft: 保存为草稿
+    publish: 发布
+    unpublish: 取消发布
+    archive: 归档
+    restore: 恢复
+    preview: 预览
+    selectCategory: 选择分类
+    selectTags: 选择标签
+    uploadCoverImage: 上传封面图片
+    removeCoverImage: 移除封面图片
+    articleList: 文章列表
+    articleDetail: 文章详情
+    articleEdit: 编辑文章
+    articleCreate: 创建文章
+    categoryPlaceholder: 请选择分类
+    tagPlaceholder: 请选择标签
+    statusPlaceholder: 请选择状态
+    batchPublish: 批量发布
+    batchUnpublish: 批量取消发布
+    batchArchive: 批量归档
+    batchRestore: 批量恢复
+    confirmDelete: 确认删除
+    confirmPublish: 确认发布
+    confirmUnpublish: 确认取消发布
+    confirmArchive: 确认归档
+    confirmRestore: 确认恢复
+    deleteSuccess: 删除成功
+    publishSuccess: 发布成功
+    unpublishSuccess: 取消发布成功
+    archiveSuccess: 归档成功
+    restoreSuccess: 恢复成功
+    saveSuccess: 保存成功
+    saveFail: 保存失败
+    uploadSuccess: 上传成功
+    uploadFail: 上传失败
+    pleaseEnterTitle: 请输入标题
+    pleaseEnterContent: 请输入内容
+    pleaseEnterSummary: 请输入摘要
+    pleaseSelectCategory: 请选择分类
+    pleaseSelectTags: 请选择标签
+    pleaseUploadCoverImage: 请上传封面图片
+    categoryRequired: 分类不能为空
+    tagsRequired: 标签不能为空
+    coverImageRequired: 封面图片不能为空
+    fetchListFailed: 获取文章列表失败
+    selectArticlesToDelete: 请选择要删除的文章
+    confirmBatchDelete: 确认批量删除
+    confirmBatchDeleteMessage: 确定要删除选中的 {count} 篇文章吗？
+    batchDeleteSuccess: 批量删除成功
+    batchDeleteFailed: 批量删除失败
+    confirmPublishMessage: 确定要发布文章 "{title}" 吗？
+    publishFailed: 发布失败
+    confirmDeleteMessage: 确定要删除文章 "{title}" 吗？
+    deleteFailed: 删除失败
+    createSuccess: 创建文章成功
+    createFailed: 创建文章失败
+    updateSuccess: 更新文章成功
+    updateFailed: 更新文章失败
+    fetchDetailFailed: 获取文章详情失败
+    basicInfo: 基本信息
+    fetchCategoriesTagsFailed: 获取分类和标签数据失败
+
+  category:
+    editCategory: 编辑分类
+    basicInfo: 基本信息
+    name: 名称
+    slug: 别名
+    parent: 父分类
+    noParent: 无父分类
+    description: 描述
+    advancedSettings: 高级设置
+    icon: 图标
+    sortOrder: 排序
+    isActive: 是否激活
+    nameRequired: 名称不能为空
+    slugInvalid: 别名格式不正确
+    updateSuccess: 分类更新成功
+    updateFailed: 分类更新失败
+    categoryDetail: 分类详情
+    id: ID
+    level: 层级
+    path: 路径
+    statusActive: 已激活
+    statusInactive: 未激活
+    articleCount: 文章数
+    createdAt: 创建时间
+    updatedAt: 更新时间
+    children: 子分类
+    actions: 操作
+    fetchListFailed: 获取分类列表失败
+    categoryTree: 分类树
+    createCategory: 创建分类
+    categoryManagement: 分类管理
+    keyword: 关键词
+    searchPlaceholder: 搜索分类名称
+    onlyShowActive: 只看启用
+    treeView: 树形结构
+    listView: 列表
+    refresh: 刷新
+    debug: 调试
+    noData: 暂无分类数据
+
+menus:
+  pureHome: 首页
+  pureLogin: 登录
+  purePermission: 权限管理
+  purePermissionPage: 页面权限
+  purePermissionButton: 按钮权限
+  purePermissionButtonRouter: 路由按钮权限
+  purePermissionButtonLogin: 登录按钮权限
+  pureTenant: 租户管理
+  pureTenantList: 租户列表
+  pureAdminUser: 管理员管理
+  pureCustomer: 客户管理
+  pureMember: 会员管理
+  pureMenu: 菜单管理
+  pureDashboard: 数据大盘
+  pureCms: 内容管理
+  pureOrder: 订单管理
+  pureFourZeroFour: 404页面
+  pureAbnormal: 错误页面
+  pureFourZeroThree: 403页面
+  pureFiveZeroZero: 500页面
+
+adminUser:
+  management: 管理员用户管理
+  list: 管理员用户列表
+  create: 创建管理员
+  createSuperAdmin: 创建超级管理员
+  edit: 编辑管理员
+  editBtn: 编辑
+  detail: 管理员详情
+  view: 查看
+  delete: 删除
+  suspend: 暂停
+  activate: 激活
+  deactivate: 停用
+  search: 搜索
+  searchPlaceholder: 搜索用户名或邮箱
+  cancel: 取消
+  backToList: 返回列表
+  username: 用户名
+  usernamePlaceholder: 请输入用户名
+  usernameRequired: 用户名不能为空
+  usernameLength: 用户名长度应为3-30个字符
+  email: 邮箱
+  emailPlaceholder: 请输入邮箱
+  emailRequired: 邮箱不能为空
+  emailInvalid: 请输入有效的邮箱地址
+  nickName: 昵称
+  nickNamePlaceholder: 请输入昵称
+  phone: 电话
+  phonePlaceholder: 请输入电话号码
+  firstName: 名
+  firstNamePlaceholder: 请输入名
+  lastName: 姓
+  lastNamePlaceholder: 请输入姓
+  isActive: 是否激活
+  avatar: 头像
+  uploadAvatar: 上传头像
+  update: 更新
+  tenant: 租户
+  tenantPlaceholder: 请选择租户
+  password: 密码
+  passwordPlaceholder: 请输入密码
+  passwordRequired: 密码不能为空
+  passwordLength: 密码长度至少为8个字符
+  confirmPassword: 确认密码
+  confirmPasswordPlaceholder: 请再次输入密码
+  confirmPasswordRequired: 请确认密码
+  passwordMismatch: 两次输入的密码不一致
+  formValidationFailed: 表单验证失败
+  close: 关闭
+  status: 状态
+  statusAll: 所有状态
+  statusActive: 活跃
+  statusSuspended: 已暂停
+  statusDeleted: 已删除
+  statusInactive: 未激活
+  roles: 角色
+  role: 角色
+  superAdmin: 超级管理员
+  tenantAdmin: 租户管理员
+  createdAt: 创建时间
+  updatedAt: 更新时间
+  actions: 操作
+  id: ID
+  grantSuperAdmin: 授予超级管理员权限
+  revokeSuperAdmin: 撤销超级管理员权限
+  confirmDelete: 确认删除
+  confirmDeleteMessage: 确定要删除管理员 {name} 吗？
+  confirmActivate: 确认激活
+  confirmActivateMessage: 确定要激活管理员 {name} 吗？
+  confirmDeactivate: 确认停用
+  confirmDeactivateMessage: 确定要停用管理员 {name} 吗？
+  confirmGrantSuperAdmin: 确认授权
+  confirmGrantSuperAdminMessage: 确定要授予 {name} 超级管理员权限吗？
+  confirmRevokeSuperAdmin: 确认撤销
+  confirmRevokeSuperAdminMessage: 确定要撤销 {name} 的超级管理员权限吗？
+  createSuccess: 创建管理员成功
+  createFailed: 创建管理员失败
+  updateSuccess: 更新管理员成功
+  updateFailed: 更新管理员失败
+  deleteSuccess: 删除管理员成功
+  deleteFailed: 删除管理员失败
+  activateSuccess: 激活管理员成功
+  activateFailed: 激活管理员失败
+  deactivateSuccess: 停用管理员成功
+  deactivateFailed: 停用管理员失败
+  grantSuperAdminSuccess: 授予超级管理员权限成功
+  grantSuperAdminFailed: 授予超级管理员权限失败
+  revokeSuperAdminSuccess: 撤销超级管理员权限成功
+  revokeSuperAdminFailed: 撤销超级管理员权限失败
+  profile: 个人资料
+  createAdminUser: 创建管理员用户
+  editAdminUser: 编辑管理员用户
+  viewAdminUser: 查看管理员用户
+  selectTenantTitle: 选择租户
+
+buttons:
+  pureClickCollapse: 点击折叠
+  pureOpenSystemSet: 打开系统设置
+  pureLoginOut: 退出登录
+  pureReload: 重新加载
+  pureCloseCurrentTab: 关闭当前标签
+  pureCloseLeftTabs: 关闭左侧标签
+  pureCloseRightTabs: 关闭右侧标签
+  pureCloseOtherTabs: 关闭其他标签
+  pureCloseAllTabs: 关闭所有标签
+  pureContentFullScreen: 内容全屏
+  pureBackTop: 返回顶部
+  pureOpenText: 开启
+  pureCloseText: 关闭
+  more: 更多
+  pureClickExpand: 点击展开
+  pureConfirm: 确认
+  edit: 编辑
+  delete: 删除
+  search: 搜索
+  reset: 重置
+  confirm: 确认
+  cancel: 取消
+  submit: 提交
+  back: 返回
+
+panel:
+  pureSystemSet: 系统设置
+  pureCloseSystemSet: 关闭系统设置
+  pureClearCacheAndToLogin: 清除缓存并重新登录
+  pureOverallStyle: 整体风格
+  pureOverallStyleLight: 亮色模式
+  pureOverallStyleLightTip: 亮色背景配色
+  pureOverallStyleDark: 暗色模式
+  pureOverallStyleDarkTip: 暗色背景配色
+  pureOverallStyleSystem: 跟随系统
+  pureOverallStyleSystemTip: 跟随系统外观设置
+  pureThemeColor: 主题色
+  pureLayoutModel: 布局模式
+  pureVerticalTip: 垂直菜单布局
+  pureHorizontalTip: 水平菜单布局
+  pureMixTip: 混合菜单布局
+  pureTagsStyle: 标签风格
+  pureTagsStyleSmart: 灵动模式
+  pureTagsStyleSmartTip: 灵动的标签页模式
+  pureTagsStyleCard: 卡片模式
+  pureTagsStyleCardTip: 卡片标签页模式
+  pureTagsStyleChrome: 浏览器模式
+  pureTagsStyleChromeTip: 浏览器标签页模式
+  pureInterfaceDisplay: 界面显示
+  pureGreyModel: 灰色模式
+  pureWeakModel: 色弱模式
+  pureHiddenTags: 隐藏标签页
+  pureHiddenFooter: 隐藏页脚
+  pureMultiTagsCache: 多标签页持久化
+  pureClearCache: 清除缓存
+  pureStretch: 布局拉伸
+  pureStretchFixed: 固定拉伸
+  pureStretchFixedTip: 固定宽高比拉伸
+  pureStretchCustom: 自定义拉伸
+  pureStretchCustomTip: 自定义宽高比拉伸
+
+status:
+  pureNotify: 通知
+  pureMessage: 消息
+  pureTodo: 待办
+  pureNoNotify: 暂无通知
+
+dashboard:
+  title: 仪表盘
+  tenantChartsTitle: 租户统计
+  userChartsTitle: 用户统计
+  to: 至
+  startDate: 开始日期
+  endDate: 结束日期
+  daily: 每日
+  weekly: 每周
+  monthly: 每月
+  quarterly: 每季度
+  yearly: 每年
+  tenantTrend: 租户数量趋势
+  noData: 暂无数据
+  tenantStatusDistribution: 租户状态分布
+  tenantCreationRate: 租户创建速率
+  loading: 加载中...
+  tenantTotal: 租户总数
+  growthRate: 增长率
+  avgGrowth: 平均增长
+  month: 月
+  tenantCount: 租户数量
+  newTenants: 新增租户
+  average: 平均值
+  updatingCharts: 更新图表数据中...
+  userRoleDistribution: 用户角色分布
+  activeUsersChart: 活跃用户统计
+  userTotal: 用户总数
+  activeUsers: 活跃用户
+  inactiveUsers: 非活跃用户
+  adminCount: 管理员数量
+  normalUserCount: 普通用户数量
+  userCreationRate: 用户创建速率
+  newUsers: 新增用户
+  fetchDataFailed: 获取数据失败
+  refresh: 刷新
+  periodSelector: 时间周期
+  dateRangeSelector: 日期范围
+  statusActive: 活跃
+  statusSuspended: 暂停
+  statusDeleted: 已删除
+  statusInactive: 未激活
+
+仪表盘: 仪表盘
+
+error:
+  404: 页面不存在
+  403: 没有权限
+  500: 服务器错误
+  backHome: 返回首页
+  notFound: 页面不存在
+  notFoundMessage: 抱歉，您访问的页面不存在
+  forbidden: 没有权限
+  forbiddenMessage: 抱歉，您没有权限访问此页面
+  serverError: 服务器错误
+  serverErrorMessage: 抱歉，服务器出现了错误
+
+components:
+  svg-icon:
+    loading: 加载中
+    noData: 暂无数据
+    failed: 加载失败
+
+user:
+  management: 用户管理
+  list: 用户列表
+  create: 创建用户
+  edit: 编辑用户
+  detail: 用户详情
+  profile: 个人资料
+  username: 用户名
+  email: 邮箱
+  nickName: 昵称
+  role: 角色
+  roleAdmin: 管理员
+  roleUser: 普通用户
+  isActive: 是否激活
+  isActiveTrue: 是
+  isActiveFalse: 否
+  dateJoined: 加入日期
+  lastLogin: 最后登录
+  actions: 操作
+  view: 查看
+  delete: 删除
+  suspend: 暂停
+  activate: 激活
+  search: 搜索
+  cancel: 取消
+  backToList: 返回列表
+  createSuccess: 创建用户成功
+  updateSuccess: 更新用户成功
+  deleteSuccess: 删除用户成功
+  suspendSuccess: 暂停用户成功
+  activateSuccess: 激活用户成功
+
+el:
+  colorpicker:
+    confirm: 确定
+    clear: 清空
+  datepicker:
+    now: 此刻
+    today: 今天
+    cancel: 取消
+    clear: 清空
+    confirm: 确定
+    selectDate: 选择日期
+    selectTime: 选择时间
+    startDate: 开始日期
+    startTime: 开始时间
+    endDate: 结束日期
+    endTime: 结束时间
+    prevYear: 前一年
+    nextYear: 后一年
+    prevMonth: 上个月
+    nextMonth: 下个月
+    year: 年
+    month1: 1 月
+    month2: 2 月
+    month3: 3 月
+    month4: 4 月
+    month5: 5 月
+    month6: 6 月
+    month7: 7 月
+    month8: 8 月
+    month9: 9 月
+    month10: 10 月
+    month11: 11 月
+    month12: 12 月
+    weeks:
+      sun: 日
+      mon: 一
+      tue: 二
+      wed: 三
+      thu: 四
+      fri: 五
+      sat: 六
+    months:
+      jan: 一月
+      feb: 二月
+      mar: 三月
+      apr: 四月
+      may: 五月
+      jun: 六月
+      jul: 七月
+      aug: 八月
+      sep: 九月
+      oct: 十月
+      nov: 十一月
+      dec: 十二月
+  pagination:
+    goto: 前往
+    pagesize: 条/页
+    total: 共 {total} 条
+    pageClassifier: 页
+    deprecationWarning: 废弃的用法，请使用 v-model 绑定分页属性
+  cascader:
+    noMatch: 无匹配数据
+    loading: 加载中
+    placeholder: 请选择
+    noData: 暂无数据
+  table:
+    emptyText: 暂无数据
+    confirmFilter: 筛选
+    resetFilter: 重置
+    clearFilter: 全部
+    sumText: 合计
+  select:
+    loading: 加载中
+    noMatch: 无匹配数据
+    noData: 暂无数据
+    placeholder: 请选择
+  messagebox:
+    title: 提示
+    confirm: 确定
+    cancel: 取消
+    error: 输入的数据不合法!
+  upload:
+    deleteTip: 按 delete 键可删除
+    delete: 删除
+    preview: 查看图片
+    continue: 继续上传
+  dialog:
+    close: 关闭
+  drawer:
+    close: 关闭
+  radio:
+    value: 值
+    label: 标签
+
+layout:
+  header:
+    profile: 个人资料
+    logout: 退出登录
+    settings: 设置
+    darkMode: 暗黑模式
+    lightMode: 明亮模式
+    fullScreen: 全屏
+    exitFullScreen: 退出全屏
+    language: 语言
+    search: 搜索
+    notifications: 通知
+    noNotifications: 暂无通知
+    viewAll: 查看全部
+    welcome: 欢迎回来
+  sidebar:
+    collapse: 收起菜单
+    expand: 展开菜单
+  footer:
+    copyright: 版权所有
+    version: 版本
+
+labels:
+  allRole: 所有角色
+
+customer:
+  management: 客户管理
+  list: 客户列表
+  create: 创建客户
+  edit: 编辑客户
+  detail: 客户详情
+  view: 查看客户
+  delete: 删除客户
+  search: 搜索客户
+  filter: 筛选客户
+  cancel: 取消
+  backToList: 返回列表
+  name: 客户名称
+  type: 客户类型
+  typeCompany: 企业
+  typeEnterprise: 企业
+  typeGovernment: 政府机构
+  typeEducation: 教育机构
+  typeNonprofit: 非营利组织
+  typeIndividual: 个人
+  customerList: 客户列表
+  createCustomer: 创建客户
+  editCustomer: 编辑客户
+  viewCustomer: 查看客户
+  searchPlaceholder: 搜索客户名称、联系人或电话
+  batchDelete: 批量删除
+  id: ID
+  menu:
+    customerManagement: 客户管理
+    customerList: 客户列表
+    customerCreate: 创建客户
+    customerEdit: 编辑客户
+    customerDetail: 客户详情
+  valueLevel: 价值等级
+  valueVip: VIP
+  valuePlatinum: 白金
+  valueGold: 黄金
+  valueSilver: 白银
+  valueBronze: 青铜
+  status: 状态
+  statusAll: 所有状态
+  statusActive: 活跃
+  statusInactive: 非活跃
+  statusProspect: 潜在客户
+  statusChurned: 流失客户
+  statusLost: 已流失
+  industry: 所属行业
+  createdAt: 创建时间
+  registrationNumber: 注册号
+  taxId: 税号
+  address: 地址
+  city: 城市
+  province: 省份
+  postalCode: 邮政编码
+  country: 国家
+  website: 网站
+  description: 描述
+  annualRevenue: 年收入
+  employeeCount: 员工数量
+  foundedYear: 成立年份
+  updatedAt: 更新时间
+  memberCount: 联系人数量
+  tenantCount: 关联租户数量
+  basicInfo: 基本信息
+  contactInfo: 联系信息
+  additionalInfo: 附加信息
+  
+  # 客户-联系人关系
+  memberRelation:
+    title: 联系人关系
+    create: 添加联系人
+    edit: 编辑联系人
+    delete: 删除联系人
+    view: 查看联系人
+    name: 姓名
+    email: 邮箱
+    phone: 电话
+    position: 职位
+    role: 角色
+    department: 部门
+    isPrimary: 是否主要联系人
+    isPrimaryTrue: 是
+    isPrimaryFalse: 否
+    notes: 备注
+    setPrimary: 设为主要联系人
+    createSuccess: 联系人添加成功
+    createFailed: 联系人添加失败
+    updateSuccess: 联系人更新成功
+    updateFailed: 联系人更新失败
+    deleteSuccess: 联系人删除成功
+    deleteFailed: 联系人删除失败
+    setPrimarySuccess: 已设为主要联系人
+    setPrimaryFailed: 设置主要联系人失败
+    confirmDelete: 确认删除
+    confirmDeleteMessage: 确定要删除联系人 {name} 吗？
+  
+  # 客户-租户关系
+  tenantRelation:
+    title: 租户关系
+    create: 添加租户关系
+    edit: 编辑租户关系
+    delete: 删除租户关系
+    view: 查看租户关系
+    tenant: 租户
+    relationType: 关系类型
+    relationTypeOwner: 所有者
+    relationTypePartner: 合作伙伴
+    relationTypeReseller: 经销商
+    relationTypeAffiliate: 附属机构
+    isPrimary: 是否主要关系
+    isPrimaryTrue: 是
+    isPrimaryFalse: 否
+    startDate: 开始日期
+    endDate: 结束日期
+    contractId: 合同编号
+    notes: 备注
+    setPrimary: 设为主要关系
+    createSuccess: 租户关系添加成功
+    createFailed: 租户关系添加失败
+    updateSuccess: 租户关系更新成功
+    updateFailed: 租户关系更新失败
+    deleteSuccess: 租户关系删除成功
+    deleteFailed: 租户关系删除失败
+    setPrimarySuccess: 已设为主要关系
+    setPrimaryFailed: 设置主要关系失败
+    confirmDelete: 确认删除
+    confirmDeleteMessage: 确定要删除与租户 {name} 的关系吗？
+  
+  # 批量操作
+  bulk:
+    title: 批量操作
+    create: 批量创建
+    update: 批量更新
+    delete: 批量删除
+    select: 已选择 {count} 项
+    createSuccess: 成功创建 {count} 个客户
+    updateSuccess: 成功更新 {count} 个客户
+    deleteSuccess: 成功删除 {count} 个客户
+    createFailed: 批量创建失败
+    updateFailed: 批量更新失败
+    deleteFailed: 批量删除失败
+    confirmDelete: 确认批量删除
+    confirmDeleteMessage: 确定要删除选中的 {count} 个客户吗？
+    import: 导入客户
+    export: 导出客户
+    template: 下载模板
+    uploadSuccess: 文件上传成功
+    uploadFailed: 文件上传失败
+    importSuccess: 导入成功
+    importFailed: 导入失败
+    exportSuccess: 导出成功
+    exportFailed: 导出失败
+
+  # 会员关系
+  member:
+    title: 会员关系
+    list: 会员列表
+    addMember: 添加会员
+    editRelation: 编辑会员关系
+    viewRelation: 查看会员关系
+    deleteRelation: 删除会员关系
+    batchDeleteRelation: 批量删除会员关系
+    memberInfo: 会员信息
+    memberSelect: 会员选择
+    memberSelectPlaceholder: 请选择会员
+    memberRequired: 请选择会员
+    role: 角色
+    rolePlaceholder: 请输入角色
+    roleRequired: 请输入角色
+    department: 部门
+    departmentPlaceholder: 请输入部门
+    isPrimary: 主要联系人
+    notes: 备注
+    notesPlaceholder: 请输入备注
+    searchPlaceholder: 搜索会员名称、邮箱或角色
+    createSuccess: 添加会员关系成功
+    updateSuccess: 更新会员关系成功
+    deleteSuccess: 删除会员关系成功
+    batchDeleteSuccess: 批量删除会员关系成功
+    saveError: 保存会员关系失败
+    deleteError: 删除会员关系失败
+    searchMemberFailed: 搜索会员失败
+    deleteRelationConfirm: 确定要删除与会员 {username} 的关系吗？
+    batchDeleteRelationConfirm: 确定要删除选中的 {count} 个会员关系吗？
+
+member:
+  memberManagement: 会员管理
+  memberList: 会员列表
+  createMember: 创建会员
+  editMember: 编辑会员
+  memberDetail: 会员详情
+  deleteTitle: 确认删除会员
+  deleteConfirm: 确定要删除会员 {name} 吗？
+  deleteSuccess: 会员删除成功
+  bulkDeleteTitle: 确认批量删除
+  bulkDeleteConfirm: 确定要删除选中的 {count} 个会员吗？
+  bulkDeleteSuccess: 批量删除会员成功
+  createSuccess: 会员创建成功
+  updateSuccess: 会员更新成功
+  id: ID
+  username: 用户名
+  usernamePlaceholder: 请输入用户名
+  usernameRequired: 用户名不能为空
+  usernameLength: 用户名长度应在3-30个字符之间
+  name: 姓名
+  namePlaceholder: 请输入姓名
+  nameRequired: 姓名不能为空
+  nameLength: 姓名长度应在2-50个字符之间
+  nickName: 昵称
+  nickNamePlaceholder: 请输入昵称
+  firstName: 名
+  firstNamePlaceholder: 请输入名
+  lastName: 姓
+  lastNamePlaceholder: 请输入姓
+  email: 邮箱
+  emailPlaceholder: 请输入邮箱
+  emailRequired: 邮箱不能为空
+  emailInvalid: 邮箱格式不正确
+  phone: 手机号
+  phonePlaceholder: 请输入手机号
+  phoneInvalid: 手机号格式不正确
+  password: 密码
+  passwordPlaceholder: 请输入密码
+  passwordRequired: 密码不能为空
+  passwordLength: 密码长度不能少于8个字符
+  confirmPassword: 确认密码
+  confirmPasswordPlaceholder: 请再次输入密码
+  confirmPasswordRequired: 请确认密码
+  passwordMismatch: 两次输入的密码不一致
+  status: 状态
+  statusPlaceholder: 请选择状态
+  statusRequired: 请选择状态
+  statusActive: 活跃
+  statusInactive: 未激活
+  statusLocked: 已锁定
+  statusPending: 待审核
+  statusFilterPlaceholder: 状态筛选
+  tenant: 所属租户
+  tenantPlaceholder: 请选择租户
+  tenantRequired: 请选择租户
+  tenantFilterPlaceholder: 租户筛选
+  notes: 备注
+  notesPlaceholder: 请输入备注信息
+  notesLength: 备注长度不能超过500个字符
+  createdAt: 创建时间
+  updatedAt: 更新时间
+  lastLogin: 最后登录时间
+  searchPlaceholder: 搜索会员（用户名、姓名、邮箱）
+  bulkDelete: 批量删除
+  invalidId: 无效的会员ID
+  notFound: 会员不存在
+  basicInfo: 基本信息
+  avatar: 头像
+  clickToUpload: 点击上传
+  avatarTypeError: 头像必须是图片格式（JPEG/PNG/GIF）
+  avatarSizeError: 头像大小不能超过2MB
+  avatarUploadSuccess: 头像上传成功
+  customerRelations: 客户关系
+  customerType: 客户类型
+  addRelation: 添加关系
+  editRelation: 编辑关系
+  deleteRelation: 删除关系
+  deleteRelationTitle: 确认删除客户关系
+  deleteRelationConfirm: 确定要删除与客户 {name} 的关系吗？
+  deleteRelationSuccess: 客户关系删除成功
+  createRelationSuccess: 客户关系创建成功
+  updateRelationSuccess: 客户关系更新成功
+  noRelations: 暂无客户关系
+  customer: 客户
+  customerPlaceholder: 请选择客户
+  customerRequired: 请选择客户
+  role: 角色
+  rolePlaceholder: 请输入角色
+  roleRequired: 请输入角色
+  roleLength: 角色长度不能超过50个字符
+  department: 部门
+  departmentPlaceholder: 请输入部门
+  departmentLength: 部门长度不能超过100个字符
+  isPrimaryCustomer: 是否主要客户
+  setPrimary: 设为主要客户
+  setPrimaryTitle: 确认设置主要客户
+  setPrimaryConfirm: 确定要将客户 {name} 设置为主要客户吗？
+  setPrimarySuccess: 设置主要客户成功
+  relationNotesPlaceholder: 请输入关系备注
+  passwordManagement: 密码管理
+  resetPassword: 重置密码
+  resetPasswordTitle: 重置密码
+  resetPasswordConfirm: 请输入新密码
+  resetPasswordSuccess: 密码重置成功
+  newPasswordPlaceholder: 请输入新密码
