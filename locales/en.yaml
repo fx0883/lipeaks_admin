@@ -833,6 +833,7 @@ menus:
   purePermissionButtonRouter: Router Button Permission
   purePermissionButtonLogin: Login Button Permission
   pureTenant: Tenant Management
+  pureTenantManagement: Tenant Management
   pureTenantList: Tenant List
   pureAdminUser: Admin Management
   pureCustomer: Customer Management

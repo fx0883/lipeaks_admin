@@ -853,6 +853,7 @@ menus:
   purePermissionButtonRouter: 路由按钮权限
   purePermissionButtonLogin: 登录按钮权限
   pureTenant: 租户管理
+  pureTenantManagement: 租户管理
   pureTenantList: 租户列表
   pureAdminUser: 管理员管理
   pureCustomer: 客户管理
