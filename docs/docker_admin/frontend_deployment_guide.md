@@ -236,3 +236,72 @@ git pull
 docker-compose build frontend
 docker-compose up -d frontend
 ``` 
+
+# 前端部署指南
+
+## API地址配置
+
+前端应用需要知道后端API的地址。我们提供了几种配置方式：
+
+### 1. 使用环境变量
+
+在构建前端应用时，可以通过`.env.production`文件设置API地址：
+
+```
+VITE_API_BASE_URL=http://your-api-server.com/api/v1
+```
+
+### 2. 使用Docker Compose
+
+在`docker-compose.yml`文件中，确保前端和后端服务在同一网络中，并配置好反向代理：
+
+```yaml
+version: '3'
+
+services:
+  frontend:
+    image: lipeaks_admin:latest
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+      
+  backend:
+    image: lipeaks_backend:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    driver: bridge
+```
+
+### 3. 使用Nginx反向代理
+
+最推荐的方法是使用Nginx反向代理，将API请求转发到后端服务：
+
+```nginx
+# 前端静态资源路径
+location / {
+    root /usr/share/nginx/html;
+    index index.html;
+    try_files $uri $uri/ /index.html;
+}
+
+# API 请求代理
+location /api/ {
+    proxy_pass http://backend:8000/api/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+## Docker网络通信
+
+在Docker Compose环境中，服务可以通过服务名互相访问。例如，前端容器可以通过 `http://backend:8000` 访问后端服务。
+
+但请注意，浏览器中的JavaScript代码无法直接访问Docker内部网络。因此，我们需要使用Nginx反向代理将API请求转发到正确的后端服务。 
