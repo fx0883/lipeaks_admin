@@ -160,12 +160,20 @@ export const useMemberStore = defineStore("member", {
           this.currentMember = response.data;
           return response;
         } else {
+          // 记录错误但不显示消息，将错误传递给视图层处理
           this.error = response.message || "获取会员详情失败";
-          return Promise.reject(new Error(this.error));
+          
+          // 直接抛出包含完整错误信息的错误对象
+          return Promise.reject(response);
         }
-      } catch (error) {
+      } catch (error: any) {
+        // 记录错误日志
         logger.error("获取会员详情失败", error);
+        
+        // 存储错误信息
         this.error = error.message || "获取会员详情失败";
+        
+        // 向上抛出原始错误，让视图层处理
         throw error;
       } finally {
         this.loading.detail = false;
@@ -182,31 +190,22 @@ export const useMemberStore = defineStore("member", {
       try {
         const response = await createMember(data);
         if (response.success) {
-          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          // 处理错误响应
+          // 记录错误但不显示消息，将错误传递给视图层处理
           this.error = response.message || "创建会员失败";
           
-          // 处理密码验证错误
-          if (response.errors && response.errors.non_field_errors) {
-            // 如果有具体的密码错误信息，使用这些信息
-            this.error = response.errors.non_field_errors.join(", ");
-          }
-          
-          return Promise.reject(new Error(this.error));
+          // 直接抛出包含完整错误信息的错误对象
+          return Promise.reject(response);
         }
       } catch (error: any) {
+        // 记录错误日志
         logger.error("创建会员失败", error);
         
-        // 处理错误对象
-        if (error.errors && error.errors.non_field_errors) {
-          // 处理密码相关错误
-          this.error = error.errors.non_field_errors.join(", ");
-        } else {
-          this.error = error.message || "创建会员失败";
-        }
+        // 存储错误信息
+        this.error = error.message || "创建会员失败";
         
+        // 向上抛出原始错误，让视图层处理
         throw error;
       } finally {
         this.loading.create = false;
@@ -238,15 +237,22 @@ export const useMemberStore = defineStore("member", {
             };
           }
           
-          // 移除成功消息提示，由视图层负责
           return response;
         } else {
+          // 记录错误但不显示消息，将错误传递给视图层处理
           this.error = response.message || "更新会员信息失败";
-          return Promise.reject(new Error(this.error));
+          
+          // 直接抛出包含完整错误信息的错误对象
+          return Promise.reject(response);
         }
-      } catch (error) {
+      } catch (error: any) {
+        // 记录错误日志
         logger.error("更新会员信息失败", error);
+        
+        // 存储错误信息
         this.error = error.message || "更新会员信息失败";
+        
+        // 向上抛出原始错误，让视图层处理
         throw error;
       } finally {
         this.loading.update = false;

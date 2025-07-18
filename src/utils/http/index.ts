@@ -34,6 +34,91 @@ const defaultConfig: AxiosRequestConfig = {
   }
 };
 
+// 添加一个辅助函数来格式化错误消息，放在PureHttp类外面
+/**
+ * 格式化错误消息
+ * @param errors - 错误对象
+ * @returns 格式化后的错误消息
+ */
+function formatErrorMessage(errors: any): string {
+  // 如果是字符串，直接返回
+  if (typeof errors === 'string') {
+    return errors;
+  }
+  
+  // 如果是空值，返回默认消息
+  if (!errors) {
+    return '请求失败';
+  }
+
+  // 处理数组情况
+  if (Array.isArray(errors)) {
+    return errors.map(err => {
+      if (typeof err === 'string') {
+        return err;
+      } else if (typeof err === 'object' && err !== null) {
+        // 处理ErrorDetail对象 - DRF特有的错误对象
+        if ('string' in err) {
+          return err.string;
+        }
+        // 处理可能的嵌套错误对象
+        if (err.message) {
+          return err.message;
+        }
+        return JSON.stringify(err);
+      }
+      return String(err);
+    }).join(', ');
+  }
+
+  // 处理对象情况
+  if (typeof errors === 'object') {
+    // 尝试直接提取non_field_errors
+    if (errors.non_field_errors && Array.isArray(errors.non_field_errors)) {
+      return formatErrorMessage(errors.non_field_errors);
+    }
+
+    // 尝试处理特殊情况：errors对象可能是Django格式的{'field': [ErrorDetail...]}
+    const fieldErrors: string[] = [];
+    let hasValidationErrors = false;
+    
+    Object.entries(errors).forEach(([field, fieldError]) => {
+      if (Array.isArray(fieldError) && fieldError.length > 0) {
+        hasValidationErrors = true;
+        // 这里处理Django的字段错误，格式为：字段名: 错误消息
+        fieldErrors.push(`${field}: ${formatErrorMessage(fieldError)}`);
+      } else if (fieldError !== null && typeof fieldError === 'object') {
+        fieldErrors.push(`${field}: ${formatErrorMessage(fieldError)}`);
+      } else if (fieldError !== undefined) {
+        fieldErrors.push(`${field}: ${String(fieldError)}`);
+      }
+    });
+    
+    // 如果有字段错误，返回拼接后的错误消息
+    if (hasValidationErrors && fieldErrors.length > 0) {
+      return fieldErrors.join('; ');
+    }
+    
+    // 如果有message字段，优先使用
+    if (errors.message) {
+      return errors.message;
+    }
+    
+    // 如果有detail字段，使用它
+    if (errors.detail) {
+      return errors.detail;
+    }
+
+    // 尝试提取第一个字段错误（兜底处理）
+    if (fieldErrors.length > 0) {
+      return fieldErrors[0];
+    }
+  }
+
+  // 默认情况，转为字符串
+  return String(errors);
+}
+
 class PureHttp {
   constructor() {
     this.httpInterceptorsRequest();
@@ -233,12 +318,23 @@ class PureHttp {
           });
         }
 
+        // 添加更多的调试日志，以便更好地理解错误响应结构
+        if (error.response) {
+          logger.debug("API错误响应:", {
+            status: error.response.status,
+            data: error.response.data,
+            url: error.config?.url
+          });
+        }
+
         // 创建统一的错误响应格式
         let errorResponse = {
           success: false,
           code: 5000, // 默认服务器错误
           message: "服务器内部错误",
-          data: null
+          data: null,
+          // 增加errors字段用于存储详细错误信息
+          errors: null
         };
 
         if (error.response) {
@@ -297,72 +393,78 @@ class PureHttp {
               success: false,
               code: 4003,
               message: "没有权限执行此操作",
-              data: error.response.data
+              data: error.response.data,
+              // 增加errors字段
+              errors: error.response.data
             };
           } else if (status === 404) {
             errorResponse = {
               success: false,
               code: 4004,
               message: "请求的资源不存在",
-              data: null
+              data: null,
+              errors: null
             };
           } else if (status === 400) {
             // 处理表单验证错误
             const data = error.response.data as Record<string, any>;
             let errorMsg = "请求参数错误";
+            let errorDetails = null;
 
             if (data && typeof data === "object") {
-              // 处理 non_field_errors 字段（常见于密码验证错误等）
-              if (
-                data.non_field_errors &&
-                Array.isArray(data.non_field_errors)
-              ) {
-                errorMsg = data.non_field_errors.join(", ");
+              logger.debug("处理400错误响应数据:", data);
+
+              // 保存原始错误详情
+              errorDetails = data.errors || data;
+
+              // 尝试从errors字段提取结构化错误信息
+              if (data.errors && typeof data.errors === "object") {
+                // 使用格式化函数处理errors对象
+                errorMsg = formatErrorMessage(data.errors);
+                logger.debug("从errors字段提取错误消息:", errorMsg);
               }
-              // 处理嵌套在 errors 中的 non_field_errors
-              else if (
-                data.errors &&
-                data.errors.non_field_errors &&
-                Array.isArray(data.errors.non_field_errors)
-              ) {
-                errorMsg = data.errors.non_field_errors.join(", ");
-              }
-              // 处理 message 字段可能包含的 JSON 字符串
+              // 处理message字段可能是JSON字符串的情况
               else if (data.message && typeof data.message === "string") {
                 try {
-                  // 尝试解析可能是 JSON 字符串的 message
-                  const parsedMessage = JSON.parse(
-                    data.message.replace(/'/g, '"')
-                  ) as Record<string, any>;
-                  if (
-                    parsedMessage.non_field_errors &&
-                    Array.isArray(parsedMessage.non_field_errors)
-                  ) {
-                    errorMsg = parsedMessage.non_field_errors
-                      .map((err: any) => {
-                        if (typeof err === "object" && err.string) {
-                          return err.string;
-                        }
-                        return err;
-                      })
-                      .join(", ");
+                  // 尝试解析可能是JSON字符串的message
+                  let parsedMessage;
+                  // 处理Python字典字符串转JSON的情况（单引号替换为双引号）
+                  if (data.message.includes("'") && !data.message.includes('"')) {
+                    let preparedMessage = data.message
+                      .replace(/'/g, '"')           // 替换单引号为双引号
+                      .replace(/\bTrue\b/g, "true") // 替换Python的True为JSON的true
+                      .replace(/\bFalse\b/g, "false") // 替换Python的False为JSON的false
+                      .replace(/\bNone\b/g, "null");  // 替换Python的None为JSON的null
+                    
+                    parsedMessage = JSON.parse(preparedMessage);
+                  } else {
+                    parsedMessage = JSON.parse(data.message);
                   }
-                } catch {
-                  // 如果不是有效的 JSON，则使用原始消息
+                  
+                  if (parsedMessage && typeof parsedMessage === "object") {
+                    // 将解析后的对象用于错误消息格式化
+                    errorMsg = formatErrorMessage(parsedMessage);
+                    // 同时更新errorDetails
+                    errorDetails = parsedMessage;
+                    logger.debug("从JSON字符串解析的错误消息:", errorMsg);
+                  } else {
+                    errorMsg = data.message;
+                  }
+                } catch (parseError) {
+                  // 如果解析失败，使用原始消息
+                  logger.debug("无法解析message字段为JSON:", data.message, parseError);
                   errorMsg = data.message;
                 }
               }
-              // 处理常规 message 或 detail 字段
+              // 直接处理DRF风格的错误响应
+              else if (Object.keys(data).length > 0) {
+                // 使用格式化函数处理整个data对象
+                errorMsg = formatErrorMessage(data);
+                logger.debug("从整个响应对象提取错误消息:", errorMsg);
+              }
+              // 如果有message字段，使用它
               else if (data.message) {
                 errorMsg = data.message;
-              } else if (data.detail) {
-                errorMsg = data.detail;
-              } else {
-                // 尝试提取第一个字段错误
-                const firstField = Object.keys(data)[0];
-                if (firstField && Array.isArray(data[firstField])) {
-                  errorMsg = `${firstField}: ${data[firstField][0]}`;
-                }
               }
             }
 
@@ -370,14 +472,17 @@ class PureHttp {
               success: false,
               code: 4000,
               message: errorMsg,
-              data: data
+              data: null,
+              // errors字段存储原始错误信息，用于前端可能的详细错误展示
+              errors: errorDetails
             };
           } else if (status >= 500) {
             errorResponse = {
               success: false,
               code: 5000,
               message: "服务器内部错误",
-              data: error.response.data
+              data: error.response.data,
+              errors: error.response.data
             };
           }
         } else if (error.message && error.message.includes("timeout")) {
@@ -385,14 +490,16 @@ class PureHttp {
             success: false,
             code: 5001,
             message: "请求超时，请稍后重试",
-            data: null
+            data: null,
+            errors: { timeout: true }
           };
         } else if (error.message && error.message.includes("Network Error")) {
           errorResponse = {
             success: false,
             code: 5002,
             message: "网络连接错误，请检查网络设置",
-            data: null
+            data: null,
+            errors: { network: true }
           };
         }
 

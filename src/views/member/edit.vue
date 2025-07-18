@@ -66,8 +66,17 @@ const fetchMemberDetail = async () => {
       ElMessage.error(t("member.notFound"));
       router.push("/member/index");
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error("获取会员详情失败", error);
+
+    // 从错误对象中提取错误信息
+    if (error && error.message) {
+      ElMessage.error(error.message);
+    } else {
+      ElMessage.error(t("member.fetchDetailFailed"));
+    }
+
+    // 获取详情失败时返回列表页
     router.push("/member/index");
   } finally {
     detailLoading.value = false;
@@ -83,8 +92,52 @@ const handleSubmit = async (data: MemberCreateUpdateParams) => {
     await memberStore.updateMemberInfo(memberId.value, data);
     ElMessage.success(t("member.updateSuccess"));
     router.push(`/member/detail/${memberId.value}`);
-  } catch (error) {
+  } catch (error: any) {
     logger.error("更新会员信息失败", error);
+
+    // 从错误对象中提取错误信息
+    if (error) {
+      // 显示格式化后的错误消息
+      ElMessage.error(error.message || t("member.updateFailed"));
+
+      // 特殊处理字段级错误，提供更具体的反馈
+      if (error.errors) {
+        // 用户名错误特殊处理
+        if (error.errors.username) {
+          ElMessage({
+            message: `${t("member.usernameError")}: ${error.errors.username.join(", ")}`,
+            type: "warning",
+            duration: 5000
+          });
+        }
+
+        // 邮箱错误特殊处理
+        if (error.errors.email) {
+          ElMessage({
+            message: `${t("member.emailError")}: ${error.errors.email.join(", ")}`,
+            type: "warning",
+            duration: 5000
+          });
+        }
+
+        // 其他字段错误
+        for (const [field, messages] of Object.entries(error.errors)) {
+          if (
+            field !== "username" &&
+            field !== "email" &&
+            Array.isArray(messages)
+          ) {
+            ElMessage({
+              message: `${field}: ${messages.join(", ")}`,
+              type: "warning",
+              duration: 3000
+            });
+          }
+        }
+      }
+    } else {
+      ElMessage.error(t("member.updateFailed"));
+    }
   } finally {
     updateLoading.value = false;
   }

@@ -53,8 +53,41 @@ const handleSubmit = async (data: MemberCreateUpdateParams) => {
       // 如果没有返回ID，则跳转到列表页
       router.push("/member/index");
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error("创建会员失败", error);
+
+    // 从错误对象中提取错误信息
+    if (error) {
+      // 显示格式化后的错误消息
+      ElMessage.error(error.message || t("member.createFailed"));
+
+      // 特殊处理字段级错误，提供更具体的反馈
+      if (error.errors) {
+        // 用户名重复错误特殊处理
+        if (error.errors.username) {
+          ElMessage({
+            message: `${t("member.usernameError")}: ${error.errors.username.join(", ")}`,
+            type: "warning",
+            duration: 5000
+          });
+        }
+
+        // 密码相关错误
+        if (error.errors.password || error.errors.non_field_errors) {
+          const passwordErrors =
+            error.errors.password || error.errors.non_field_errors;
+          if (Array.isArray(passwordErrors)) {
+            ElMessage({
+              message: passwordErrors.join(", "),
+              type: "warning",
+              duration: 5000
+            });
+          }
+        }
+      }
+    } else {
+      ElMessage.error(t("member.createFailed"));
+    }
   } finally {
     loading.value = false;
   }

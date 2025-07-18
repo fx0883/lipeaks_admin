@@ -479,9 +479,15 @@ const handleEdit = async (row: Member) => {
     if (response.success) {
       editDialog.memberData = memberStore.currentMember;
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error("加载会员详情失败", error);
-    ElMessage.error(t("member.loadDetailFailed"));
+
+    // 从错误对象中提取错误信息
+    if (error && error.message) {
+      ElMessage.error(error.message);
+    } else {
+      ElMessage.error(t("member.loadDetailFailed"));
+    }
   } finally {
     editDialog.loading = false;
   }
@@ -540,8 +546,15 @@ const handleEditSubmit = async (data: MemberCreateUpdateParams) => {
       editDialog.visible = false;
       fetchMemberList();
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error("更新会员失败", error);
+
+    // 只保留通用错误消息
+    if (error && error.message) {
+      ElMessage.error(error.message || t("member.updateFailed"));
+    } else {
+      ElMessage.error(t("member.updateFailed"));
+    }
   } finally {
     editDialog.loading = false;
   }
@@ -702,8 +715,15 @@ const handleCreateSubmit = async (data: MemberCreateUpdateParams) => {
       createDialog.visible = false;
       fetchMemberList();
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error("创建会员失败", error);
+
+    // 只保留通用错误消息
+    if (error && error.message) {
+      ElMessage.error(error.message || t("member.createFailed"));
+    } else {
+      ElMessage.error(t("member.createFailed"));
+    }
   } finally {
     createDialog.loading = false;
   }
