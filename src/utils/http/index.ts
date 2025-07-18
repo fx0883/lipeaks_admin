@@ -11,7 +11,7 @@ import type {
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-import { getToken, formatToken } from "@/utils/auth";
+// 移除未使用的导入
 import { useUserStoreHook } from "@/store/modules/user";
 import { message } from "@/utils/message";
 import logger from "@/utils/logger"; // 导入日志工具
@@ -307,19 +307,60 @@ class PureHttp {
             };
           } else if (status === 400) {
             // 处理表单验证错误
-            const data = error.response.data;
-            let message = "请求参数错误";
+            const data = error.response.data as Record<string, any>;
+            let errorMsg = "请求参数错误";
 
             if (data && typeof data === "object") {
-              if (data.message) {
-                message = data.message;
+              // 处理 non_field_errors 字段（常见于密码验证错误等）
+              if (
+                data.non_field_errors &&
+                Array.isArray(data.non_field_errors)
+              ) {
+                errorMsg = data.non_field_errors.join(", ");
+              }
+              // 处理嵌套在 errors 中的 non_field_errors
+              else if (
+                data.errors &&
+                data.errors.non_field_errors &&
+                Array.isArray(data.errors.non_field_errors)
+              ) {
+                errorMsg = data.errors.non_field_errors.join(", ");
+              }
+              // 处理 message 字段可能包含的 JSON 字符串
+              else if (data.message && typeof data.message === "string") {
+                try {
+                  // 尝试解析可能是 JSON 字符串的 message
+                  const parsedMessage = JSON.parse(
+                    data.message.replace(/'/g, '"')
+                  ) as Record<string, any>;
+                  if (
+                    parsedMessage.non_field_errors &&
+                    Array.isArray(parsedMessage.non_field_errors)
+                  ) {
+                    errorMsg = parsedMessage.non_field_errors
+                      .map((err: any) => {
+                        if (typeof err === "object" && err.string) {
+                          return err.string;
+                        }
+                        return err;
+                      })
+                      .join(", ");
+                  }
+                } catch {
+                  // 如果不是有效的 JSON，则使用原始消息
+                  errorMsg = data.message;
+                }
+              }
+              // 处理常规 message 或 detail 字段
+              else if (data.message) {
+                errorMsg = data.message;
               } else if (data.detail) {
-                message = data.detail;
+                errorMsg = data.detail;
               } else {
                 // 尝试提取第一个字段错误
                 const firstField = Object.keys(data)[0];
                 if (firstField && Array.isArray(data[firstField])) {
-                  message = `${firstField}: ${data[firstField][0]}`;
+                  errorMsg = `${firstField}: ${data[firstField][0]}`;
                 }
               }
             }
@@ -327,7 +368,7 @@ class PureHttp {
             errorResponse = {
               success: false,
               code: 4000,
-              message,
+              message: errorMsg,
               data: data
             };
           } else if (status >= 500) {
@@ -357,8 +398,8 @@ class PureHttp {
         // 记录错误日志
         logger.logError(error);
 
-        // 显示错误消息
-        message.error(errorResponse.message);
+        // 显示错误消息 - 修复 message.error is not a function 错误
+        message(errorResponse.message, { type: "error" });
 
         return Promise.reject(errorResponse);
       }

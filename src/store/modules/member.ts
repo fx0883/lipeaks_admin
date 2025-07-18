@@ -1,36 +1,34 @@
 import { defineStore } from "pinia";
-import { ElMessage } from "element-plus";
+import { message } from "@/utils/message";
+import logger from "@/utils/logger";
 import {
   getMemberList,
   getMemberDetail,
   createMember,
   updateMember,
   deleteMember,
-  searchMembers,
   bulkUpdateMembers,
   bulkDeleteMembers,
   getMemberCustomerRelations,
   createMemberCustomerRelation,
-  getMemberCustomerRelationDetail,
   updateMemberCustomerRelation,
-  deleteMemberCustomerRelations,
+  deleteMemberCustomerRelation,
   setPrimaryCustomerRelation,
-  getPrimaryCustomerRelation,
   resetMemberPassword,
+  searchMembers,
   uploadMemberAvatar
 } from "@/api/modules/member";
-import { http } from "@/utils/http";
 import type {
   Member,
   MemberListParams,
   MemberCreateUpdateParams,
+  MemberBulkOperationParams,
   MemberCustomerRelation,
   MemberCustomerRelationCreateUpdateParams,
-  MemberPasswordResetParams,
-  MemberBulkOperationParams
+  MemberPasswordResetParams
 } from "@/types/member";
-import type { PaginationData, ApiResponse } from "@/types/api";
-import logger from "@/utils/logger";
+import type { PaginationData } from "@/types/api";
+import { ElMessage } from "element-plus";
 
 interface MemberState {
   // 会员列表数据
@@ -136,13 +134,13 @@ export const useMemberStore = defineStore("member", {
           return response;
         } else {
           this.error = response.message || "获取会员列表失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取会员列表失败", error);
         this.error = error.message || "获取会员列表失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.list = false;
@@ -163,13 +161,13 @@ export const useMemberStore = defineStore("member", {
           return response;
         } else {
           this.error = response.message || "获取会员详情失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取会员详情失败", error);
         this.error = error.message || "获取会员详情失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.detail = false;
@@ -186,17 +184,33 @@ export const useMemberStore = defineStore("member", {
       try {
         const response = await createMember(data);
         if (response.success) {
-          ElMessage.success(response.message || "创建会员成功");
+          message(response.message || "创建会员成功", { type: "success" });
           return response;
         } else {
+          // 处理错误响应
           this.error = response.message || "创建会员失败";
-          ElMessage.error(this.error);
+          
+          // 处理密码验证错误
+          if (response.errors && response.errors.non_field_errors) {
+            // 如果有具体的密码错误信息，使用这些信息
+            this.error = response.errors.non_field_errors.join(", ");
+          }
+          
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
-      } catch (error) {
+      } catch (error: any) {
         logger.error("创建会员失败", error);
-        this.error = error.message || "创建会员失败";
-        ElMessage.error(this.error);
+        
+        // 处理错误对象
+        if (error.errors && error.errors.non_field_errors) {
+          // 处理密码相关错误
+          this.error = error.errors.non_field_errors.join(", ");
+        } else {
+          this.error = error.message || "创建会员失败";
+        }
+        
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.create = false;
@@ -228,17 +242,17 @@ export const useMemberStore = defineStore("member", {
             };
           }
           
-          ElMessage.success(response.message || "更新会员信息成功");
+          message(response.message || "更新会员信息成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "更新会员信息失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("更新会员信息失败", error);
         this.error = error.message || "更新会员信息失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.update = false;
@@ -261,17 +275,17 @@ export const useMemberStore = defineStore("member", {
           }
           // 从列表中移除被删除的会员
           this.memberList.data = this.memberList.data.filter(member => member.id !== id);
-          ElMessage.success(response.message || "删除会员成功");
+          message(response.message || "删除会员成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "删除会员失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("删除会员失败", error);
         this.error = error.message || "删除会员失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.delete = false;
@@ -288,7 +302,7 @@ export const useMemberStore = defineStore("member", {
       try {
         const response = await bulkUpdateMembers(data);
         if (response.success) {
-          ElMessage.success(response.message || `成功更新 ${response.data.success_count} 个会员`);
+          message(`成功更新 ${response.data.success_count} 个会员`, { type: "success" });
           // 刷新会员列表
           await this.fetchMemberList({
             page: this.memberList.page,
@@ -297,13 +311,13 @@ export const useMemberStore = defineStore("member", {
           return response;
         } else {
           this.error = response.message || "批量更新会员失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("批量更新会员失败", error);
         this.error = error.message || "批量更新会员失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.bulkUpdate = false;
@@ -326,17 +340,17 @@ export const useMemberStore = defineStore("member", {
           }
           // 从列表中移除被删除的会员
           this.memberList.data = this.memberList.data.filter(member => !memberIds.includes(member.id));
-          ElMessage.success(response.message || `成功删除 ${response.data.success_count} 个会员`);
+          message(`成功删除 ${response.data.success_count} 个会员`, { type: "success" });
           return response;
         } else {
           this.error = response.message || "批量删除会员失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("批量删除会员失败", error);
         this.error = error.message || "批量删除会员失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.bulkDelete = false;
@@ -387,13 +401,13 @@ export const useMemberStore = defineStore("member", {
           return response;
         } else {
           this.error = response.message || "获取会员客户关系列表失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取会员客户关系列表失败", error);
         this.error = error.message || "获取会员客户关系列表失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.customerRelations = false;
@@ -410,17 +424,17 @@ export const useMemberStore = defineStore("member", {
       try {
         const response = await createMemberCustomerRelation(data);
         if (response.success) {
-          ElMessage.success(response.message || "创建会员-客户关系成功");
+          message(response.message || "创建会员-客户关系成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "创建会员-客户关系失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("创建会员-客户关系失败", error);
         this.error = error.message || "创建会员-客户关系失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.createCustomerRelation = false;
@@ -442,17 +456,17 @@ export const useMemberStore = defineStore("member", {
           if (index !== -1) {
             this.memberCustomerRelations.data[index] = response.data;
           }
-          ElMessage.success(response.message || "更新会员-客户关系成功");
+          message(response.message || "更新会员-客户关系成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "更新会员-客户关系失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("更新会员-客户关系失败", error);
         this.error = error.message || "更新会员-客户关系失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.updateCustomerRelation = false;
@@ -468,21 +482,21 @@ export const useMemberStore = defineStore("member", {
       
       try {
         // 使用新的API，传递会员ID和客户ID数组
-        const response = await deleteMemberCustomerRelations(memberId, [customerId]);
+        const response = await deleteMemberCustomerRelation(memberId, [customerId]);
         if (response.success || response.status === 204) { // 新API返回204状态码表示成功
           // 从关系列表中移除被删除的关系
           this.memberCustomerRelations.data = this.memberCustomerRelations.data.filter(relation => relation.customer.id !== customerId);
-          ElMessage.success("删除会员-客户关系成功");
+          message("删除会员-客户关系成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "删除会员-客户关系失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("删除会员-客户关系失败", error);
         this.error = error.message || "删除会员-客户关系失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.deleteCustomerRelation = false;
@@ -504,17 +518,17 @@ export const useMemberStore = defineStore("member", {
             ...relation,
             is_primary: relation.id === relationId
           }));
-          ElMessage.success(response.message || "设置主要客户关系成功");
+          message(response.message || "设置主要客户关系成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "设置主要客户关系失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("设置主要客户关系失败", error);
         this.error = error.message || "设置主要客户关系失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.updateCustomerRelation = false;
@@ -531,17 +545,17 @@ export const useMemberStore = defineStore("member", {
       try {
         const response = await resetMemberPassword(memberId, data);
         if (response.success) {
-          ElMessage.success(response.message || "重置会员密码成功");
+          message(response.message || "重置会员密码成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "重置会员密码失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("重置会员密码失败", error);
         this.error = error.message || "重置会员密码失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.resetPassword = false;
@@ -562,13 +576,13 @@ export const useMemberStore = defineStore("member", {
           return response;
         } else {
           this.error = response.message || "搜索会员失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("搜索会员失败", error);
         this.error = error.message || "搜索会员失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       }
     },
@@ -594,17 +608,17 @@ export const useMemberStore = defineStore("member", {
               };
             }
           }
-          ElMessage.success(response.message || "上传会员头像成功");
+          message(response.message || "上传会员头像成功", { type: "success" });
           return response;
         } else {
           this.error = response.message || "上传会员头像失败";
-          ElMessage.error(this.error);
+          message(this.error, { type: "error" });
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("上传会员头像失败", error);
         this.error = error.message || "上传会员头像失败";
-        ElMessage.error(this.error);
+        message(this.error, { type: "error" });
         throw error;
       } finally {
         this.loading.uploadAvatar = false;
