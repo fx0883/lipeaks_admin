@@ -265,7 +265,7 @@ export function getMemberOrderList(memberId: number, params: OrderListParams = {
 
   return http.request<PaginationResponse<Order>>(
     "get",
-    `/members/${memberId}/orders/`,
+    `/orders/members/${memberId}/orders/`,
     { params }
   );
 } 
