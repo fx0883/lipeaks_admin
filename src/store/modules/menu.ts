@@ -165,12 +165,10 @@ export const useMenuStore = defineStore("menu", {
           this.menuTree = response.data || [];
           return response;
         } else {
-          ElMessage.error(response.message || "获取菜单树失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取菜单树失败"));
         }
       } catch (error) {
         logger.error("获取菜单树失败", { error, requestId });
-        ElMessage.error(error.message || "获取菜单树失败");
         throw error;
       } finally {
         this.loading.tree = false;
@@ -188,12 +186,10 @@ export const useMenuStore = defineStore("menu", {
           this.currentMenu = response.data;
           return response;
         } else {
-          ElMessage.error(response.message || "获取菜单详情失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取菜单详情失败"));
         }
       } catch (error) {
         logger.error("获取菜单详情失败", error);
-        ElMessage.error(error.message || "获取菜单详情失败");
         throw error;
       } finally {
         this.loading.detail = false;
@@ -208,15 +204,13 @@ export const useMenuStore = defineStore("menu", {
       try {
         const response = await createMenu(data);
         if (response.success) {
-          ElMessage.success(response.message || "创建菜单成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "创建菜单失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "创建菜单失败"));
         }
       } catch (error) {
         logger.error("创建菜单失败", error);
-        ElMessage.error(error.message || "创建菜单失败");
         throw error;
       } finally {
         this.loading.create = false;
@@ -245,15 +239,13 @@ export const useMenuStore = defineStore("menu", {
           // 更新树形结构中的节点
           this.updateNodeInTree(id, response.data);
           
-          ElMessage.success(response.message || "更新菜单成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "更新菜单失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "更新菜单失败"));
         }
       } catch (error) {
         logger.error("更新菜单失败", error);
-        ElMessage.error(error.message || "更新菜单失败");
         throw error;
       } finally {
         this.loading.update = false;
@@ -279,15 +271,13 @@ export const useMenuStore = defineStore("menu", {
           // 从树形结构中移除被删除的菜单
           this.removeNodeFromTree(id);
           
-          ElMessage.success(response.message || "删除菜单成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "删除菜单失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "删除菜单失败"));
         }
       } catch (error) {
         logger.error("删除菜单失败", error);
-        ElMessage.error(error.message || "删除菜单失败");
         throw error;
       } finally {
         this.loading.delete = false;
@@ -361,15 +351,13 @@ export const useMenuStore = defineStore("menu", {
       try {
         const response = await batchMenus(data);
         if (response.success) {
-          ElMessage.success(response.message || "批量操作菜单成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "批量操作菜单失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "批量操作菜单失败"));
         }
       } catch (error) {
         logger.error("批量操作菜单失败", error);
-        ElMessage.error(error.message || "批量操作菜单失败");
         throw error;
       } finally {
         this.loading.batch = false;
@@ -384,15 +372,13 @@ export const useMenuStore = defineStore("menu", {
       try {
         const response = await importMenus(file);
         if (response.success) {
-          ElMessage.success(response.message || "导入菜单配置成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "导入菜单配置失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "导入菜单配置失败"));
         }
       } catch (error) {
         logger.error("导入菜单配置失败", error);
-        ElMessage.error(error.message || "导入菜单配置失败");
         throw error;
       } finally {
         this.loading.import = false;
@@ -439,12 +425,10 @@ export const useMenuStore = defineStore("menu", {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url); // 释放URL对象
         
-        // 显示成功消息
-        ElMessage.success("导出菜单配置成功");
+        // 移除成功消息提示，由视图层负责
         return jsonContent;
       } catch (error) {
         logger.error("导出菜单配置失败", error);
-        ElMessage.error("导出菜单配置失败");
         throw error;
       } finally {
         this.loading.export = false;
@@ -470,15 +454,13 @@ export const useMenuStore = defineStore("menu", {
             targetMenu.is_active = active;
           }
           
-          ElMessage.success(response.message || `${active ? '启用' : '禁用'}菜单成功`);
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || `${active ? '启用' : '禁用'}菜单失败`);
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || `${active ? '启用' : '禁用'}菜单失败`));
         }
       } catch (error) {
         logger.error(`${active ? '启用' : '禁用'}菜单失败`, error);
-        ElMessage.error(error.message || `${active ? '启用' : '禁用'}菜单失败`);
         throw error;
       } finally {
         this.loading.toggleStatus = false;
@@ -513,12 +495,10 @@ export const useMenuStore = defineStore("menu", {
           this.userMenus = response.data;
           return response;
         } else {
-          ElMessage.error(response.message || "获取用户菜单配置失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取用户菜单配置失败"));
         }
       } catch (error) {
         logger.error("获取用户菜单配置失败", { error, userId, requestId });
-        ElMessage.error(error.message || "获取用户菜单配置失败");
         throw error;
       } finally {
         this.loading.userMenus = false;
@@ -535,15 +515,13 @@ export const useMenuStore = defineStore("menu", {
       try {
         const response = await assignUserMenus(userId, data);
         if (response.success) {
-          ElMessage.success(response.message || "分配菜单成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "分配菜单失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "分配菜单失败"));
         }
       } catch (error) {
         logger.error("分配菜单失败", error);
-        ElMessage.error(error.message || "分配菜单失败");
         throw error;
       } finally {
         this.loading.assignUserMenus = false;
@@ -587,15 +565,13 @@ export const useMenuStore = defineStore("menu", {
             this.removeNodeFromTree(id);
           });
           
-          ElMessage.success(response.message || "批量删除菜单成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "批量删除菜单失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "批量删除菜单失败"));
         }
       } catch (error) {
         logger.error("批量删除菜单失败", error);
-        ElMessage.error(error.message || "批量删除菜单失败");
         throw error;
       } finally {
         this.loading.batch = false;

@@ -102,12 +102,10 @@ export const useTenantStore = defineStore("tenant", {
           }
           return response;
         } else {
-          ElMessage.error(response.message || "获取租户列表失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取租户列表失败"));
         }
       } catch (error) {
         logger.error("获取租户列表失败", error);
-        ElMessage.error(error.message || "获取租户列表失败");
         throw error;
       } finally {
         this.loading.list = false;
@@ -125,12 +123,10 @@ export const useTenantStore = defineStore("tenant", {
           this.currentTenant = response.data;
           return response;
         } else {
-          ElMessage.error(response.message || "获取租户详情失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取租户详情失败"));
         }
       } catch (error) {
         logger.error("获取租户详情失败", error);
-        ElMessage.error(error.message || "获取租户详情失败");
         throw error;
       } finally {
         this.loading.detail = false;
@@ -145,15 +141,13 @@ export const useTenantStore = defineStore("tenant", {
       try {
         const response = await createTenant(data);
         if (response.success) {
-          ElMessage.success(response.message || "创建租户成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "创建租户失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "创建租户失败"));
         }
       } catch (error) {
         logger.error("创建租户失败", error);
-        ElMessage.error(error.message || "创建租户失败");
         throw error;
       } finally {
         this.loading.create = false;
@@ -172,15 +166,13 @@ export const useTenantStore = defineStore("tenant", {
           if (this.currentTenant && this.currentTenant.id === id) {
             this.currentTenant = response.data;
           }
-          ElMessage.success(response.message || "更新租户成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "更新租户失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "更新租户失败"));
         }
       } catch (error) {
         logger.error("更新租户失败", error);
-        ElMessage.error(error.message || "更新租户失败");
         throw error;
       } finally {
         this.loading.update = false;
@@ -203,15 +195,13 @@ export const useTenantStore = defineStore("tenant", {
           this.tenantList.data = this.tenantList.data.filter(tenant => tenant.id !== id);
           this.tenantList.total--;
           
-          ElMessage.success(response.message || "删除租户成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "删除租户失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "删除租户失败"));
         }
       } catch (error) {
         logger.error("删除租户失败", error);
-        ElMessage.error(error.message || "删除租户失败");
         throw error;
       } finally {
         this.loading.delete = false;
@@ -237,15 +227,13 @@ export const useTenantStore = defineStore("tenant", {
             targetTenant.status = 'suspended';
           }
           
-          ElMessage.success(response.message || "暂停租户成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "暂停租户失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "暂停租户失败"));
         }
       } catch (error) {
         logger.error("暂停租户失败", error);
-        ElMessage.error(error.message || "暂停租户失败");
         throw error;
       } finally {
         this.loading.suspend = false;
@@ -271,15 +259,13 @@ export const useTenantStore = defineStore("tenant", {
             targetTenant.status = 'active';
           }
           
-          ElMessage.success(response.message || "激活租户成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "激活租户失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "激活租户失败"));
         }
       } catch (error) {
         logger.error("激活租户失败", error);
-        ElMessage.error(error.message || "激活租户失败");
         throw error;
       } finally {
         this.loading.activate = false;
@@ -297,12 +283,10 @@ export const useTenantStore = defineStore("tenant", {
           this.currentQuota = response.data;
           return response;
         } else {
-          ElMessage.error(response.message || "获取租户配额失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取租户配额失败"));
         }
       } catch (error) {
         logger.error("获取租户配额失败", error);
-        ElMessage.error(error.message || "获取租户配额失败");
         throw error;
       } finally {
         this.loading.quota = false;
@@ -320,12 +304,10 @@ export const useTenantStore = defineStore("tenant", {
           this.currentQuota = response.data;
           return response;
         } else {
-          ElMessage.error(response.message || "获取租户配额使用情况失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取租户配额使用情况失败"));
         }
       } catch (error) {
         logger.error("获取租户配额使用情况失败", error);
-        ElMessage.error(error.message || "获取租户配额使用情况失败");
         throw error;
       } finally {
         this.loading.quota = false;
@@ -341,15 +323,13 @@ export const useTenantStore = defineStore("tenant", {
         const response = await updateTenantQuota(id, data);
         if (response.success) {
           this.currentQuota = response.data;
-          ElMessage.success(response.message || "更新租户配额成功");
+          // 移除成功消息提示，由视图层负责
           return response;
         } else {
-          ElMessage.error(response.message || "更新租户配额失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "更新租户配额失败"));
         }
       } catch (error) {
         logger.error("更新租户配额失败", error);
-        ElMessage.error(error.message || "更新租户配额失败");
         throw error;
       } finally {
         this.loading.updateQuota = false;
@@ -378,12 +358,10 @@ export const useTenantStore = defineStore("tenant", {
           }
           return response;
         } else {
-          ElMessage.error(response.message || "获取租户用户列表失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(new Error(response.message || "获取租户用户列表失败"));
         }
       } catch (error) {
         logger.error("获取租户用户列表失败", error);
-        ElMessage.error(error.message || "获取租户用户列表失败");
         throw error;
       } finally {
         this.loading.users = false;

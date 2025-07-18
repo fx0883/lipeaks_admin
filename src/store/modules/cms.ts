@@ -28,7 +28,6 @@ import type {
   CategoryOrderParams
 } from "@/types/cms";
 import type { PaginationData } from "@/types/api";
-import { ElMessage } from "element-plus";
 import logger from "@/utils/logger";
 import {
   getArticleList,
@@ -310,12 +309,11 @@ export const useCmsStore = defineStore("cms", {
           }
           return response;
         } else {
-          ElMessage.error(response.message || "获取文章列表失败");
+          logger.error(response.message || "获取文章列表失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("获取文章列表失败", error);
-        ElMessage.error(error.message || "获取文章列表失败");
         throw error;
       } finally {
         this.loading.articleList = false;
@@ -333,12 +331,11 @@ export const useCmsStore = defineStore("cms", {
           this.currentArticle = response.data;
           return response;
         } else {
-          ElMessage.error(response.message || "获取文章详情失败");
+          logger.error(response.message || "获取文章详情失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("获取文章详情失败", error);
-        ElMessage.error(error.message || "获取文章详情失败");
         throw error;
       } finally {
         this.loading.articleDetail = false;
@@ -386,15 +383,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.createArticle(articleData);
         if (response.success) {
-          ElMessage.success(response.message || "创建文章成功");
           return response;
         } else {
-          ElMessage.error(response.message || "创建文章失败");
+          logger.error(response.message || "创建文章失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("创建文章失败", error);
-        ElMessage.error(error.message || "创建文章失败");
         throw error;
       } finally {
         this.loading.articleCreate = false;
@@ -413,15 +408,13 @@ export const useCmsStore = defineStore("cms", {
           if (this.currentArticle && this.currentArticle.id === id) {
             this.currentArticle = response.data;
           }
-          ElMessage.success(response.message || "更新文章成功");
           return response;
         } else {
-          ElMessage.error(response.message || "更新文章失败");
+          logger.error(response.message || "更新文章失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("更新文章失败", error);
-        ElMessage.error(error.message || "更新文章失败");
         throw error;
       } finally {
         this.loading.articleUpdate = false;
@@ -440,15 +433,13 @@ export const useCmsStore = defineStore("cms", {
           if (this.currentArticle && this.currentArticle.id === id) {
             this.currentArticle = response.data;
           }
-          ElMessage.success(response.message || "更新文章成功");
           return response;
         } else {
-          ElMessage.error(response.message || "更新文章失败");
+          logger.error(response.message || "更新文章失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("部分更新文章失败", error);
-        ElMessage.error(error.message || "更新文章失败");
         throw error;
       } finally {
         this.loading.articleUpdate = false;
@@ -471,15 +462,13 @@ export const useCmsStore = defineStore("cms", {
           this.articles.data = this.articles.data.filter(
             item => item.id !== id
           );
-          ElMessage.success(response.message || "删除文章成功");
           return response;
         } else {
-          ElMessage.error(response.message || "删除文章失败");
+          logger.error(response.message || "删除文章失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("删除文章失败", error);
-        ElMessage.error(error.message || "删除文章失败");
         throw error;
       } finally {
         this.loading.articleDelete = false;
@@ -502,15 +491,13 @@ export const useCmsStore = defineStore("cms", {
           this.articles.data = this.articles.data.filter(
             item => !ids.includes(item.id)
           );
-          ElMessage.success(response.message || "批量删除文章成功");
           return response;
         } else {
-          ElMessage.error(response.message || "批量删除文章失败");
+          logger.error(response.message || "批量删除文章失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("批量删除文章失败", error);
-        ElMessage.error(error.message || "批量删除文章失败");
         throw error;
       } finally {
         this.loading.articleDelete = false;
@@ -538,15 +525,13 @@ export const useCmsStore = defineStore("cms", {
               published_at: new Date().toISOString()
             };
           }
-          ElMessage.success(response.message || "发布文章成功");
           return response;
         } else {
-          ElMessage.error(response.message || "发布文章失败");
+          logger.error(response.message || "发布文章失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("发布文章失败", error);
-        ElMessage.error(error.message || "发布文章失败");
         throw error;
       } finally {
         this.loading.articlePublish = false;
@@ -587,12 +572,11 @@ export const useCmsStore = defineStore("cms", {
           }
           return response;
         } else {
-          ElMessage.error(response.message || "获取评论列表失败");
+          logger.error(response.message || "获取评论列表失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("获取评论列表失败", error);
-        ElMessage.error(error.message || "获取评论列表失败");
         throw error;
       } finally {
         this.loading.commentList = false;
@@ -610,12 +594,11 @@ export const useCmsStore = defineStore("cms", {
           this.currentComment = response.data;
           return response;
         } else {
-          ElMessage.error(response.message || "获取评论详情失败");
+          logger.error(response.message || "获取评论详情失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("获取评论详情失败", error);
-        ElMessage.error(error.message || "获取评论详情失败");
         throw error;
       } finally {
         this.loading.commentDetail = false;
@@ -630,15 +613,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.createComment(commentData);
         if (response.success) {
-          ElMessage.success("评论创建成功");
           return response;
         } else {
-          ElMessage.error(response.message || "评论创建失败");
+          logger.error(response.message || "评论创建失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("评论创建失败", error);
-        ElMessage.error(error.message || "评论创建失败");
         throw error;
       } finally {
         this.loading.commentCreate = false;
@@ -653,15 +634,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.updateComment(id, commentData);
         if (response.success) {
-          ElMessage.success("评论更新成功");
           return response;
         } else {
-          ElMessage.error(response.message || "评论更新失败");
+          logger.error(response.message || "评论更新失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("评论更新失败", error);
-        ElMessage.error(error.message || "评论更新失败");
         throw error;
       } finally {
         this.loading.commentUpdate = false;
@@ -676,15 +655,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.deleteComment(id);
         if (response.success) {
-          ElMessage.success("评论删除成功");
           return response;
         } else {
-          ElMessage.error(response.message || "评论删除失败");
+          logger.error(response.message || "评论删除失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("评论删除失败", error);
-        ElMessage.error(error.message || "评论删除失败");
         throw error;
       } finally {
         this.loading.commentDelete = false;
@@ -699,15 +676,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.moderateComments([id], "approved");
         if (response.success) {
-          ElMessage.success("评论已批准");
           return response;
         } else {
-          ElMessage.error(response.message || "批准评论失败");
+          logger.error(response.message || "批准评论失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("批准评论失败", error);
-        ElMessage.error(error.message || "批准评论失败");
         throw error;
       } finally {
         this.loading.commentModerate = false;
@@ -722,15 +697,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.moderateComments([id], "trash");
         if (response.success) {
-          ElMessage.success("评论已拒绝");
           return response;
         } else {
-          ElMessage.error(response.message || "拒绝评论失败");
+          logger.error(response.message || "拒绝评论失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("拒绝评论失败", error);
-        ElMessage.error(error.message || "拒绝评论失败");
         throw error;
       } finally {
         this.loading.commentModerate = false;
@@ -745,15 +718,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.moderateComments([id], "spam");
         if (response.success) {
-          ElMessage.success("已标记为垃圾评论");
           return response;
         } else {
-          ElMessage.error(response.message || "标记垃圾评论失败");
+          logger.error(response.message || "标记垃圾评论失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("标记垃圾评论失败", error);
-        ElMessage.error(error.message || "标记垃圾评论失败");
         throw error;
       } finally {
         this.loading.commentModerate = false;
@@ -768,15 +739,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.moderateComments(commentIds, action);
         if (response.success) {
-          ElMessage.success("批量操作成功");
           return response;
         } else {
-          ElMessage.error(response.message || "批量操作失败");
+          logger.error(response.message || "批量操作失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("批量操作失败", error);
-        ElMessage.error(error.message || "批量操作失败");
         throw error;
       } finally {
         this.loading.commentModerate = false;
@@ -793,12 +762,11 @@ export const useCmsStore = defineStore("cms", {
         if (response.success) {
           return response;
         } else {
-          ElMessage.error(response.message || "获取评论回复失败");
+          logger.error(response.message || "获取评论回复失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("获取评论回复失败", error);
-        ElMessage.error(error.message || "获取评论回复失败");
         throw error;
       } finally {
         this.loading.commentList = false;
@@ -850,12 +818,7 @@ export const useCmsStore = defineStore("cms", {
           console.error("[CmsStore] fetchCategoryList - 错误详情:", error.message);
           console.error("[CmsStore] fetchCategoryList - 错误堆栈:", error.stack);
         }
-        ElMessage.error("获取分类列表失败");
-        // 确保错误时重置为空数组
-        this.categoryList = [];
-        this.categoryTotal = 0;
-        this.categories = [];
-        return []; // 返回空数组
+        throw error;
       } finally {
         this.categoryLoading = false;
         this.loading.categoryList = false;
@@ -901,7 +864,6 @@ export const useCmsStore = defineStore("cms", {
         console.error("构建分类树失败", error);
         // 确保错误时也设置为空数组
         this.categoryTree = [];
-        ElMessage.error("获取分类树失败");
         throw error;
       } finally {
         this.categoryLoading = false;
@@ -929,7 +891,6 @@ export const useCmsStore = defineStore("cms", {
         }
       } catch (error) {
         console.error("[CmsStore] fetchCategoryDetail - 获取分类详情失败:", error);
-        ElMessage.error("获取分类详情失败");
         throw error;
       } finally {
         this.categoryLoading = false;
@@ -945,11 +906,9 @@ export const useCmsStore = defineStore("cms", {
       try {
         const { data } = await createCategory(params);
         console.log("Store createCategory - 创建分类成功:", data);
-        ElMessage.success("创建分类成功");
         return data;
       } catch (error) {
         console.error("Store createCategory - 创建分类失败:", error);
-        ElMessage.error("创建分类失败");
         throw error;
       } finally {
         this.categoryLoading = false;
@@ -963,10 +922,8 @@ export const useCmsStore = defineStore("cms", {
       this.categoryLoading = true;
       try {
         const { data } = await updateCategory(id, params);
-        ElMessage.success("更新分类成功");
         return data;
       } catch (error) {
-        ElMessage.error("更新分类失败");
         throw error;
       } finally {
         this.categoryLoading = false;
@@ -980,10 +937,8 @@ export const useCmsStore = defineStore("cms", {
       this.categoryLoading = true;
       try {
         await deleteCategory(id);
-        ElMessage.success("删除分类成功");
         return true;
       } catch (error) {
-        ElMessage.error("删除分类失败");
         throw error;
       } finally {
         this.categoryLoading = false;
@@ -997,10 +952,8 @@ export const useCmsStore = defineStore("cms", {
       this.categoryLoading = true;
       try {
         await updateCategoryOrder(params);
-        ElMessage.success("更新分类排序成功");
         return true;
       } catch (error) {
-        ElMessage.error("更新分类排序失败");
         throw error;
       } finally {
         this.categoryLoading = false;
@@ -1057,12 +1010,6 @@ export const useCmsStore = defineStore("cms", {
         return response;
       } catch (error) {
         console.error("[CmsStore] fetchTagList - 获取标签列表失败:", error);
-        ElMessage.error("获取标签列表失败");
-        // 确保错误时重置为空数组
-        this.tagList = [];
-        this.tagTotal = 0;
-        this.tags.data = [];
-        this.tags.total = 0;
         throw error;
       } finally {
         this.tagLoading = false;
@@ -1079,7 +1026,6 @@ export const useCmsStore = defineStore("cms", {
         this.tagDetail = response.data;
         return response;
       } catch (error) {
-        ElMessage.error("获取标签详情失败");
         throw error;
       } finally {
         this.tagLoading = false;
@@ -1093,10 +1039,8 @@ export const useCmsStore = defineStore("cms", {
       this.tagLoading = true;
       try {
         const response = await createTag(data);
-        ElMessage.success("创建标签成功");
         return response;
       } catch (error) {
-        ElMessage.error("创建标签失败");
         throw error;
       } finally {
         this.tagLoading = false;
@@ -1110,10 +1054,8 @@ export const useCmsStore = defineStore("cms", {
       this.tagLoading = true;
       try {
         const response = await updateTag(id, data);
-        ElMessage.success("更新标签成功");
         return response;
       } catch (error) {
-        ElMessage.error("更新标签失败");
         throw error;
       } finally {
         this.tagLoading = false;
@@ -1127,10 +1069,8 @@ export const useCmsStore = defineStore("cms", {
       this.tagLoading = true;
       try {
         const response = await deleteTag(id);
-        ElMessage.success("删除标签成功");
         return response;
       } catch (error) {
-        ElMessage.error("删除标签失败");
         throw error;
       } finally {
         this.tagLoading = false;
@@ -1145,15 +1085,13 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await uploadFile(file, folder);
         if (response.success) {
-          ElMessage.success(response.message || "图片上传成功");
           return response.data;
         } else {
-          ElMessage.error(response.message || "图片上传失败");
+          logger.error(response.message || "图片上传失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("上传图片失败", error);
-        ElMessage.error(error.message || "上传图片失败");
         throw error;
       } finally {
         this.loading.uploadCoverImage = false;

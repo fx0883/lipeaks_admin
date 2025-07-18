@@ -13,12 +13,14 @@ import {
   getLogin,
   refreshTokenApi
 } from "@/api/user";
-import { getCurrentAdmin, updateCurrentAdmin, uploadCurrentAdminAvatar } from "@/api/modules/adminUser";
+import {
+  getCurrentAdmin,
+  updateCurrentAdmin,
+  uploadCurrentAdminAvatar
+} from "@/api/modules/adminUser";
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
-import { ElMessage } from "element-plus";
 import logger from "@/utils/logger";
-import { useI18n } from "vue-i18n";
 
 export const useUserStore = defineStore("pure-user", {
   state: (): userType => ({
@@ -29,21 +31,27 @@ export const useUserStore = defineStore("pure-user", {
     // 用户名
     username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
     // 昵称
-    nickname: storageLocal().getItem<DataInfo<number>>(userKey)?.nick_name ?? "",
+    nickname:
+      storageLocal().getItem<DataInfo<number>>(userKey)?.nick_name ?? "",
     // 邮箱
     email: storageLocal().getItem<DataInfo<number>>(userKey)?.email ?? "",
     // 是否管理员
-    is_admin: storageLocal().getItem<DataInfo<number>>(userKey)?.is_admin ?? false,
+    is_admin:
+      storageLocal().getItem<DataInfo<number>>(userKey)?.is_admin ?? false,
     // 是否超级管理员
-    is_super_admin: storageLocal().getItem<DataInfo<number>>(userKey)?.is_super_admin ?? false,
+    is_super_admin:
+      storageLocal().getItem<DataInfo<number>>(userKey)?.is_super_admin ??
+      false,
     // 是否普通成员
-    is_member: storageLocal().getItem<DataInfo<number>>(userKey)?.is_member ?? false,
+    is_member:
+      storageLocal().getItem<DataInfo<number>>(userKey)?.is_member ?? false,
     // 手机号
     phone: storageLocal().getItem<DataInfo<number>>(userKey)?.phone ?? "",
     // 状态
     status: storageLocal().getItem<DataInfo<number>>(userKey)?.status ?? "",
     // 最后登录IP
-    last_login_ip: storageLocal().getItem<DataInfo<number>>(userKey)?.last_login_ip ?? "",
+    last_login_ip:
+      storageLocal().getItem<DataInfo<number>>(userKey)?.last_login_ip ?? "",
     // 租户ID
     tenant: storageLocal().getItem<DataInfo<number>>(userKey)?.tenant,
     // 父账号ID
@@ -142,8 +150,8 @@ export const useUserStore = defineStore("pure-user", {
               const { token, refresh_token, user } = data.data;
 
               // 存储token到localStorage
-              localStorage.setItem('access_token', token);
-              localStorage.setItem('refresh_token', refresh_token);
+              localStorage.setItem("access_token", token);
+              localStorage.setItem("refresh_token", refresh_token);
 
               const userData = {
                 accessToken: token,
@@ -162,7 +170,13 @@ export const useUserStore = defineStore("pure-user", {
                 tenant: user.tenant,
                 parent: user.parent,
                 avatar: user.avatar || "",
-                roles: [user.is_super_admin ? "super_admin" : (user.is_admin ? "admin" : "member")],
+                roles: [
+                  user.is_super_admin
+                    ? "super_admin"
+                    : user.is_admin
+                      ? "admin"
+                      : "member"
+                ],
                 permissions: ["*:*:*"] // 假设拥有所有权限，根据实际情况调整
               };
 
@@ -170,7 +184,7 @@ export const useUserStore = defineStore("pure-user", {
               setToken(userData);
 
               // 存储原始用户信息到localStorage
-              localStorage.setItem('user_info', JSON.stringify(user));
+              localStorage.setItem("user_info", JSON.stringify(user));
             }
             resolve(data);
           })
@@ -186,9 +200,9 @@ export const useUserStore = defineStore("pure-user", {
       this.permissions = [];
 
       // 清除localStorage中的token和用户信息
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user_info');
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user_info");
 
       // 清除cookie中的token
       removeToken();
@@ -207,8 +221,8 @@ export const useUserStore = defineStore("pure-user", {
               const { token, refresh_token } = data.data;
 
               // 更新localStorage中的token
-              localStorage.setItem('access_token', token);
-              localStorage.setItem('refresh_token', refresh_token);
+              localStorage.setItem("access_token", token);
+              localStorage.setItem("refresh_token", refresh_token);
 
               const userData = {
                 accessToken: token,
@@ -224,7 +238,7 @@ export const useUserStore = defineStore("pure-user", {
           });
       });
     },
-    
+
     /** 获取当前登录管理员信息 */
     async fetchCurrentAdmin() {
       this.loading.getCurrentAdmin = true;
@@ -244,24 +258,23 @@ export const useUserStore = defineStore("pure-user", {
           this.SET_IS_MEMBER(user.is_member || false);
           this.SET_STATUS(user.status || "active");
           this.SET_TENANT(user.tenant);
-          
+
           // 更新localStorage中的用户信息
-          localStorage.setItem('user_info', JSON.stringify(user));
-          
+          localStorage.setItem("user_info", JSON.stringify(user));
+
           return response;
         } else {
-          ElMessage.error(response.message || "获取当前管理员信息失败");
+          logger.error(response.message || "获取当前管理员信息失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("获取当前管理员信息失败", error);
-        ElMessage.error(error.message || "获取当前管理员信息失败");
         throw error;
       } finally {
         this.loading.getCurrentAdmin = false;
       }
     },
-    
+
     /** 更新当前登录管理员信息 */
     async updateCurrentAdminInfo(data) {
       this.loading.updateCurrentAdmin = true;
@@ -273,25 +286,28 @@ export const useUserStore = defineStore("pure-user", {
           this.SET_NICKNAME(user.nick_name || "");
           this.SET_PHONE(user.phone || "");
           this.SET_AVATAR(user.avatar || "");
-          
+
           // 更新localStorage中的用户信息
-          const userInfo = JSON.parse(localStorage.getItem('user_info') || "{}");
-          localStorage.setItem('user_info', JSON.stringify({
-            ...userInfo,
-            nick_name: user.nick_name,
-            phone: user.phone,
-            avatar: user.avatar
-          }));
-          
-          ElMessage.success("个人信息更新成功");
+          const userInfo = JSON.parse(
+            localStorage.getItem("user_info") || "{}"
+          );
+          localStorage.setItem(
+            "user_info",
+            JSON.stringify({
+              ...userInfo,
+              nick_name: user.nick_name,
+              phone: user.phone,
+              avatar: user.avatar
+            })
+          );
+
           return response;
         } else {
-          ElMessage.error(response.message || "更新当前管理员信息失败");
+          logger.error(response.message || "更新当前管理员信息失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("更新当前管理员信息失败", error);
-        ElMessage.error(error.message || "更新当前管理员信息失败");
         throw error;
       } finally {
         this.loading.updateCurrentAdmin = false;
@@ -302,29 +318,32 @@ export const useUserStore = defineStore("pure-user", {
       this.loading.updateCurrentAdmin = true;
       try {
         const formData = new FormData();
-        formData.append('avatar', file);
-        
+        formData.append("avatar", file);
+
         const response = await uploadCurrentAdminAvatar(formData);
         if (response.success) {
           // 更新store中的用户头像
           this.SET_AVATAR(response.data.avatar || "");
-          
+
           // 更新localStorage中的用户信息
-          const userInfo = JSON.parse(localStorage.getItem('user_info') || "{}");
-          localStorage.setItem('user_info', JSON.stringify({
-            ...userInfo,
-            avatar: response.data.avatar
-          }));
-          
-          ElMessage.success("头像上传成功");
+          const userInfo = JSON.parse(
+            localStorage.getItem("user_info") || "{}"
+          );
+          localStorage.setItem(
+            "user_info",
+            JSON.stringify({
+              ...userInfo,
+              avatar: response.data.avatar
+            })
+          );
+
           return response;
         } else {
-          ElMessage.error(response.message || "头像上传失败");
+          logger.error(response.message || "头像上传失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
         logger.error("上传当前用户头像失败", error);
-        ElMessage.error("上传头像失败");
         throw error;
       } finally {
         this.loading.updateCurrentAdmin = false;

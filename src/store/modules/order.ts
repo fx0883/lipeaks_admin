@@ -176,13 +176,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取订单列表失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取订单列表失败", error);
         this.error = error.message || "获取订单列表失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.list = false;
@@ -226,13 +224,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取订单详情失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取订单详情失败", error);
         this.error = error.message || "获取订单详情失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.detail = false;
@@ -249,18 +245,16 @@ export const useOrderStore = defineStore("order", {
       try {
         const response = await createOrder(data);
         if (response.success) {
-          ElMessage.success("订单创建成功");
+          // 移除成功消息提示，由视图层负责
           this.currentOrder = response.data;
           return response;
         } else {
           this.error = response.message || "创建订单失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("创建订单失败", error);
         this.error = error.message || "创建订单失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.create = false;
@@ -277,7 +271,7 @@ export const useOrderStore = defineStore("order", {
       try {
         const response = await updateOrder(id, data);
         if (response.success) {
-          ElMessage.success("订单更新成功");
+          // 移除成功消息提示，由视图层负责
           // 更新当前订单数据
           if (this.currentOrder && this.currentOrder.id === id) {
             this.currentOrder = response.data;
@@ -290,13 +284,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "更新订单失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("更新订单失败", error);
         this.error = error.message || "更新订单失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.update = false;
@@ -313,7 +305,7 @@ export const useOrderStore = defineStore("order", {
       try {
         const response = await deleteOrder(id);
         if (response.success) {
-          ElMessage.success("订单删除成功");
+          // 移除成功消息提示，由视图层负责
           // 从订单列表中移除
           this.orderList.data = this.orderList.data.filter(item => item.id !== id);
           // 如果当前订单是被删除的订单，则清空
@@ -323,13 +315,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "删除订单失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("删除订单失败", error);
         this.error = error.message || "删除订单失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.delete = false;
@@ -354,13 +344,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取订单统计数据失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取订单统计数据失败", error);
         this.error = error.message || "获取订单统计数据失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.statistics = false;
@@ -384,13 +372,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取订单提醒失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取订单提醒失败", error);
         this.error = error.message || "获取订单提醒失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.reminders = false;
@@ -407,7 +393,7 @@ export const useOrderStore = defineStore("order", {
       try {
         const response = await bulkUpdateOrders(data);
         if (response.success) {
-          ElMessage.success(`成功更新 ${response.data.success_count} 条订单数据`);
+          // 移除成功消息提示，由视图层负责
           // 更新成功后重新获取列表
           await this.fetchOrderList({
             page: this.orderList.page,
@@ -416,13 +402,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "批量更新订单失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("批量更新订单失败", error);
         this.error = error.message || "批量更新订单失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.bulkUpdate = false;
@@ -439,7 +423,7 @@ export const useOrderStore = defineStore("order", {
       try {
         const response = await bulkDeleteOrders(orderIds);
         if (response.success) {
-          ElMessage.success(`成功删除 ${response.data.success_count} 条订单数据`);
+          // 移除成功消息提示，由视图层负责
           // 从订单列表中移除被删除的订单
           this.orderList.data = this.orderList.data.filter(
             item => !orderIds.includes(item.id)
@@ -451,13 +435,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "批量删除订单失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("批量删除订单失败", error);
         this.error = error.message || "批量删除订单失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.bulkDelete = false;
@@ -494,12 +476,11 @@ export const useOrderStore = defineStore("order", {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         
-        ElMessage.success("订单数据导出成功");
+        // 移除成功消息提示，由视图层负责
         return response;
       } catch (error) {
         logger.error("导出订单数据失败", error);
         this.error = error.message || "导出订单数据失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.export = false;
@@ -522,12 +503,11 @@ export const useOrderStore = defineStore("order", {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         
-        ElMessage.success("订单导入模板下载成功");
+        // 移除成功消息提示，由视图层负责
         return response;
       } catch (error) {
         logger.error("下载订单导入模板失败", error);
         this.error = error.message || "下载订单导入模板失败";
-        ElMessage.error(this.error);
         throw error;
       }
     },
@@ -542,7 +522,7 @@ export const useOrderStore = defineStore("order", {
       try {
         const response = await importOrders(file);
         if (response.success) {
-          ElMessage.success(`成功导入 ${response.data.success_count} 条订单数据`);
+          // 移除成功消息提示，由视图层负责
           // 导入成功后重新获取列表
           await this.fetchOrderList({
             page: 1,
@@ -551,13 +531,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "导入订单数据失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("导入订单数据失败", error);
         this.error = error.message || "导入订单数据失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.import = false;
@@ -593,13 +571,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取订单历史记录失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取订单历史记录失败", error);
         this.error = error.message || "获取订单历史记录失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.history = false;
@@ -638,13 +614,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取订单历史记录详情失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取订单历史记录详情失败", error);
         this.error = error.message || "获取订单历史记录详情失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.historyDetail = false;
@@ -661,19 +635,17 @@ export const useOrderStore = defineStore("order", {
       try {
         const response = await restoreOrderVersion(orderId, historyId);
         if (response.success) {
-          ElMessage.success("订单已恢复到历史版本");
+          // 移除成功消息提示，由视图层负责
           // 更新当前订单数据
           this.currentOrder = response.data;
           return response;
         } else {
           this.error = response.message || "恢复订单历史版本失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("恢复订单历史版本失败", error);
         this.error = error.message || "恢复订单历史版本失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.restore = false;
@@ -702,13 +674,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取客户订单列表失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取客户订单列表失败", error);
         this.error = error.message || "获取客户订单列表失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.customerOrders = false;
@@ -737,13 +707,11 @@ export const useOrderStore = defineStore("order", {
           return response;
         } else {
           this.error = response.message || "获取联系人订单列表失败";
-          ElMessage.error(this.error);
           return Promise.reject(new Error(this.error));
         }
       } catch (error) {
         logger.error("获取联系人订单列表失败", error);
         this.error = error.message || "获取联系人订单列表失败";
-        ElMessage.error(this.error);
         throw error;
       } finally {
         this.loading.memberOrders = false;
