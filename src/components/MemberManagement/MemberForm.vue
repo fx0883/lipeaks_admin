@@ -9,7 +9,7 @@
   >
     <!-- 头像上传 -->
     <div class="avatar-container">
-      <el-form-item :label="$t('member.avatar')">
+      <el-form-item label="">
         <AvatarUpload
           :avatar-url="form.avatar"
           :disabled="disabled"
@@ -468,7 +468,7 @@ onMounted(() => {
 
 .avatar-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: 20px;
 }
 </style>

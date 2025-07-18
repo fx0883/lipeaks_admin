@@ -114,13 +114,13 @@ const customUpload = (options: UploadRequestOptions) => {
 .avatar-upload {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .avatar-uploader {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   cursor: pointer;
 }
 
