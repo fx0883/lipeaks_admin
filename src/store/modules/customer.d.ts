@@ -58,7 +58,7 @@ export interface CustomerGetters {
   // 获取客户的租户关系列表
   getTenantRelations: CustomerTenantRelation[];
   // 获取加载状态
-  isLoading: (key: keyof CustomerState['loading']) => boolean;
+  isLoading: (key: keyof CustomerState["loading"]) => boolean;
   // 获取错误信息
   getError: string | null;
 }
@@ -69,9 +69,12 @@ export interface CustomerActions {
   // 获取客户详情
   fetchCustomerDetail: (id: number) => Promise<any>;
   // 创建客户
-  createNewCustomer: (data: CustomerCreateUpdateParams) => Promise<any>;
+  createCustomer: (data: CustomerCreateUpdateParams) => Promise<any>;
   // 更新客户信息
-  updateCustomerInfo: (id: number, data: CustomerCreateUpdateParams) => Promise<any>;
+  updateCustomerInfo: (
+    id: number,
+    data: CustomerCreateUpdateParams
+  ) => Promise<any>;
   // 删除客户
   removeCustomer: (id: number) => Promise<any>;
   // 获取客户统计数据
@@ -83,25 +86,55 @@ export interface CustomerActions {
   // 批量删除客户
   bulkDeleteCustomers: (customerIds: number[]) => Promise<any>;
   // 获取客户的联系人关系列表
-  fetchCustomerMemberRelations: (customerId: number, params?: { page?: number; page_size?: number }) => Promise<any>;
+  fetchCustomerMemberRelations: (
+    customerId: number,
+    params?: { page?: number; page_size?: number }
+  ) => Promise<any>;
   // 创建客户-联系人关系
-  createCustomerMemberRelation: (data: CustomerMemberRelationCreateUpdateParams) => Promise<any>;
+  createCustomerMemberRelation: (
+    data: CustomerMemberRelationCreateUpdateParams
+  ) => Promise<any>;
   // 更新客户-联系人关系
-  updateCustomerMemberRelation: (customerId: number, relationId: number, data: Omit<CustomerMemberRelationCreateUpdateParams, 'customer_id'>) => Promise<any>;
+  updateCustomerMemberRelation: (
+    customerId: number,
+    relationId: number,
+    data: Omit<CustomerMemberRelationCreateUpdateParams, "customer_id">
+  ) => Promise<any>;
   // 删除客户-联系人关系
-  removeCustomerMemberRelation: (customerId: number, relationId: number) => Promise<any>;
+  removeCustomerMemberRelation: (
+    customerId: number,
+    relationId: number
+  ) => Promise<any>;
   // 设置主要联系人
-  setPrimaryMemberRelation: (customerId: number, relationId: number) => Promise<any>;
+  setPrimaryMemberRelation: (
+    customerId: number,
+    relationId: number
+  ) => Promise<any>;
   // 获取客户的租户关系列表
-  fetchCustomerTenantRelations: (customerId: number, params?: { page?: number; page_size?: number }) => Promise<any>;
+  fetchCustomerTenantRelations: (
+    customerId: number,
+    params?: { page?: number; page_size?: number }
+  ) => Promise<any>;
   // 创建客户-租户关系
-  createCustomerTenantRelation: (data: CustomerTenantRelationCreateUpdateParams) => Promise<any>;
+  createCustomerTenantRelation: (
+    data: CustomerTenantRelationCreateUpdateParams
+  ) => Promise<any>;
   // 更新客户-租户关系
-  updateCustomerTenantRelation: (customerId: number, relationId: number, data: Omit<CustomerTenantRelationCreateUpdateParams, 'customer_id'>) => Promise<any>;
+  updateCustomerTenantRelation: (
+    customerId: number,
+    relationId: number,
+    data: Omit<CustomerTenantRelationCreateUpdateParams, "customer_id">
+  ) => Promise<any>;
   // 删除客户-租户关系
-  removeCustomerTenantRelation: (customerId: number, relationId: number) => Promise<any>;
+  removeCustomerTenantRelation: (
+    customerId: number,
+    relationId: number
+  ) => Promise<any>;
   // 设置主要租户关系
-  setPrimaryTenantRelation: (customerId: number, relationId: number) => Promise<any>;
+  setPrimaryTenantRelation: (
+    customerId: number,
+    relationId: number
+  ) => Promise<any>;
   // 重置客户管理状态
   resetCustomerState: () => void;
 }
@@ -109,4 +142,4 @@ export interface CustomerActions {
 export type CustomerStore = CustomerState & {
   getters: CustomerGetters;
   actions: CustomerActions;
-}; 
+};

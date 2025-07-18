@@ -442,7 +442,7 @@ export interface CustomerState {
 // 主要操作
 // - fetchCustomerList: 获取客户列表
 // - fetchCustomerDetail: 获取客户详情
-// - createNewCustomer: 创建新客户
+// - createCustomer: 创建新客户
 // - updateCustomerInfo: 更新客户信息
 // - removeCustomer: 删除客户
 // - fetchCustomerMemberRelations: 获取客户的联系人关系

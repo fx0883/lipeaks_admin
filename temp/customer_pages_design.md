@@ -139,7 +139,7 @@ const batchOperationDialog = reactive({
 
 4. **创建客户**
    - 点击创建按钮，显示创建客户对话框
-   - 填写表单并提交，调用`createNewCustomer`创建客户
+   - 填写表单并提交，调用`createCustomer`创建客户
    - 创建成功后，刷新客户列表
 
 5. **批量操作**
@@ -341,7 +341,7 @@ const isSubmitting = ref(false);
 
 3. **表单提交**
    - 点击保存按钮时，进行表单验证
-   - 验证通过后，调用`createNewCustomer`创建客户
+   - 验证通过后，调用`createCustomer`创建客户
    - 创建成功后，显示成功提示并返回客户列表页面或跳转到客户详情页面
 
 4. **取消操作**

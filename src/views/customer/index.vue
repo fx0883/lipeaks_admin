@@ -262,7 +262,7 @@ const handleCreateCustomer = () => {
 // 提交创建客户表单
 const handleCreateSubmit = async (formData: CustomerCreateUpdateParams) => {
   try {
-    await customerStore.createNewCustomer(formData);
+    await customerStore.createCustomer(formData);
     ElMessage.success(t("customer.createSuccess"));
     createDialogVisible.value = false;
     // 刷新列表

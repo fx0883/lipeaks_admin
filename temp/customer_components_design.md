@@ -617,7 +617,7 @@ interface Emits {
 2. 在编辑模式下，页面加载时调用`fetchCustomerDetail`获取客户详情
 3. 使用`CustomerForm`组件显示客户表单
 4. 用户填写表单并提交
-5. 表单验证通过后，调用`createNewCustomer`或`updateCustomerInfo`
+5. 表单验证通过后，调用`createCustomer`或`updateCustomerInfo`
 6. 操作成功后，显示成功提示并返回客户列表或详情页面
 
 ## 4. 组件复用策略
