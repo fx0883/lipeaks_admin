@@ -1497,7 +1497,7 @@ member:
   notFound: 会员不存在
   basicInfo: 基本信息
   avatar: 头像
-  clickToUpload: 点击上传
+  clickToUpload: 上传头像
   avatarTypeError: 头像必须是图片格式（JPEG/PNG/GIF）
   avatarSizeError: 头像大小不能超过2MB
   avatarUploadSuccess: 头像上传成功

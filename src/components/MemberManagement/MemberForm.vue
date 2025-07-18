@@ -83,34 +83,6 @@
       </el-col>
     </el-row>
 
-    <el-row v-if="!isEdit" :gutter="20">
-      <el-col :span="12">
-        <el-form-item :label="$t('member.password')" prop="password">
-          <el-input
-            v-model="form.password"
-            type="password"
-            show-password
-            :placeholder="$t('member.passwordPlaceholder')"
-            autocomplete="new-password"
-          />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item
-          :label="$t('member.confirmPassword')"
-          prop="confirmPassword"
-        >
-          <el-input
-            v-model="form.confirmPassword"
-            type="password"
-            show-password
-            :placeholder="$t('member.confirmPasswordPlaceholder')"
-            autocomplete="new-password"
-          />
-        </el-form-item>
-      </el-col>
-    </el-row>
-
     <el-row :gutter="20">
       <el-col :span="12">
         <el-form-item :label="$t('member.status')" prop="status">
@@ -263,8 +235,6 @@ const form = reactive({
   last_name: "",
   email: "",
   phone: "",
-  password: "",
-  confirmPassword: "",
   status: "active" as MemberStatus,
   tenant_id: undefined as number | undefined,
   notes: "",
@@ -286,31 +256,6 @@ const rules = reactive<FormRules>({
     {
       pattern: /^[0-9\-+\s()]*$/,
       message: t("member.phoneInvalid"),
-      trigger: "blur"
-    }
-  ],
-  password: [
-    {
-      required: !props.isEdit,
-      message: t("member.passwordRequired"),
-      trigger: "blur"
-    },
-    { min: 8, message: t("member.passwordLength"), trigger: "blur" }
-  ],
-  confirmPassword: [
-    {
-      required: !props.isEdit,
-      message: t("member.confirmPasswordRequired"),
-      trigger: "blur"
-    },
-    {
-      validator: (rule, value, callback) => {
-        if (value !== form.password) {
-          callback(new Error(t("member.passwordMismatch")));
-        } else {
-          callback();
-        }
-      },
       trigger: "blur"
     }
   ],
@@ -372,8 +317,6 @@ const resetForm = () => {
   form.last_name = "";
   form.email = "";
   form.phone = "";
-  form.password = "";
-  form.confirmPassword = "";
   form.status = "active" as MemberStatus;
   form.tenant_id = undefined;
   form.notes = "";
@@ -406,9 +349,9 @@ const submitForm = async () => {
       submitData.tenant_id = form.tenant_id;
 
     // 如果是创建模式，添加密码
-    if (!props.isEdit && form.password) {
-      submitData.password = form.password;
-      submitData.password_confirm = form.confirmPassword;
+    if (!props.isEdit) {
+      submitData.password = "123456abc"; // 创建模式下直接使用默认密码
+      submitData.password_confirm = "123456abc"; // 创建模式下直接使用默认密码
     }
 
     // 如果有头像文件，添加到提交数据
