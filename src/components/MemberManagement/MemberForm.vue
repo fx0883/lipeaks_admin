@@ -350,8 +350,8 @@ const submitForm = async () => {
 
     // 如果是创建模式，添加密码
     if (!props.isEdit) {
-      submitData.password = "123456abc"; // 创建模式下直接使用默认密码
-      submitData.password_confirm = "123456abc"; // 创建模式下直接使用默认密码
+      submitData.password = "12345_abcdef"; // 创建模式下直接使用默认密码
+      submitData.password_confirm = "12345_abcdef"; // 创建模式下直接使用默认密码
     }
 
     // 如果有头像文件，添加到提交数据

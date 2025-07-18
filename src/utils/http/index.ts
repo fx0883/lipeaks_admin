@@ -13,7 +13,8 @@ import { stringify } from "qs";
 import NProgress from "../progress";
 // 移除未使用的导入
 import { useUserStoreHook } from "@/store/modules/user";
-import { message } from "@/utils/message";
+// 移除未使用的 message 导入
+// import { message } from "@/utils/message";
 import logger from "@/utils/logger"; // 导入日志工具
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
@@ -398,8 +399,8 @@ class PureHttp {
         // 记录错误日志
         logger.logError(error);
 
-        // 显示错误消息 - 修复 message.error is not a function 错误
-        message(errorResponse.message, { type: "error" });
+        // 移除显示错误消息的代码，由业务层处理
+        // message(errorResponse.message, { type: "error" });
 
         return Promise.reject(errorResponse);
       }
