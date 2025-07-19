@@ -58,6 +58,31 @@ const formData = reactive<AdminUserCreateParams | AdminUserUpdateParams>({
   is_super_admin: false
 });
 
+// 重置表单方法
+const resetForm = () => {
+  formData.username = "";
+  formData.email = "";
+  formData.password = undefined;
+  formData.password_confirm = undefined;
+  formData.phone = "";
+  formData.nick_name = "";
+  formData.first_name = "";
+  formData.last_name = undefined;
+  formData.tenant_id = undefined;
+  formData.is_active = true;
+  formData.is_super_admin = false;
+
+  // 如果表单引用存在，重置表单验证状态
+  if (formRef.value) {
+    formRef.value.resetFields();
+  }
+};
+
+// 暴露方法给父组件
+defineExpose({
+  resetForm
+});
+
 // 表单校验规则
 const rules = {
   username: [

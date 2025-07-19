@@ -428,6 +428,7 @@ menu:
   view: 查看
   title: 菜单管理
   search: 搜索
+  searchMenus: 搜索菜单
   refresh: 刷新
   import: 导入
   export: 导出
@@ -476,6 +477,9 @@ menu:
   userMenuSetting: 用户菜单设置
   setUserMenu: 设置菜单
   preview: 预览
+  return: 返回
+  settingSuccess: 菜单设置成功
+  saveFailed: 保存失败
   basicInfo: 基本信息
   routeConfig: 路由配置
   displaySettings: 显示设置

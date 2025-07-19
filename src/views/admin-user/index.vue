@@ -154,6 +154,10 @@ const userToRevoke = ref<AdminUser | null>(null);
 const menuSettingDialogVisible = ref(false);
 const userForMenuSetting = ref<AdminUser | null>(null);
 
+// 表单引用
+const createFormRef = ref();
+const createSuperAdminFormRef = ref();
+
 // 获取管理员用户列表
 const fetchAdminUsers = async () => {
   try {
@@ -399,11 +403,23 @@ const handleView = (row: AdminUser) => {
 // 创建管理员
 const handleCreate = () => {
   createDialogVisible.value = true;
+  // 在下一个事件循环中重置表单，确保组件已经挂载
+  setTimeout(() => {
+    if (createFormRef.value) {
+      createFormRef.value.resetForm();
+    }
+  }, 0);
 };
 
 // 创建超级管理员
 const handleCreateSuperAdmin = () => {
   createSuperAdminDialogVisible.value = true;
+  // 在下一个事件循环中重置表单，确保组件已经挂载
+  setTimeout(() => {
+    if (createSuperAdminFormRef.value) {
+      createSuperAdminFormRef.value.resetForm();
+    }
+  }, 0);
 };
 
 // 提交创建管理员表单
@@ -458,11 +474,19 @@ const handleEditSubmit = async (formData: AdminUserUpdateParams) => {
 // 关闭创建对话框
 const handleCreateCancel = () => {
   createDialogVisible.value = false;
+  // 重置表单
+  if (createFormRef.value) {
+    createFormRef.value.resetForm();
+  }
 };
 
 // 关闭创建超级管理员对话框
 const handleCreateSuperAdminCancel = () => {
   createSuperAdminDialogVisible.value = false;
+  // 重置表单
+  if (createSuperAdminFormRef.value) {
+    createSuperAdminFormRef.value.resetForm();
+  }
 };
 
 // 关闭编辑对话框
@@ -774,8 +798,10 @@ onMounted(() => {
       width="70%"
       :close-on-click-modal="false"
       :destroy-on-close="true"
+      @closed="handleCreateCancel"
     >
       <AdminUserForm
+        ref="createFormRef"
         mode="create"
         :loading="formLoading"
         @submit="handleCreateSubmit"
@@ -790,8 +816,10 @@ onMounted(() => {
       width="70%"
       :close-on-click-modal="false"
       :destroy-on-close="true"
+      @closed="handleCreateSuperAdminCancel"
     >
       <AdminUserForm
+        ref="createSuperAdminFormRef"
         mode="superAdmin"
         :loading="formLoading"
         @submit="handleCreateSuperAdminSubmit"

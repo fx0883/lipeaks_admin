@@ -426,6 +426,7 @@ menu:
   view: View
   title: Menu Management
   search: Search
+  searchMenus: Search Menus
   refresh: Refresh
   import: Import
   export: Export
@@ -474,6 +475,9 @@ menu:
   userMenuSetting: User Menu Setting
   setUserMenu: Set Menu
   preview: Preview
+  return: Return
+  settingSuccess: Menu settings saved successfully
+  saveFailed: Failed to save
   basicInfo: Basic Information
   routeConfig: Route Configuration
   displaySettings: Display Settings
