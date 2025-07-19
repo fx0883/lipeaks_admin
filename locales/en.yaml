@@ -349,14 +349,17 @@ tenant:
   create: Create Tenant
   edit: Edit Tenant
   detail: Tenant Detail
-  view: View
-  delete: Delete
-  suspend: Suspend
-  activate: Activate
-  search: Search
+  view: View Tenant
+  delete: Delete Tenant
+  search: Search Tenant
+  filter: Filter Tenant
   cancel: Cancel
+  save: Save
   backToList: Back to List
-  name: Name
+  name: Tenant Name
+  namePlaceholder: Please enter tenant name
+  nameRequired: Tenant name is required
+  nameLength: Tenant name should be 2-100 characters
   status: Status
   statusAll: All Status
   statusActive: Active
