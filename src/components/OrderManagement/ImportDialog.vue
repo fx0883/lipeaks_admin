@@ -28,7 +28,8 @@ const uploadStatus = reactive({
   fileName: "",
   fileSize: "",
   result: null as OrderImportResponse | null,
-  error: ""
+  error: "",
+  updateExisting: false // 是否更新已存在的订单
 });
 
 // 文件上传引用
@@ -170,7 +171,10 @@ const uploadFile = async () => {
       }
     }, 300);
 
-    const response = await importOrders(uploadStatus.file);
+    const response = await importOrders(
+      uploadStatus.file,
+      uploadStatus.updateExisting
+    );
 
     clearInterval(progressInterval);
     uploadStatus.progress = 100;
@@ -201,6 +205,7 @@ const resetUpload = () => {
   uploadStatus.fileSize = "";
   uploadStatus.result = null;
   uploadStatus.error = "";
+  uploadStatus.updateExisting = false; // 重置更新选项
 
   // 重置文件输入
   if (fileInputRef.value) {
@@ -267,6 +272,19 @@ const formatFileSize = (bytes: number): string => {
         <div class="file-info" v-if="uploadStatus.fileName">
           <span class="file-name">{{ uploadStatus.fileName }}</span>
           <span class="file-size">{{ uploadStatus.fileSize }}</span>
+
+          <!-- 添加更新已存在订单的选项 -->
+          <div class="update-option">
+            <el-checkbox v-model="uploadStatus.updateExisting">
+              {{ t("order.updateExistingOrders") }}
+            </el-checkbox>
+            <el-tooltip
+              :content="t('order.updateExistingOrdersTooltip')"
+              placement="top"
+            >
+              <el-icon class="info-icon"><i class="el-icon-info" /></el-icon>
+            </el-tooltip>
+          </div>
         </div>
       </div>
 
@@ -281,22 +299,26 @@ const formatFileSize = (bytes: number): string => {
       <div class="import-result" v-if="uploadStatus.result">
         <h4>{{ t("order.importResult") }}</h4>
 
+
+
         <div class="result-summary">
           <div class="result-item success">
-            <span class="result-label">{{ t("order.successCount") }}:</span>
-            <span class="result-value">{{
-              uploadStatus.result.success_count
-            }}</span>
+            <span class="result-label">{{ t("order.createdCount") }}:</span>
+            <span class="result-value">{{ uploadStatus.result.created }}</span>
+          </div>
+          <div class="result-item success">
+            <span class="result-label">{{ t("order.updatedCount") }}:</span>
+            <span class="result-value">{{ uploadStatus.result.updated }}</span>
           </div>
           <div class="result-item failed">
             <span class="result-label">{{ t("order.failedCount") }}:</span>
-            <span class="result-value">{{
-              uploadStatus.result.failed_count
-            }}</span>
+            <span class="result-value">{{ uploadStatus.result.failed }}</span>
           </div>
           <div class="result-item total">
             <span class="result-label">{{ t("order.totalCount") }}:</span>
-            <span class="result-value">{{ uploadStatus.result.total }}</span>
+            <span class="result-value">{{
+              uploadStatus.result.total_records
+            }}</span>
           </div>
         </div>
 
@@ -308,13 +330,22 @@ const formatFileSize = (bytes: number): string => {
           "
         >
           <h5>{{ t("order.errorDetails") }}</h5>
-          <el-table :data="uploadStatus.result.errors" size="small" border>
+          <el-table
+            :data="
+              uploadStatus.result.errors.map((error, index) => ({
+                id: index,
+                message: error
+              }))
+            "
+            size="small"
+            border
+          >
             <el-table-column
-              prop="row"
-              :label="t('order.rowNumber')"
+              prop="id"
+              :label="t('order.errorNumber')"
               width="100"
             />
-            <el-table-column prop="error" :label="t('order.errorMessage')" />
+            <el-table-column prop="message" :label="t('order.errorMessage')" />
           </el-table>
         </div>
       </div>
@@ -421,6 +452,23 @@ const formatFileSize = (bytes: number): string => {
 .file-size {
   color: #909399;
   font-size: 12px;
+}
+
+.update-option {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  color: #909399;
+  font-size: 12px;
+}
+
+.update-option .el-checkbox {
+  margin-right: 5px;
+}
+
+.update-option .info-icon {
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .upload-progress {

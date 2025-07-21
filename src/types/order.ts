@@ -258,13 +258,12 @@ export interface OrderBulkOperationResponse {
 
 // 订单导入接口
 export interface OrderImportResponse {
-  total: number;                // 总记录数
-  success_count: number;        // 成功导入数
-  failed_count: number;         // 失败数量
-  errors?: Array<{
-    row: number;                // 行号
-    error: string;              // 错误信息
-  }>;
+  status: string;               // 状态，如 "success"
+  total_records: number;        // 总记录数
+  created: number;              // 新创建的记录数
+  updated: number;              // 更新的记录数
+  failed: number;               // 失败数量
+  errors: string[];             // 错误信息数组
 }
 
 // 订单图表数据接口

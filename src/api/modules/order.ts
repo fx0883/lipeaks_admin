@@ -144,15 +144,16 @@ export function downloadOrderImportTemplate() {
 /**
  * 导入订单
  */
-export function importOrders(file: File) {
-  logger.debug("API请求: 导入订单", { fileName: file.name });
+export function importOrders(file: File, updateExisting: boolean = false) {
+  logger.debug("API请求: 导入订单", { fileName: file.name, updateExisting });
 
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("update_existing", updateExisting.toString());
 
   return http.request<ApiResponse<OrderImportResponse>>(
     "post",
-    "/orders/import/",
+    "/orders/import_data/",
     {
       data: formData,
       headers: {
