@@ -168,9 +168,9 @@ order:
   
   # 客户/联系人订单关联
   customerOrders: 客户订单
-  memberOrders: 会员订单
+  memberOrders: 联系人订单
   customerOrdersLoadFailed: 加载客户订单失败
-  memberOrdersLoadFailed: 加载会员订单失败
+  memberOrdersLoadFailed: 加载联系人订单失败
   
   # 批量更新相关
   batchUpdate: 批量更新
@@ -864,7 +864,7 @@ menus:
   pureTenantList: 租户列表
   pureAdminUser: 管理员管理
   pureCustomer: 客户管理
-  pureMember: 会员管理
+  pureMember: 联系人管理
   pureMenu: 菜单管理
   pureDashboard: 数据大盘
   pureCms: 内容管理
@@ -1404,19 +1404,19 @@ customer:
     exportSuccess: 导出成功
     exportFailed: 导出失败
 
-  # 会员关系
+  # 联系人关系
   member:
-    title: 会员关系
-    list: 会员列表
-    addMember: 添加会员
-    editRelation: 编辑会员关系
-    viewRelation: 查看会员关系
-    deleteRelation: 删除会员关系
-    batchDeleteRelation: 批量删除会员关系
-    memberInfo: 会员信息
-    memberSelect: 会员选择
-    memberSelectPlaceholder: 请选择会员
-    memberRequired: 请选择会员
+    title: 联系人关系
+    list: 联系人列表
+    addMember: 添加联系人
+    editRelation: 编辑联系人关系
+    viewRelation: 查看联系人关系
+    deleteRelation: 删除联系人关系
+    batchDeleteRelation: 批量删除联系人关系
+    memberInfo: 联系人信息
+    memberSelect: 联系人选择
+    memberSelectPlaceholder: 请选择联系人
+    memberRequired: 请选择联系人
     role: 角色
     rolePlaceholder: 请输入角色
     roleRequired: 请输入角色
@@ -1425,31 +1425,31 @@ customer:
     isPrimary: 主要联系人
     notes: 备注
     notesPlaceholder: 请输入备注
-    searchPlaceholder: 搜索会员名称、邮箱或角色
-    createSuccess: 添加会员关系成功
-    updateSuccess: 更新会员关系成功
-    deleteSuccess: 删除会员关系成功
-    batchDeleteSuccess: 批量删除会员关系成功
-    saveError: 保存会员关系失败
-    deleteError: 删除会员关系失败
-    searchMemberFailed: 搜索会员失败
-    deleteRelationConfirm: 确定要删除与会员 {username} 的关系吗？
-    batchDeleteRelationConfirm: 确定要删除选中的 {count} 个会员关系吗？
+    searchPlaceholder: 搜索联系人名称、邮箱或角色
+    createSuccess: 添加联系人关系成功
+    updateSuccess: 更新联系人关系成功
+    deleteSuccess: 删除联系人关系成功
+    batchDeleteSuccess: 批量删除联系人关系成功
+    saveError: 保存联系人关系失败
+    deleteError: 删除联系人关系失败
+    searchMemberFailed: 搜索联系人失败
+    deleteRelationConfirm: 确定要删除与联系人 {username} 的关系吗？
+    batchDeleteRelationConfirm: 确定要删除选中的 {count} 个联系人关系吗？
 
 member:
-  memberManagement: 会员管理
-  memberList: 会员列表
-  createMember: 创建会员
-  editMember: 编辑会员
-  memberDetail: 会员详情
-  deleteTitle: 确认删除会员
-  deleteConfirm: 确定要删除会员 {name} 吗？
-  deleteSuccess: 会员删除成功
+  memberManagement: 联系人管理
+  memberList: 联系人列表
+  createMember: 创建联系人
+  editMember: 编辑联系人
+  memberDetail: 联系人详情
+  deleteTitle: 确认删除联系人
+  deleteConfirm: 确定要删除联系人 {name} 吗？
+  deleteSuccess: 联系人删除成功
   bulkDeleteTitle: 确认批量删除
-  bulkDeleteConfirm: 确定要删除选中的 {count} 个会员吗？
-  bulkDeleteSuccess: 批量删除会员成功
-  createSuccess: 会员创建成功
-  updateSuccess: 会员更新成功
+  bulkDeleteConfirm: 确定要删除选中的 {count} 个联系人吗？
+  bulkDeleteSuccess: 批量删除联系人成功
+  createSuccess: 联系人创建成功
+  updateSuccess: 联系人更新成功
   id: ID
   username: 用户名
   usernamePlaceholder: 请输入用户名
@@ -1498,10 +1498,10 @@ member:
   createdAt: 创建时间
   updatedAt: 更新时间
   lastLogin: 最后登录时间
-  searchPlaceholder: 搜索会员（用户名、姓名、邮箱）
+  searchPlaceholder: 搜索联系人（用户名、姓名、邮箱）
   bulkDelete: 批量删除
-  invalidId: 无效的会员ID
-  notFound: 会员不存在
+  invalidId: 无效的联系人ID
+  notFound: 联系人不存在
   basicInfo: 基本信息
   avatar: 头像
   clickToUpload: 上传头像
