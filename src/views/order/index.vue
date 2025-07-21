@@ -235,17 +235,19 @@ const exportOrders = async () => {
 
     // 如果有选中的订单，则只导出选中的订单
     if (selectedOrders.value.length > 0) {
-      const orderIds = selectedOrders.value.map(order => order.id);
+      const order_ids = selectedOrders.value.map(order => order.id);
       await orderStore.exportOrderData({
-        ...currentFilters.value,
-        ids: orderIds.join(",")
+        order_ids,
+        format: "xlsx"
       });
       ElMessage.success(
         t("order.exportSelectedSuccess", { count: selectedOrders.value.length })
       );
     } else {
       // 否则导出当前筛选条件下的所有订单
-      await orderStore.exportOrderData(currentFilters.value);
+      await orderStore.exportOrderData({
+        format: "xlsx"
+      });
       ElMessage.success(t("order.exportAllSuccess"));
     }
   } catch (error) {

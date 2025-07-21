@@ -42,37 +42,39 @@ const defaultConfig: AxiosRequestConfig = {
  */
 function formatErrorMessage(errors: any): string {
   // 如果是字符串，直接返回
-  if (typeof errors === 'string') {
+  if (typeof errors === "string") {
     return errors;
   }
-  
+
   // 如果是空值，返回默认消息
   if (!errors) {
-    return '请求失败';
+    return "请求失败";
   }
 
   // 处理数组情况
   if (Array.isArray(errors)) {
-    return errors.map(err => {
-      if (typeof err === 'string') {
-        return err;
-      } else if (typeof err === 'object' && err !== null) {
-        // 处理ErrorDetail对象 - DRF特有的错误对象
-        if ('string' in err) {
-          return err.string;
+    return errors
+      .map(err => {
+        if (typeof err === "string") {
+          return err;
+        } else if (typeof err === "object" && err !== null) {
+          // 处理ErrorDetail对象 - DRF特有的错误对象
+          if ("string" in err) {
+            return err.string;
+          }
+          // 处理可能的嵌套错误对象
+          if (err.message) {
+            return err.message;
+          }
+          return JSON.stringify(err);
         }
-        // 处理可能的嵌套错误对象
-        if (err.message) {
-          return err.message;
-        }
-        return JSON.stringify(err);
-      }
-      return String(err);
-    }).join(', ');
+        return String(err);
+      })
+      .join(", ");
   }
 
   // 处理对象情况
-  if (typeof errors === 'object') {
+  if (typeof errors === "object") {
     // 尝试直接提取non_field_errors
     if (errors.non_field_errors && Array.isArray(errors.non_field_errors)) {
       return formatErrorMessage(errors.non_field_errors);
@@ -81,29 +83,29 @@ function formatErrorMessage(errors: any): string {
     // 尝试处理特殊情况：errors对象可能是Django格式的{'field': [ErrorDetail...]}
     const fieldErrors: string[] = [];
     let hasValidationErrors = false;
-    
+
     Object.entries(errors).forEach(([field, fieldError]) => {
       if (Array.isArray(fieldError) && fieldError.length > 0) {
         hasValidationErrors = true;
         // 这里处理Django的字段错误，格式为：字段名: 错误消息
         fieldErrors.push(`${field}: ${formatErrorMessage(fieldError)}`);
-      } else if (fieldError !== null && typeof fieldError === 'object') {
+      } else if (fieldError !== null && typeof fieldError === "object") {
         fieldErrors.push(`${field}: ${formatErrorMessage(fieldError)}`);
       } else if (fieldError !== undefined) {
         fieldErrors.push(`${field}: ${String(fieldError)}`);
       }
     });
-    
+
     // 如果有字段错误，返回拼接后的错误消息
     if (hasValidationErrors && fieldErrors.length > 0) {
-      return fieldErrors.join('; ');
+      return fieldErrors.join("; ");
     }
-    
+
     // 如果有message字段，优先使用
     if (errors.message) {
       return errors.message;
     }
-    
+
     // 如果有detail字段，使用它
     if (errors.detail) {
       return errors.detail;
@@ -262,6 +264,14 @@ class PureHttp {
         // 统一处理API响应格式
         const res = response.data;
 
+        // 如果是Blob类型的响应，直接返回原始响应
+        if (response.config.responseType === "blob") {
+          // 为Blob响应添加headers属性，以便后续处理可以访问到headers
+          const blobWithHeaders = response.data;
+          blobWithHeaders.headers = response.headers;
+          return blobWithHeaders;
+        }
+
         // 已经符合标准格式的响应直接返回
         if (
           res.success !== undefined &&
@@ -362,7 +372,8 @@ class PureHttp {
                     success: false,
                     code: 4001,
                     message: "登录已过期，请重新登录",
-                    data: null
+                    data: null,
+                    errors: null
                   };
                 }
               } catch (refreshError) {
@@ -374,7 +385,8 @@ class PureHttp {
                   success: false,
                   code: 4001,
                   message: "登录已过期，请重新登录",
-                  data: null
+                  data: null,
+                  errors: null
                 };
               } finally {
                 PureHttp.isRefreshing = false;
@@ -429,18 +441,21 @@ class PureHttp {
                   // 尝试解析可能是JSON字符串的message
                   let parsedMessage;
                   // 处理Python字典字符串转JSON的情况（单引号替换为双引号）
-                  if (data.message.includes("'") && !data.message.includes('"')) {
-                    let preparedMessage = data.message
-                      .replace(/'/g, '"')           // 替换单引号为双引号
+                  if (
+                    data.message.includes("'") &&
+                    !data.message.includes('"')
+                  ) {
+                    const preparedMessage = data.message
+                      .replace(/'/g, '"') // 替换单引号为双引号
                       .replace(/\bTrue\b/g, "true") // 替换Python的True为JSON的true
                       .replace(/\bFalse\b/g, "false") // 替换Python的False为JSON的false
-                      .replace(/\bNone\b/g, "null");  // 替换Python的None为JSON的null
-                    
+                      .replace(/\bNone\b/g, "null"); // 替换Python的None为JSON的null
+
                     parsedMessage = JSON.parse(preparedMessage);
                   } else {
                     parsedMessage = JSON.parse(data.message);
                   }
-                  
+
                   if (parsedMessage && typeof parsedMessage === "object") {
                     // 将解析后的对象用于错误消息格式化
                     errorMsg = formatErrorMessage(parsedMessage);
@@ -452,7 +467,11 @@ class PureHttp {
                   }
                 } catch (parseError) {
                   // 如果解析失败，使用原始消息
-                  logger.debug("无法解析message字段为JSON:", data.message, parseError);
+                  logger.debug(
+                    "无法解析message字段为JSON:",
+                    data.message,
+                    parseError
+                  );
                   errorMsg = data.message;
                 }
               }
@@ -612,8 +631,8 @@ class PureHttp {
     return new Promise((resolve, reject) => {
       PureHttp.axiosInstance
         .request(config)
-        .then((response: undefined) => {
-          resolve(response as unknown as Promise<T>);
+        .then(response => {
+          resolve(response as T);
         })
         .catch(error => {
           reject(error);

@@ -449,12 +449,18 @@ export const useOrderStore = defineStore("order", {
     /**
      * 导出订单数据
      */
-    async exportOrderData(params: OrderListParams = {}) {
+    async exportOrderData(options: { order_ids?: number[], format?: string } = {}) {
       this.loading.export = true;
       this.error = null;
       
       try {
-        const response = await exportOrders(params);
+        const response = await exportOrders(options);
+        
+        // 检查response是否为Blob类型
+        if (!(response instanceof Blob)) {
+          throw new Error("导出失败：服务器返回的不是文件数据");
+        }
+        
         // Blob数据处理
         const url = window.URL.createObjectURL(response);
         const link = document.createElement("a");
@@ -462,7 +468,7 @@ export const useOrderStore = defineStore("order", {
         
         // 设置文件名（从headers或默认）
         const contentDisposition = response.headers?.["content-disposition"];
-        let filename = "订单数据.xlsx";
+        let filename = `订单数据.${options.format || 'xlsx'}`;
         if (contentDisposition) {
           const filenameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
           if (filenameMatch && filenameMatch[1]) {
@@ -493,6 +499,12 @@ export const useOrderStore = defineStore("order", {
     async downloadImportTemplate() {
       try {
         const response = await downloadOrderImportTemplate();
+        
+        // 检查response是否为Blob类型
+        if (!(response instanceof Blob)) {
+          throw new Error("下载失败：服务器返回的不是文件数据");
+        }
+        
         // Blob数据处理
         const url = window.URL.createObjectURL(response);
         const link = document.createElement("a");

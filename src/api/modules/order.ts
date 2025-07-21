@@ -115,14 +115,14 @@ export function bulkDeleteOrders(orderIds: number[]) {
 /**
  * 订单导出API
  */
-export function exportOrders(params: OrderListParams = {}) {
-  logger.debug("API请求: 导出订单", params);
+export function exportOrders(data: { order_ids?: number[], format?: string } = {}) {
+  logger.debug("API请求: 导出订单", data);
 
   return http.request<Blob>(
-    "get",
+    "post",
     "/orders/export/",
     { 
-      params,
+      data,
       responseType: "blob"
     }
   );
