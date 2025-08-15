@@ -57,7 +57,7 @@ const searchForm = reactive<CommentListParams>({
   date_from: "",
   date_to: "",
   page: 1,
-  per_page: 10,
+  page_size: 10,
   parent: undefined
 });
 
@@ -104,7 +104,7 @@ const handleSelectionChange = (val: Comment[]) => {
 const fetchComments = async () => {
   try {
     searchForm.page = pagination.currentPage;
-    searchForm.per_page = pagination.pageSize;
+    searchForm.page_size = pagination.pageSize;
 
     await cmsStore.fetchCommentList(searchForm);
   } catch (error) {

@@ -162,7 +162,7 @@ const searchArticles = async (query: string) => {
     articleLoading.value = true;
     const response = await cmsStore.fetchArticleList({
       search: query,
-      per_page: 20
+      page_size: 20
     });
     articleOptions.value = response.data.map((article: Article) => ({
       label: article.title,
@@ -184,7 +184,7 @@ const fetchParentComments = async (articleId: number) => {
     loading.value = true;
     const response = await cmsStore.fetchCommentList({
       article: articleId,
-      per_page: 100
+      page_size: 100
     });
     parentCommentOptions.value = response.data.map((comment: Comment) => ({
       label:

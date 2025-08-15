@@ -67,8 +67,8 @@ const pagination = reactive({
 const searchForm = reactive<ArticleListParams>({
   search: "",
   status: undefined,
-  category: undefined,
-  tag: undefined,
+  category_id: undefined,
+  tag_id: undefined,
   is_featured: undefined,
   is_pinned: undefined,
   date_from: "",
@@ -113,7 +113,7 @@ const fetchArticleList = async () => {
     const params: ArticleListParams = {
       ...searchForm,
       page: pagination.currentPage,
-      per_page: pagination.pageSize,
+      page_size: pagination.pageSize,
     };
     
     await cmsStore.fetchArticleList(params);

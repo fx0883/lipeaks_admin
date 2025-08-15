@@ -287,7 +287,7 @@ export const useCmsStore = defineStore("cms", {
               this.articles = {
                 total: pagination.count || 0,
                 page: pagination.current_page || params.page || 1,
-                limit: pagination.page_size || params.per_page || 10,
+                limit: pagination.page_size || 10,
                 data: Array.isArray(results) ? results : []
               };
             } else if ("results" in response.data && "count" in response.data) {
@@ -295,7 +295,7 @@ export const useCmsStore = defineStore("cms", {
               this.articles = {
                 total: (response.data.count as number) || 0,
                 page: params.page || 1,
-                limit: params.per_page || 10,
+                limit: params.page_size || 10,
                 data: Array.isArray(response.data.results)
                   ? response.data.results
                   : []
@@ -559,7 +559,7 @@ export const useCmsStore = defineStore("cms", {
             this.comments = {
               total: (response.data.count as number) || 0,
               page: params.page || 1,
-              limit: params.per_page || 10,
+              limit: params.page_size || 10,
               data: Array.isArray(response.data.results)
                 ? response.data.results
                 : []
@@ -786,7 +786,7 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await getCategoryList(params);
         console.log("[CmsStore] fetchCategoryList - 分类列表API响应:", response);
-        
+
         // 详细检查响应格式
         if (response && response.data) {
           console.log("[CmsStore] fetchCategoryList - 分类列表数据有效, 长度:", response.data.length);
@@ -833,12 +833,12 @@ export const useCmsStore = defineStore("cms", {
       try {
         // 首先获取分类列表
         await this.fetchCategoryList();
-        
+
         // 从分类列表构建树形结构
         const buildTree = () => {
           // 找出所有顶级分类（没有父级的分类）
           const rootCategories = this.categoryList.filter(item => !item.parent);
-          
+
           // 递归构建子树
           const buildSubTree = (parentId: number): Category[] => {
             return this.categoryList
@@ -848,17 +848,17 @@ export const useCmsStore = defineStore("cms", {
                 children: buildSubTree(item.id)
               }));
           };
-          
+
           // 为每个顶级分类添加子分类
           return rootCategories.map(root => ({
             ...root,
             children: buildSubTree(root.id)
           }));
         };
-        
+
         this.categoryTree = buildTree();
         console.log("构建的树形结构:", this.categoryTree);
-        
+
         return this.categoryTree;
       } catch (error) {
         console.error("构建分类树失败", error);
@@ -879,7 +879,7 @@ export const useCmsStore = defineStore("cms", {
         console.log("[CmsStore] fetchCategoryDetail - 开始获取分类详情:", id);
         const response = await getCategoryDetail(id);
         console.log("[CmsStore] fetchCategoryDetail - API响应:", response);
-        
+
         if (response && response.data) {
           console.log("[CmsStore] fetchCategoryDetail - 分类详情数据:", response.data);
           this.categoryDetail = response.data;
@@ -972,7 +972,7 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await getTagList(params);
         console.log("[CmsStore] fetchTagList - 标签列表API响应:", response);
-        
+
         // 处理API响应
         if (response && response.data) {
           console.log("[CmsStore] fetchTagList - 响应数据:", response.data);
@@ -1006,7 +1006,7 @@ export const useCmsStore = defineStore("cms", {
           this.tags.data = [];
           this.tags.total = 0;
         }
-        
+
         return response;
       } catch (error) {
         console.error("[CmsStore] fetchTagList - 获取标签列表失败:", error);

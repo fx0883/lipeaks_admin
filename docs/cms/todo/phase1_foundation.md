@@ -59,12 +59,12 @@ export interface Article {
 // 文章列表参数
 export interface ArticleListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   search?: string;
   status?: ArticleStatus;
-  category?: number;
-  tag?: number;
-  author?: number;
+  category_id?: number;
+  tag_id?: number;
+  author_id?: number;
   is_featured?: boolean;
   is_pinned?: boolean;
   date_from?: string;
@@ -135,7 +135,7 @@ export interface Comment {
 // 评论列表参数
 export interface CommentListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   status?: CommentStatus;
   article?: number;
   user?: number;
@@ -196,7 +196,7 @@ export interface CategorySimple {
 // 分类列表参数
 export interface CategoryListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   search?: string;
   parent?: number;
   is_active?: boolean;
@@ -269,7 +269,7 @@ export interface TagGroupSimple {
 // 标签列表参数
 export interface TagListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   search?: string;
   group?: number;
   is_active?: boolean;
@@ -291,7 +291,7 @@ export interface TagUpdateParams extends Partial<TagCreateParams> {}
 // 标签组列表参数
 export interface TagGroupListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   search?: string;
   is_active?: boolean;
 }

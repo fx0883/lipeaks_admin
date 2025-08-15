@@ -13,6 +13,21 @@ export type ArticleVisibility = 'public' | 'private' | 'password';
 // 内容类型枚举
 export type ContentType = 'markdown' | 'html';
 
+// 简化的分类信息
+export interface CategorySimple {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+// 简化的标签信息
+export interface TagSimple {
+  id: number;
+  name: string;
+  slug: string;
+  color?: string;
+}
+
 // 文章模型
 export interface Article {
   id: number;
@@ -50,12 +65,12 @@ export interface Article {
 // 文章列表参数
 export interface ArticleListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   search?: string;
   status?: ArticleStatus;
-  category?: number;
-  tag?: number;
-  author?: number;
+  category_id?: number;
+  tag_id?: number;
+  author_id?: number;
   is_featured?: boolean;
   is_pinned?: boolean;
   date_from?: string;
@@ -85,7 +100,7 @@ export interface ArticleCreateParams {
 }
 
 // 文章更新参数
-export interface ArticleUpdateParams extends Partial<ArticleCreateParams> {}
+export interface ArticleUpdateParams extends Partial<ArticleCreateParams> { }
 
 // 评论相关类型
 // --------------------------------------------
@@ -125,7 +140,7 @@ export interface Comment {
 // 评论列表参数
 export interface CommentListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   status?: CommentStatus;
   article?: number;
   user?: number;
@@ -282,7 +297,7 @@ export interface TagGroupSimple {
 // 标签组列表参数
 export interface TagGroupListParams {
   page?: number;
-  per_page?: number;
+  page_size?: number;
   search?: string;
   is_active?: boolean;
 }
@@ -296,7 +311,7 @@ export interface TagGroupCreateParams {
 }
 
 // 标签组更新参数
-export interface TagGroupUpdateParams extends Partial<TagGroupCreateParams> {}
+export interface TagGroupUpdateParams extends Partial<TagGroupCreateParams> { }
 
 // 文章统计数据
 export interface ArticleStatistics {

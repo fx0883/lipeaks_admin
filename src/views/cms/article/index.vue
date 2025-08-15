@@ -56,14 +56,14 @@ const pagination = reactive({
 const searchForm = reactive<ArticleListParams>({
   search: "",
   status: undefined,
-  category: undefined,
-  tag: undefined,
+  category_id: undefined,
+  tag_id: undefined,
   is_featured: undefined,
   is_pinned: undefined,
   date_from: "",
   date_to: "",
   page: 1,
-  per_page: 10
+  page_size: 10
 });
 
 // 确认对话框
@@ -126,7 +126,7 @@ const handleSelectionChange = (val: Article[]) => {
 const fetchArticles = async () => {
   try {
     searchForm.page = pagination.currentPage;
-    searchForm.per_page = pagination.pageSize;
+    searchForm.page_size = pagination.pageSize;
 
     // 处理布尔值转换
     const params = { ...searchForm };
@@ -139,15 +139,15 @@ const fetchArticles = async () => {
     console.log("[ArticleIndex] 文章列表请求参数:", params);
 
     // 确保分类ID是数字类型
-    if (params.category !== undefined && params.category !== null) {
-      params.category = Number(params.category);
-      console.log("[ArticleIndex] 使用分类过滤:", params.category);
+    if (params.category_id !== undefined && params.category_id !== null) {
+      params.category_id = Number(params.category_id);
+      console.log("[ArticleIndex] 使用分类过滤:", params.category_id);
     }
 
     // 确保标签ID是数字类型
-    if (params.tag !== undefined && params.tag !== null) {
-      params.tag = Number(params.tag);
-      console.log("[ArticleIndex] 使用标签过滤:", params.tag);
+    if (params.tag_id !== undefined && params.tag_id !== null) {
+      params.tag_id = Number(params.tag_id);
+      console.log("[ArticleIndex] 使用标签过滤:", params.tag_id);
     }
 
     await cmsStore.fetchArticleList(params);
@@ -250,8 +250,8 @@ const handleSearch = () => {
 const resetSearch = () => {
   searchForm.search = "";
   searchForm.status = undefined;
-  searchForm.category = undefined;
-  searchForm.tag = undefined;
+  searchForm.category_id = undefined;
+  searchForm.tag_id = undefined;
   searchForm.is_featured = undefined;
   searchForm.is_pinned = undefined;
   searchForm.date_from = "";
@@ -566,7 +566,7 @@ onMounted(() => {
           <el-col :span="8">
             <el-form-item :label="t('cms.article.category')">
               <el-select
-                v-model="searchForm.category"
+                v-model="searchForm.category_id"
                 clearable
                 class="w-full"
                 placeholder="选择分类"
@@ -584,7 +584,7 @@ onMounted(() => {
           <el-col :span="8">
             <el-form-item :label="t('cms.article.tag')">
               <el-select 
-                v-model="searchForm.tag" 
+                v-model="searchForm.tag_id" 
                 clearable 
                 class="w-full"
                 placeholder="选择标签"
