@@ -99,13 +99,13 @@ docker login
 2. 为镜像添加标签（替换 `your_username` 为您的 Docker Hub 用户名）：
 
 ```powershell
-docker tag lipeaks_backend:latest your_username/lipeaks_backend:latest
+docker tag lipeaks_admin:latest fx0883/lipeaks_admin:latest
 ```
 
 3. 推送镜像到 Docker Hub：
 
 ```powershell
-docker push your_username/lipeaks_backend:latest
+docker push fx0883/lipeaks_admin:latest
 ```
 
 4. 验证推送结果：访问 `https://hub.docker.com/r/your_username/lipeaks_backend`
