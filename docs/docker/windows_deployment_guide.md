@@ -56,7 +56,7 @@ cd D:\GitHub\lipeaks_backend  # 替换为您的实际项目路径
 2. 构建 Docker 镜像：
 
 ```powershell
-docker build -t lipeaks_backend:latest .
+docker build -t lipeaks_admin:latest .
 ```
 
 3. 检查构建的镜像：
