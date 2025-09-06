@@ -1,0 +1,599 @@
+{
+  "menu": {
+    "name": "license",
+    "title": "license.menu.title",
+    "icon": "Document",
+    "path": "/license",
+    "redirect": "/license/dashboard",
+    "meta": {
+      "title": "license.menu.title",
+      "icon": "Document",
+      "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+      "permissions": ["dashboard:view"]
+    },
+    "children": [
+      {
+        "name": "license-dashboard",
+        "title": "license.menu.dashboard",
+        "path": "/license/dashboard",
+        "component": "views/license/dashboard/index",
+        "meta": {
+          "title": "license.menu.dashboard",
+          "icon": "Odometer",
+          "affix": true,
+          "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+          "permissions": ["dashboard:view"],
+          "cache": true
+        }
+      },
+      {
+        "name": "license-products",
+        "title": "license.menu.products",
+        "path": "/license/products",
+        "component": "views/license/products/index",
+        "meta": {
+          "title": "license.menu.products",
+          "icon": "Box",
+          "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+          "permissions": ["product:view"],
+          "cache": true
+        },
+        "children": [
+          {
+            "name": "product-create",
+            "title": "license.products.create",
+            "path": "/license/products/create",
+            "component": "views/license/products/create",
+            "meta": {
+              "title": "license.products.create",
+              "activeMenu": "/license/products",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager"],
+              "permissions": ["product:create"]
+            }
+          },
+          {
+            "name": "product-edit",
+            "title": "license.products.edit",
+            "path": "/license/products/:id/edit",
+            "component": "views/license/products/edit",
+            "meta": {
+              "title": "license.products.edit",
+              "activeMenu": "/license/products",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager"],
+              "permissions": ["product:edit"]
+            }
+          },
+          {
+            "name": "product-detail",
+            "title": "license.products.detail",
+            "path": "/license/products/:id",
+            "component": "views/license/products/detail",
+            "meta": {
+              "title": "license.products.detail",
+              "activeMenu": "/license/products",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+              "permissions": ["product:view"]
+            }
+          }
+        ]
+      },
+      {
+        "name": "license-plans",
+        "title": "license.menu.plans",
+        "path": "/license/plans",
+        "component": "views/license/plans/index",
+        "meta": {
+          "title": "license.menu.plans",
+          "icon": "Calendar",
+          "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+          "permissions": ["plan:view"],
+          "cache": true
+        },
+        "children": [
+          {
+            "name": "plan-create",
+            "title": "license.plans.create",
+            "path": "/license/plans/create",
+            "component": "views/license/plans/create",
+            "meta": {
+              "title": "license.plans.create",
+              "activeMenu": "/license/plans",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager"],
+              "permissions": ["plan:create"]
+            }
+          },
+          {
+            "name": "plan-edit",
+            "title": "license.plans.edit",
+            "path": "/license/plans/:id/edit",
+            "component": "views/license/plans/edit",
+            "meta": {
+              "title": "license.plans.edit",
+              "activeMenu": "/license/plans",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager"],
+              "permissions": ["plan:edit"]
+            }
+          },
+          {
+            "name": "plan-detail",
+            "title": "license.plans.detail",
+            "path": "/license/plans/:id",
+            "component": "views/license/plans/detail",
+            "meta": {
+              "title": "license.plans.detail",
+              "activeMenu": "/license/plans",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+              "permissions": ["plan:view"]
+            }
+          }
+        ]
+      },
+      {
+        "name": "license-licenses",
+        "title": "license.menu.licenses",
+        "path": "/license/licenses",
+        "component": "views/license/licenses/index",
+        "meta": {
+          "title": "license.menu.licenses",
+          "icon": "Key",
+          "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+          "permissions": ["license:view"],
+          "cache": true
+        },
+        "children": [
+          {
+            "name": "license-create",
+            "title": "license.licenses.create",
+            "path": "/license/licenses/create",
+            "component": "views/license/licenses/create",
+            "meta": {
+              "title": "license.licenses.create",
+              "activeMenu": "/license/licenses",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_operator"],
+              "permissions": ["license:create"]
+            }
+          },
+          {
+            "name": "license-edit",
+            "title": "license.licenses.edit",
+            "path": "/license/licenses/:id/edit",
+            "component": "views/license/licenses/edit",
+            "meta": {
+              "title": "license.licenses.edit",
+              "activeMenu": "/license/licenses",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_operator"],
+              "permissions": ["license:edit"]
+            }
+          },
+          {
+            "name": "license-detail",
+            "title": "license.licenses.detail",
+            "path": "/license/licenses/:id",
+            "component": "views/license/licenses/detail",
+            "meta": {
+              "title": "license.licenses.detail",
+              "activeMenu": "/license/licenses",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+              "permissions": ["license:view"]
+            }
+          }
+        ]
+      },
+      {
+        "name": "license-machines",
+        "title": "license.menu.machines",
+        "path": "/license/machines",
+        "component": "views/license/machines/index",
+        "meta": {
+          "title": "license.menu.machines",
+          "icon": "Monitor",
+          "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+          "permissions": ["machine:view"],
+          "cache": true
+        },
+        "children": [
+          {
+            "name": "machine-detail",
+            "title": "license.machines.detail",
+            "path": "/license/machines/:id",
+            "component": "views/license/machines/detail",
+            "meta": {
+              "title": "license.machines.detail",
+              "activeMenu": "/license/machines",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+              "permissions": ["machine:view"]
+            }
+          }
+        ]
+      },
+      {
+        "name": "license-activations",
+        "title": "license.menu.activations",
+        "path": "/license/activations",
+        "component": "views/license/activations/index",
+        "meta": {
+          "title": "license.menu.activations",
+          "icon": "Connection",
+          "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+          "permissions": ["activation:view"],
+          "cache": true
+        },
+        "children": [
+          {
+            "name": "activation-detail",
+            "title": "license.activations.detail",
+            "path": "/license/activations/:id",
+            "component": "views/license/activations/detail",
+            "meta": {
+              "title": "license.activations.detail",
+              "activeMenu": "/license/activations",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"],
+              "permissions": ["activation:view"]
+            }
+          }
+        ]
+      },
+      {
+        "name": "license-audit-logs",
+        "title": "license.menu.auditLogs",
+        "path": "/license/audit-logs",
+        "component": "views/license/audit-logs/index",
+        "meta": {
+          "title": "license.menu.auditLogs",
+          "icon": "DocumentChecked",
+          "roles": ["super_admin", "license_manager", "license_viewer"],
+          "permissions": ["audit:view"],
+          "cache": true
+        },
+        "children": [
+          {
+            "name": "audit-log-detail",
+            "title": "license.auditLogs.detail",
+            "path": "/license/audit-logs/:id",
+            "component": "views/license/audit-logs/detail",
+            "meta": {
+              "title": "license.auditLogs.detail",
+              "activeMenu": "/license/audit-logs",
+              "hidden": true,
+              "roles": ["super_admin", "license_manager", "license_viewer"],
+              "permissions": ["audit:view"]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "breadcrumb": {
+    "/license/dashboard": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.dashboard",
+        "path": "/license/dashboard"
+      }
+    ],
+    "/license/products": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.products",
+        "path": "/license/products"
+      }
+    ],
+    "/license/products/create": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.products",
+        "path": "/license/products"
+      },
+      {
+        "title": "license.products.create",
+        "path": "/license/products/create"
+      }
+    ],
+    "/license/products/:id/edit": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.products",
+        "path": "/license/products"
+      },
+      {
+        "title": "license.products.edit",
+        "path": ""
+      }
+    ],
+    "/license/products/:id": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.products",
+        "path": "/license/products"
+      },
+      {
+        "title": "license.products.detail",
+        "path": ""
+      }
+    ],
+    "/license/plans": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.plans",
+        "path": "/license/plans"
+      }
+    ],
+    "/license/plans/create": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.plans",
+        "path": "/license/plans"
+      },
+      {
+        "title": "license.plans.create",
+        "path": "/license/plans/create"
+      }
+    ],
+    "/license/plans/:id/edit": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.plans",
+        "path": "/license/plans"
+      },
+      {
+        "title": "license.plans.edit",
+        "path": ""
+      }
+    ],
+    "/license/plans/:id": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.plans",
+        "path": "/license/plans"
+      },
+      {
+        "title": "license.plans.detail",
+        "path": ""
+      }
+    ],
+    "/license/licenses": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.licenses",
+        "path": "/license/licenses"
+      }
+    ],
+    "/license/licenses/create": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.licenses",
+        "path": "/license/licenses"
+      },
+      {
+        "title": "license.licenses.create",
+        "path": "/license/licenses/create"
+      }
+    ],
+    "/license/licenses/:id/edit": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.licenses",
+        "path": "/license/licenses"
+      },
+      {
+        "title": "license.licenses.edit",
+        "path": ""
+      }
+    ],
+    "/license/licenses/:id": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.licenses",
+        "path": "/license/licenses"
+      },
+      {
+        "title": "license.licenses.detail",
+        "path": ""
+      }
+    ],
+    "/license/machines": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.machines",
+        "path": "/license/machines"
+      }
+    ],
+    "/license/machines/:id": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.machines",
+        "path": "/license/machines"
+      },
+      {
+        "title": "license.machines.detail",
+        "path": ""
+      }
+    ],
+    "/license/activations": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.activations",
+        "path": "/license/activations"
+      }
+    ],
+    "/license/activations/:id": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.activations",
+        "path": "/license/activations"
+      },
+      {
+        "title": "license.activations.detail",
+        "path": ""
+      }
+    ],
+    "/license/audit-logs": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.auditLogs",
+        "path": "/license/audit-logs"
+      }
+    ],
+    "/license/audit-logs/:id": [
+      {
+        "title": "license.menu.title",
+        "path": "/license"
+      },
+      {
+        "title": "license.menu.auditLogs",
+        "path": "/license/audit-logs"
+      },
+      {
+        "title": "license.auditLogs.detail",
+        "path": ""
+      }
+    ]
+  },
+  "quickActions": [
+    {
+      "name": "create-product",
+      "title": "license.products.create",
+      "icon": "Plus",
+      "path": "/license/products/create",
+      "permissions": ["product:create"],
+      "roles": ["super_admin", "license_manager"]
+    },
+    {
+      "name": "create-plan",
+      "title": "license.plans.create",
+      "icon": "Plus",
+      "path": "/license/plans/create",
+      "permissions": ["plan:create"],
+      "roles": ["super_admin", "license_manager"]
+    },
+    {
+      "name": "create-license",
+      "title": "license.licenses.create",
+      "icon": "Plus",
+      "path": "/license/licenses/create",
+      "permissions": ["license:create"],
+      "roles": ["super_admin", "license_manager", "license_operator"]
+    },
+    {
+      "name": "view-dashboard",
+      "title": "license.menu.dashboard",
+      "icon": "Odometer",
+      "path": "/license/dashboard",
+      "permissions": ["dashboard:view"],
+      "roles": ["super_admin", "license_manager", "license_operator", "license_viewer"]
+    }
+  ],
+  "shortcuts": [
+    {
+      "key": "Ctrl+D",
+      "action": "go-to-dashboard",
+      "path": "/license/dashboard",
+      "description": "license.shortcuts.dashboard"
+    },
+    {
+      "key": "Ctrl+P",
+      "action": "create-product",
+      "path": "/license/products/create",
+      "description": "license.shortcuts.createProduct",
+      "permissions": ["product:create"]
+    },
+    {
+      "key": "Ctrl+L",
+      "action": "create-license",
+      "path": "/license/licenses/create",
+      "description": "license.shortcuts.createLicense",
+      "permissions": ["license:create"]
+    },
+    {
+      "key": "Ctrl+Shift+L",
+      "action": "view-licenses",
+      "path": "/license/licenses",
+      "description": "license.shortcuts.viewLicenses",
+      "permissions": ["license:view"]
+    }
+  ],
+  "tabConfig": {
+    "maxTabs": 10,
+    "persistTabs": true,
+    "defaultTabs": [
+      {
+        "name": "license-dashboard",
+        "title": "license.menu.dashboard",
+        "path": "/license/dashboard",
+        "affix": true
+      }
+    ]
+  },
+  "pageConfig": {
+    "defaultPageSize": 20,
+    "pageSizeOptions": [10, 20, 50, 100],
+    "showQuickJumper": true,
+    "showSizeChanger": true,
+    "showTotal": true
+  }
+}
