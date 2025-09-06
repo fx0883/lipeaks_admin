@@ -1013,6 +1013,281 @@ panel:
   pureMixTip: 混合菜单布局
   pureTagsStyle: 标签风格
   pureTagsStyleSmart: 灵动模式
+
+license:
+  menu:
+    licenseManagement: 许可证管理
+    productManagement: 产品管理
+    productList: 产品列表
+    productCreate: 创建产品
+    productEdit: 编辑产品
+    productDetail: 产品详情
+    planManagement: 计划管理
+    planList: 计划列表
+    planCreate: 创建计划
+    licenseList: 许可证列表
+    licenseIndex: 许可证管理
+    licenseCreate: 创建许可证
+    licenseDetail: 许可证详情
+    machineManagement: 机器管理
+    machineList: 机器列表
+    activationManagement: 激活管理
+    activationList: 激活列表
+    auditLogManagement: 审计日志管理
+    auditLogList: 审计日志列表
+
+  products:
+    management: 产品管理
+    list: 产品列表
+    create: 创建产品
+    edit: 编辑产品
+    update: 更新产品
+    detail: 产品详情
+    delete: 删除产品
+    search: 搜索产品
+    searchPlaceholder: 搜索产品名称或版本
+    total: 共 {count} 个产品
+    fetchError: 获取产品列表失败
+    createSuccess: 产品创建成功
+    createError: 产品创建失败
+    updateSuccess: 产品更新成功
+    updateError: 产品更新失败
+    deleteSuccess: 产品删除成功
+    deleteError: 产品删除失败
+    deleteConfirm: 确认删除产品 "{name}" 吗？
+    
+    id: ID
+    name: 产品名称
+    namePlaceholder: 请输入产品名称
+    nameRequired: 产品名称不能为空
+    nameLength: 产品名称长度应为2-100个字符
+    version: 版本
+    versionPlaceholder: 请输入版本号，如 1.0.0
+    versionRequired: 版本号不能为空
+    versionFormat: 版本号格式不正确，应为 x.y.z 格式
+    description: 描述
+    descriptionPlaceholder: 请输入产品描述
+    descriptionLength: 描述长度不能超过500个字符
+    status: 状态
+    statusPlaceholder: 请选择状态
+    isActive: 是否激活
+    metadata: 元数据
+    metadataConfig: 元数据配置
+    metadataKey: 键名
+    metadataValue: 键值
+    addMetadata: 添加元数据
+    noMetadata: 暂无元数据配置
+    createdAt: 创建时间
+    updatedAt: 更新时间
+    
+    basicInfo: 基本信息
+    statistics: 统计信息
+    plansCount: 计划数量
+    licensesCount: 许可证数量
+    activeLicensesCount: 活跃许可证数量
+
+  plans:
+    management: 计划管理
+    search: 搜索计划
+    searchPlaceholder: 搜索计划名称或类型
+    product: 产品
+    productPlaceholder: 请选择产品
+    type: 计划类型
+    typePlaceholder: 请选择计划类型
+    typeAll: 全部类型
+    typeTrial: 试用版
+    typeBasic: 基础版
+    typeProfessional: 专业版
+    typeEnterprise: 企业版
+    status: 状态
+    statusPlaceholder: 请选择状态
+    statusAll: 全部状态
+    statusActive: 已激活
+    statusInactive: 未激活
+    total: 共 {count} 个计划
+    fetchError: 获取计划列表失败
+    create: 创建计划
+    deleteConfirm: 确认删除计划 "{name}" 吗？
+    deleteSuccess: 计划删除成功
+    deleteError: 计划删除失败
+    
+    id: ID
+    name: 计划名称
+    maxActivations: 最大激活数
+    duration: 有效期
+    price: 价格
+    features: 功能特性
+    unlimited: 无限制
+    oneDay: 1天
+    oneWeek: 1周
+    oneMonth: 1个月
+    oneYear: 1年
+    daysCount: "{count}天"
+
+  licenses:
+    management: 许可证管理
+    search: 搜索许可证
+    searchPlaceholder: 搜索许可证密钥或客户
+    product: 产品
+    productPlaceholder: 请选择产品
+    plan: 计划
+    planPlaceholder: 请选择计划
+    status: 状态
+    statusPlaceholder: 请选择状态
+    statusAll: 全部状态
+    statusActive: 已激活
+    statusExpired: 已过期
+    statusRevoked: 已撤销
+    statusSuspended: 已暂停
+    total: 共 {count} 个许可证
+    fetchError: 获取许可证列表失败
+    create: 创建许可证
+    download: 下载
+    revoke: 撤销
+    revokeConfirm: 确认撤销许可证 {key} 吗？
+    revokeSuccess: 许可证撤销成功
+    revokeError: 许可证撤销失败
+    deleteConfirm: 确认删除许可证 {key} 吗？
+    deleteSuccess: 许可证删除成功
+    deleteError: 许可证删除失败
+    downloadSuccess: 许可证文件下载成功
+    downloadError: 许可证文件下载失败
+    copySuccess: 许可证密钥复制成功
+    copyError: 许可证密钥复制失败
+    
+    id: ID
+    licenseKey: 许可证密钥
+    activations: 激活数
+    expiresAt: 过期时间
+    customer: 客户
+    permanent: 永久有效
+    expired: 已过期
+    expiringSoon: "{days}天后过期"
+
+  machines:
+    management: 机器管理
+    search: 搜索机器
+    searchPlaceholder: 搜索主机名或指纹
+    license: 许可证
+    licensePlaceholder: 请选择许可证
+    status: 状态
+    statusPlaceholder: 请选择状态
+    statusAll: 全部状态
+    statusActive: 已激活
+    statusInactive: 未激活
+    total: 共 {count} 台机器
+    fetchError: 获取机器列表失败
+    unbind: 解绑
+    unbindConfirm: 确认解绑机器 {fingerprint} 吗？
+    unbindSuccess: 机器解绑成功
+    unbindError: 机器解绑失败
+    batchUnbind: 批量解绑
+    batchUnbindConfirm: 确认批量解绑 {count} 台机器吗？
+    batchUnbindSuccess: 批量解绑成功
+    batchUnbindError: 批量解绑失败
+    selectMachines: 请先选择要解绑的机器
+    deleteConfirm: 确认删除机器记录 {fingerprint} 吗？
+    deleteSuccess: 机器记录删除成功
+    deleteError: 机器记录删除失败
+    
+    id: ID
+    fingerprint: 机器指纹
+    hostname: 主机名
+    osInfo: 操作系统
+    hardwareInfo: 硬件信息
+    lastSeen: 最后活跃
+    firstSeen: 首次绑定
+    never: 从未
+    justNow: 刚刚
+    minutesAgo: "{minutes}分钟前"
+    hoursAgo: "{hours}小时前"
+    daysAgo: "{days}天前"
+
+  activations:
+    management: 激活管理
+    search: 搜索激活记录
+    searchPlaceholder: 搜索激活ID或IP地址
+    license: 许可证
+    licensePlaceholder: 请选择许可证
+    machine: 机器
+    machinePlaceholder: 请选择机器
+    status: 状态
+    statusPlaceholder: 请选择状态
+    statusAll: 全部状态
+    statusActive: 已激活
+    statusInactive: 未激活
+    statusExpired: 已过期
+    statusRevoked: 已撤销
+    total: 共 {count} 条激活记录
+    fetchError: 获取激活记录失败
+    revoke: 撤销激活
+    revokeConfirm: 确认撤销激活记录 {id} 吗？
+    revokeSuccess: 激活记录撤销成功
+    revokeError: 激活记录撤销失败
+    batchRevoke: 批量撤销
+    batchRevokeConfirm: 确认批量撤销 {count} 条激活记录吗？
+    batchRevokeSuccess: 批量撤销成功
+    batchRevokeError: 批量撤销失败
+    selectActivations: 请先选择要撤销的激活记录
+    noActiveActivations: 没有可撤销的激活记录
+    deleteConfirm: 确认删除激活记录 {id} 吗？
+    deleteSuccess: 激活记录删除成功
+    deleteError: 激活记录删除失败
+    
+    id: ID
+    activatedAt: 激活时间
+    lastHeartbeat: 最后心跳
+    ipAddress: IP地址
+    userAgent: 用户代理
+    metadata: 元数据
+
+  auditLogs:
+    management: 审计日志管理
+    search: 搜索日志
+    searchPlaceholder: 搜索操作描述或资源ID
+    action: 操作类型
+    actionPlaceholder: 请选择操作类型
+    actionAll: 全部操作
+    actionCreate: 创建
+    actionUpdate: 更新
+    actionDelete: 删除
+    actionActivate: 激活
+    actionDeactivate: 停用
+    actionRevoke: 撤销
+    actionBind: 绑定
+    actionUnbind: 解绑
+    actionView: 查看
+    actionDownload: 下载
+    resourceType: 资源类型
+    resourceTypePlaceholder: 请选择资源类型
+    resourceAll: 全部资源
+    resourceProduct: 产品
+    resourcePlan: 计划
+    resourceLicense: 许可证
+    resourceActivation: 激活记录
+    resourceMachine: 机器
+    dateRange: 日期范围
+    startDate: 开始日期
+    endDate: 结束日期
+    total: 共 {count} 条日志
+    fetchError: 获取审计日志失败
+    description: 记录详情页面，显示完整的审计日志信息
+    
+    id: ID
+    resourceId: 资源ID
+    user: 操作用户
+    system: 系统
+    ipAddress: IP地址
+    userAgent: 用户代理
+    changes: 变更内容
+    changesCount: "{count}个变更"
+    createdAt: 操作时间
+
+  common:
+    active: 已激活
+    inactive: 未激活
+    warning: 警告
+    refresh: 刷新
   pureTagsStyleSmartTip: 灵动的标签页模式
   pureTagsStyleCard: 卡片模式
   pureTagsStyleCardTip: 卡片标签页模式

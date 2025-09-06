@@ -1542,3 +1542,514 @@ member:
   resetPasswordConfirm: Please enter new password
   resetPasswordSuccess: Password reset successfully
   newPasswordPlaceholder: Please enter new password
+
+license:
+  # Menu items
+  menu:
+    licenseManagement: License Management
+    productManagement: Product Management
+    productList: Product List
+    productCreate: Create Product
+    productEdit: Edit Product
+    productDetail: Product Detail
+    planManagement: Plan Management
+    planList: Plan List
+    planCreate: Create Plan
+    planEdit: Edit Plan
+    planDetail: Plan Detail
+    licenseList: License List
+    licenseCreate: Create License
+    licenseEdit: Edit License
+    licenseDetail: License Detail
+    machineManagement: Machine Management
+    machineList: Machine List
+    machineDetail: Machine Detail
+    activationManagement: Activation Management
+    activationList: Activation List
+    activationDetail: Activation Detail
+    auditLogManagement: Audit Log Management
+    auditLogList: Audit Log List
+    dashboard: License Dashboard
+
+  # Product Management
+  products:
+    title: Product Management
+    list: Product List
+    create: Create Product
+    edit: Edit Product
+    detail: Product Detail
+    view: View Product
+    delete: Delete Product
+    search: Search Product
+    searchPlaceholder: Search by product name or description
+    filter: Filter Product
+    cancel: Cancel
+    save: Save
+    backToList: Back to List
+    
+    # Form fields
+    name: Product Name
+    namePlaceholder: Please enter product name
+    nameRequired: Product name is required
+    nameLength: Product name should be 2-100 characters
+    description: Description
+    descriptionPlaceholder: Please enter product description
+    descriptionRequired: Description is required
+    version: Version
+    versionPlaceholder: Please enter version (e.g., 1.0.0)
+    versionRequired: Version is required
+    versionInvalid: Invalid version format
+    category: Category
+    categoryPlaceholder: Please select category
+    categoryRequired: Category is required
+    status: Status
+    statusActive: Active
+    statusInactive: Inactive
+    statusDeprecated: Deprecated
+    statusAll: All Status
+    isActive: Active
+    createdAt: Created At
+    updatedAt: Updated At
+    actions: Actions
+    
+    # Metadata
+    metadata: Metadata
+    metadataKey: Key
+    metadataValue: Value
+    metadataKeyPlaceholder: Please enter key
+    metadataValuePlaceholder: Please enter value
+    metadataKeyRequired: Key is required
+    metadataValueRequired: Value is required
+    addMetadata: Add Metadata
+    removeMetadata: Remove Metadata
+    
+    # Statistics
+    statistics: Statistics
+    totalPlans: Total Plans
+    totalLicenses: Total Licenses
+    activeLicenses: Active Licenses
+    expiredLicenses: Expired Licenses
+    
+    # Messages
+    createSuccess: Product created successfully
+    createFailed: Failed to create product
+    updateSuccess: Product updated successfully  
+    updateFailed: Failed to update product
+    deleteSuccess: Product deleted successfully
+    deleteFailed: Failed to delete product
+    fetchFailed: Failed to fetch product list
+    fetchDetailFailed: Failed to fetch product details
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete product {name}?
+    editBtn: Edit
+    viewBtn: View
+    deleteBtn: Delete
+    
+    # Navigation
+    navigateToPlans: View Plans
+    navigateToLicenses: View Licenses
+
+  # Plan Management
+  plans:
+    title: Plan Management
+    list: Plan List
+    create: Create Plan
+    edit: Edit Plan
+    detail: Plan Detail
+    view: View Plan
+    delete: Delete Plan
+    search: Search Plan
+    searchPlaceholder: Search by plan name
+    filter: Filter Plan
+    cancel: Cancel
+    save: Save
+    backToList: Back to List
+    
+    # Form fields
+    id: Plan ID
+    name: Plan Name
+    namePlaceholder: Please enter plan name
+    nameRequired: Plan name is required
+    nameLength: Plan name should be 2-100 characters
+    description: Description
+    descriptionPlaceholder: Please enter plan description
+    product: Product
+    productPlaceholder: Please select product
+    productRequired: Product is required
+    type: Plan Type
+    typePlaceholder: Please select plan type
+    typeRequired: Plan type is required
+    typeBasic: Basic
+    typePro: Professional
+    typeEnterprise: Enterprise
+    typeCustom: Custom
+    price: Price
+    pricePlaceholder: Please enter price
+    priceRequired: Price is required
+    priceInvalid: Invalid price format
+    currency: Currency
+    currencyUSD: USD
+    currencyEUR: EUR
+    currencyCNY: CNY
+    duration: Duration (Days)
+    durationPlaceholder: Please enter duration in days
+    durationRequired: Duration is required
+    durationInvalid: Duration must be a positive number
+    maxActivations: Max Activations
+    maxActivationsPlaceholder: Please enter max activations
+    maxActivationsRequired: Max activations is required
+    maxActivationsInvalid: Max activations must be a positive number
+    maxMachines: Max Machines
+    maxMachinesPlaceholder: Please enter max machines
+    maxMachinesRequired: Max machines is required
+    maxMachinesInvalid: Max machines must be a positive number
+    features: Features
+    featuresPlaceholder: Please enter features (one per line)
+    restrictions: Restrictions
+    restrictionsPlaceholder: Please enter restrictions (one per line)
+    status: Status
+    statusActive: Active
+    statusInactive: Inactive
+    statusArchived: Archived
+    statusAll: All Status
+    isActive: Active
+    createdAt: Created At
+    updatedAt: Updated At
+    actions: Actions
+    
+    # Messages
+    createSuccess: Plan created successfully
+    createFailed: Failed to create plan
+    updateSuccess: Plan updated successfully
+    updateFailed: Failed to update plan
+    deleteSuccess: Plan deleted successfully
+    deleteFailed: Failed to delete plan
+    fetchFailed: Failed to fetch plan list
+    fetchDetailFailed: Failed to fetch plan details
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete plan {name}?
+    editBtn: Edit
+    viewBtn: View
+    deleteBtn: Delete
+
+  # License Management
+  licenses:
+    title: License Management
+    list: License List
+    create: Create License
+    edit: Edit License
+    detail: License Detail
+    view: View License
+    delete: Delete License
+    revoke: Revoke License
+    download: Download License
+    copyKey: Copy License Key
+    search: Search License
+    searchPlaceholder: Search by license key or customer
+    filter: Filter License
+    cancel: Cancel
+    save: Save
+    backToList: Back to List
+    
+    # Form fields
+    id: License ID
+    key: License Key
+    keyPlaceholder: License key will be generated automatically
+    plan: Plan
+    planPlaceholder: Please select plan
+    planRequired: Plan is required
+    customer: Customer
+    customerPlaceholder: Please enter customer name
+    customerRequired: Customer is required
+    customerEmail: Customer Email
+    customerEmailPlaceholder: Please enter customer email
+    customerEmailRequired: Customer email is required
+    customerEmailInvalid: Invalid email format
+    expiresAt: Expires At
+    expiresAtPlaceholder: Please select expiration date
+    expiresAtRequired: Expiration date is required
+    activationsUsed: Activations Used
+    activationsRemaining: Activations Remaining
+    machinesUsed: Machines Used
+    machinesRemaining: Machines Remaining
+    status: Status
+    statusActive: Active
+    statusExpired: Expired
+    statusRevoked: Revoked
+    statusSuspended: Suspended
+    statusAll: All Status
+    isActive: Active
+    createdAt: Created At
+    updatedAt: Updated At
+    actions: Actions
+    metadata: Metadata
+    notes: Notes
+    notesPlaceholder: Please enter notes
+    
+    # Actions
+    copySuccess: License key copied successfully
+    copyError: Failed to copy license key
+    downloadSuccess: License downloaded successfully
+    downloadError: Failed to download license
+    revokeSuccess: License revoked successfully
+    revokeError: Failed to revoke license
+    
+    # Messages
+    createSuccess: License created successfully
+    createFailed: Failed to create license
+    updateSuccess: License updated successfully
+    updateFailed: Failed to update license
+    deleteSuccess: License deleted successfully
+    deleteFailed: Failed to delete license
+    fetchFailed: Failed to fetch license list
+    fetchDetailFailed: Failed to fetch license details
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete license {key}?
+    confirmRevoke: Confirm Revoke
+    confirmRevokeMessage: Are you sure you want to revoke license {key}?
+    editBtn: Edit
+    viewBtn: View
+    deleteBtn: Delete
+    revokeBtn: Revoke
+    downloadBtn: Download
+    copyBtn: Copy Key
+
+  # Machine Management
+  machines:
+    title: Machine Management
+    list: Machine List
+    detail: Machine Detail
+    view: View Machine
+    delete: Delete Machine  
+    unbind: Unbind Machine
+    batchUnbind: Batch Unbind
+    search: Search Machine
+    searchPlaceholder: Search by machine ID or fingerprint
+    filter: Filter Machine
+    cancel: Cancel
+    backToList: Back to List
+    
+    # Form fields
+    id: Machine ID
+    fingerprint: Machine Fingerprint
+    licenseKey: License Key
+    license: License
+    hostname: Hostname
+    osInfo: OS Information
+    osName: OS Name
+    osVersion: OS Version
+    osArch: OS Architecture
+    cpuInfo: CPU Information
+    memoryInfo: Memory Information
+    diskInfo: Disk Information
+    networkInfo: Network Information
+    ipAddress: IP Address
+    macAddress: MAC Address
+    userAgent: User Agent
+    firstActivatedAt: First Activated At
+    lastActivatedAt: Last Activated At
+    activationCount: Activation Count
+    status: Status
+    statusActive: Active
+    statusInactive: Inactive
+    statusBlacklisted: Blacklisted
+    statusAll: All Status
+    isActive: Active
+    createdAt: Created At
+    updatedAt: Updated At
+    actions: Actions
+    metadata: Metadata
+    
+    # Selection
+    selectMachines: Please select machines first
+    selectedCount: Selected {count} machines
+    
+    # Messages
+    unbindSuccess: Machine unbound successfully
+    unbindError: Failed to unbind machine
+    batchUnbindSuccess: Machines unbound successfully
+    batchUnbindError: Failed to unbind machines
+    deleteSuccess: Machine deleted successfully
+    deleteFailed: Failed to delete machine
+    fetchFailed: Failed to fetch machine list
+    fetchDetailFailed: Failed to fetch machine details
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete machine {fingerprint}?
+    confirmUnbind: Confirm Unbind
+    confirmUnbindMessage: Are you sure you want to unbind machine {fingerprint}?
+    confirmBatchUnbind: Confirm Batch Unbind
+    confirmBatchUnbindMessage: Are you sure you want to unbind {count} selected machines?
+    viewBtn: View
+    deleteBtn: Delete
+    unbindBtn: Unbind
+
+  # Activation Management
+  activations:
+    title: Activation Management
+    list: Activation List
+    detail: Activation Detail
+    view: View Activation
+    delete: Delete Activation
+    revoke: Revoke Activation
+    batchRevoke: Batch Revoke
+    search: Search Activation
+    searchPlaceholder: Search by license key or machine
+    filter: Filter Activation
+    cancel: Cancel
+    backToList: Back to List
+    
+    # Form fields
+    id: Activation ID  
+    licenseKey: License Key
+    license: License
+    machineFingerprint: Machine Fingerprint
+    machine: Machine
+    activatedAt: Activated At
+    expiresAt: Expires At
+    revokedAt: Revoked At
+    ipAddress: IP Address
+    userAgent: User Agent
+    location: Location
+    status: Status
+    statusActive: Active
+    statusExpired: Expired
+    statusRevoked: Revoked
+    statusAll: All Status
+    isActive: Active
+    createdAt: Created At
+    updatedAt: Updated At
+    actions: Actions
+    metadata: Metadata
+    
+    # Selection
+    selectActivations: Please select activations first
+    selectedCount: Selected {count} activations
+    
+    # Messages
+    revokeSuccess: Activation revoked successfully
+    revokeError: Failed to revoke activation
+    batchRevokeSuccess: Activations revoked successfully
+    batchRevokeError: Failed to revoke activations
+    deleteSuccess: Activation deleted successfully
+    deleteFailed: Failed to delete activation
+    fetchFailed: Failed to fetch activation list
+    fetchDetailFailed: Failed to fetch activation details
+    confirmDelete: Confirm Delete
+    confirmDeleteMessage: Are you sure you want to delete this activation?
+    confirmRevoke: Confirm Revoke
+    confirmRevokeMessage: Are you sure you want to revoke this activation?
+    confirmBatchRevoke: Confirm Batch Revoke
+    confirmBatchRevokeMessage: Are you sure you want to revoke {count} selected activations?
+    viewBtn: View
+    deleteBtn: Delete
+    revokeBtn: Revoke
+
+  # Audit Log Management
+  auditLogs:
+    title: Audit Log Management
+    list: Audit Log List
+    detail: Audit Log Detail
+    view: View Audit Log
+    search: Search Audit Log
+    searchPlaceholder: Search by user or resource
+    filter: Filter Audit Log
+    cancel: Cancel
+    backToList: Back to List
+    
+    # Form fields
+    id: Log ID
+    action: Action
+    actionCreate: Create
+    actionUpdate: Update
+    actionDelete: Delete
+    actionActivate: Activate
+    actionRevoke: Revoke
+    actionDownload: Download
+    actionView: View
+    actionLogin: Login
+    actionLogout: Logout
+    actionAll: All Actions
+    resource: Resource
+    resourceType: Resource Type
+    resourceTypeProduct: Product
+    resourceTypePlan: Plan
+    resourceTypeLicense: License
+    resourceTypeMachine: Machine
+    resourceTypeActivation: Activation
+    resourceTypeUser: User
+    resourceTypeAll: All Types
+    resourceId: Resource ID
+    user: User
+    userAgent: User Agent
+    ipAddress: IP Address
+    location: Location
+    timestamp: Timestamp
+    createdAt: Created At
+    metadata: Metadata
+    details: Details
+    
+    # Action types with colors
+    getActionTagType: Get Action Tag Type
+    
+    # Messages
+    fetchFailed: Failed to fetch audit log list
+    fetchDetailFailed: Failed to fetch audit log details
+    viewBtn: View
+
+  # Common
+  common:
+    id: ID
+    name: Name
+    description: Description
+    status: Status
+    createdAt: Created At
+    updatedAt: Updated At
+    actions: Actions
+    search: Search
+    filter: Filter
+    reset: Reset
+    cancel: Cancel
+    save: Save
+    edit: Edit
+    view: View
+    delete: Delete
+    create: Create
+    update: Update
+    back: Back
+    confirm: Confirm
+    yes: Yes
+    no: No
+    active: Active
+    inactive: Inactive
+    loading: Loading...
+    noData: No Data
+    operation: Operation
+    operationSuccess: Operation successful
+    operationFailed: Operation failed
+    confirmAction: Confirm Action
+    
+    # Pagination
+    total: Total {total} items
+    page: Page
+    pageSize: Items per page
+    
+    # Date/Time
+    dateRange: Date Range
+    startDate: Start Date
+    endDate: End Date
+    selectDate: Select Date
+    selectDateRange: Select Date Range
+    
+    # Form validation
+    required: This field is required
+    invalid: Invalid format
+    tooShort: Too short
+    tooLong: Too long
+    
+    # Status tags
+    statusTagActive: Active
+    statusTagInactive: Inactive
+    statusTagExpired: Expired
+    statusTagRevoked: Revoked
+    statusTagSuspended: Suspended
+    statusTagBlacklisted: Blacklisted

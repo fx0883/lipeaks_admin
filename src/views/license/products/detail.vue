@@ -1,0 +1,497 @@
+<script lang="ts" setup>
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter, useRoute } from "vue-router";
+import { ElMessage } from "element-plus";
+import {
+  ArrowLeft,
+  Edit,
+  Delete,
+  Key,
+  Box
+} from "@element-plus/icons-vue";
+import { useLicenseStoreHook } from "@/store/modules/license";
+import type { Product } from "@/types/license";
+import { hasPerms } from "@/utils/auth";
+import logger from "@/utils/logger";
+
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
+const licenseStore = useLicenseStoreHook();
+
+// 检查用户权限
+const checkPermission = () => {
+  return hasPerms("license:view");
+};
+
+if (!checkPermission()) {
+  ElMessage.error("无权限访问此页面");
+  router.push("/license/products");
+}
+
+// 获取产品ID
+const productId = Number(route.params.id);
+
+// 加载状态
+const pageLoading = ref(false);
+
+// 产品数据
+const product = ref<Product | null>(null);
+
+// 统计数据
+const stats = ref({
+  plansCount: 0,
+  licensesCount: 0,
+  activeLicensesCount: 0
+});
+
+// 获取产品详情
+const fetchProduct = async () => {
+  try {
+    pageLoading.value = true;
+    
+    const productData = await licenseStore.fetchProductDetail(productId);
+    product.value = productData;
+    
+    // 获取统计数据
+    await fetchStats();
+    
+  } catch (error) {
+    logger.error("获取产品详情失败", error);
+    ElMessage.error(t("license.products.fetchError"));
+    router.push("/license/products");
+  } finally {
+    pageLoading.value = false;
+  }
+};
+
+// 获取统计数据
+const fetchStats = async () => {
+  try {
+    // 获取计划数量
+    const plansResponse = await licenseStore.fetchPlanList({ 
+      product_id: productId, 
+      page: 1, 
+      page_size: 1 
+    });
+    stats.value.plansCount = plansResponse.total || 0;
+    
+    // 获取许可证数量
+    const licensesResponse = await licenseStore.fetchLicenseList({ 
+      product_id: productId, 
+      page: 1, 
+      page_size: 1 
+    });
+    stats.value.licensesCount = licensesResponse.total || 0;
+    
+    // 获取活跃许可证数量
+    const activeLicensesResponse = await licenseStore.fetchLicenseList({ 
+      product_id: productId, 
+      status: "active",
+      page: 1, 
+      page_size: 1 
+    });
+    stats.value.activeLicensesCount = activeLicensesResponse.total || 0;
+    
+  } catch (error) {
+    logger.error("获取统计数据失败", error);
+  }
+};
+
+// 返回列表
+const handleBack = () => {
+  router.push("/license/products");
+};
+
+// 编辑产品
+const handleEdit = () => {
+  if (!hasPerms("license:edit")) {
+    ElMessage.error("无权限执行此操作");
+    return;
+  }
+  router.push(`/license/products/edit/${productId}`);
+};
+
+// 查看计划
+const handleViewPlans = () => {
+  router.push(`/license/plans?product_id=${productId}`);
+};
+
+// 查看许可证
+const handleViewLicenses = () => {
+  router.push(`/license/licenses?product_id=${productId}`);
+};
+
+// 格式化创建时间
+const formatCreatedAt = (createdAt: string) => {
+  return new Date(createdAt).toLocaleString();
+};
+
+// 格式化更新时间
+const formatUpdatedAt = (updatedAt: string) => {
+  return new Date(updatedAt).toLocaleString();
+};
+
+// 页面加载时获取数据
+onMounted(() => {
+  fetchProduct();
+});
+</script>
+
+<template>
+  <div class="product-detail">
+    <!-- 页面头部 -->
+    <el-card class="header-card">
+      <div class="header-content">
+        <div class="header-left">
+          <el-button :icon="ArrowLeft" @click="handleBack">
+            {{ t("common.back") }}
+          </el-button>
+          <h2 class="page-title">{{ t("license.products.detail") }}</h2>
+        </div>
+        
+        <div v-if="product" class="header-right">
+          <el-button
+            v-if="hasPerms('license:edit')"
+            type="primary"
+            :icon="Edit"
+            @click="handleEdit"
+          >
+            {{ t("common.edit") }}
+          </el-button>
+        </div>
+      </div>
+    </el-card>
+
+    <!-- 产品信息 -->
+    <el-card v-loading="pageLoading" class="info-card">
+      <template v-if="product">
+        <div class="product-header">
+          <div class="product-basic">
+            <div class="product-title">
+              <el-icon class="product-icon"><Box /></el-icon>
+              <h3>{{ product.name }}</h3>
+              <el-tag :type="product.is_active ? 'success' : 'info'">
+                {{ product.is_active ? t('common.active') : t('common.inactive') }}
+              </el-tag>
+            </div>
+            <div class="product-version">
+              <span class="version-label">{{ t("license.products.version") }}:</span>
+              <code class="version-code">v{{ product.version }}</code>
+            </div>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <!-- 基本信息 -->
+        <div class="info-section">
+          <h4 class="section-title">{{ t("license.products.basicInfo") }}</h4>
+          
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <div class="info-item">
+                <span class="info-label">{{ t("license.products.id") }}:</span>
+                <span class="info-value">{{ product.id }}</span>
+              </div>
+            </el-col>
+            
+            <el-col :span="12">
+              <div class="info-item">
+                <span class="info-label">{{ t("license.products.createdAt") }}:</span>
+                <span class="info-value">{{ formatCreatedAt(product.created_at) }}</span>
+              </div>
+            </el-col>
+            
+            <el-col :span="12">
+              <div class="info-item">
+                <span class="info-label">{{ t("license.products.updatedAt") }}:</span>
+                <span class="info-value">{{ formatUpdatedAt(product.updated_at) }}</span>
+              </div>
+            </el-col>
+          </el-row>
+
+          <div v-if="product.description" class="info-item full-width">
+            <span class="info-label">{{ t("license.products.description") }}:</span>
+            <p class="info-value description">{{ product.description }}</p>
+          </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats-section">
+          <h4 class="section-title">{{ t("license.products.statistics") }}</h4>
+          
+          <el-row :gutter="24">
+            <el-col :span="8">
+              <el-card class="stat-card" @click="handleViewPlans">
+                <div class="stat-content">
+                  <div class="stat-icon plans">
+                    <el-icon><Key /></el-icon>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-number">{{ stats.plansCount }}</div>
+                    <div class="stat-label">{{ t("license.products.plansCount") }}</div>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+            
+            <el-col :span="8">
+              <el-card class="stat-card" @click="handleViewLicenses">
+                <div class="stat-content">
+                  <div class="stat-icon licenses">
+                    <el-icon><Key /></el-icon>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-number">{{ stats.licensesCount }}</div>
+                    <div class="stat-label">{{ t("license.products.licensesCount") }}</div>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+            
+            <el-col :span="8">
+              <el-card class="stat-card">
+                <div class="stat-content">
+                  <div class="stat-icon active">
+                    <el-icon><Key /></el-icon>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-number">{{ stats.activeLicensesCount }}</div>
+                    <div class="stat-label">{{ t("license.products.activeLicensesCount") }}</div>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- 元数据信息 -->
+        <div v-if="product.metadata && Object.keys(product.metadata).length > 0" class="metadata-section">
+          <h4 class="section-title">{{ t("license.products.metadata") }}</h4>
+          
+          <div class="metadata-grid">
+            <div
+              v-for="(value, key) in product.metadata"
+              :key="key"
+              class="metadata-item"
+            >
+              <span class="metadata-key">{{ key }}:</span>
+              <span class="metadata-value">{{ value }}</span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </el-card>
+  </div>
+</template>
+
+<style scoped>
+.product-detail {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header-card,
+.info-card {
+  background: #ffffff;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-title {
+  margin: 0;
+  color: #303133;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.product-header {
+  margin-bottom: 24px;
+}
+
+.product-basic {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-icon {
+  font-size: 24px;
+  color: #409eff;
+}
+
+.product-title h3 {
+  margin: 0;
+  color: #303133;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.product-version {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.version-label {
+  color: #909399;
+  font-size: 14px;
+}
+
+.version-code {
+  background: #f0f9ff;
+  color: #0369a1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.info-section,
+.stats-section,
+.metadata-section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  margin: 0 0 16px 0;
+  color: #303133;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #ebeef5;
+  padding-bottom: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.info-item.full-width {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-label {
+  color: #606266;
+  font-weight: 500;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.info-value {
+  color: #303133;
+}
+
+.description {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.stat-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.stat-icon.plans {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.stat-icon.licenses {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.stat-icon.active {
+  background: #e8f5e8;
+  color: #388e3c;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 600;
+  color: #303133;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #606266;
+  margin-top: 4px;
+}
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.metadata-item {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+}
+
+.metadata-key {
+  color: #606266;
+  font-weight: 500;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.metadata-value {
+  color: #303133;
+  word-break: break-word;
+}
+</style>

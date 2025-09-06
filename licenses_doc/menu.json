@@ -1,0 +1,282 @@
+{
+    "path": "/license",
+    "name": "LicenseManagement", 
+    "meta": {
+        "title": "license.menu.licenseManagement",
+        "rank": 6,
+        "showLink": true,
+        "icon": "ri:key-2-line",
+        "showParent": true,
+        "keepAlive": false,
+        "frameLoading": true,
+        "hiddenTag": false
+    },
+    "redirect": "/license/products",
+    "children": [
+        {
+            "path": "/license/products",
+            "name": "ProductManagement",
+            "meta": {
+                "title": "license.menu.productManagement", 
+                "rank": 0,
+                "showLink": true,
+                "icon": "ri:box-3-line",
+                "showParent": true,
+                "keepAlive": true,
+                "frameLoading": false,
+                "hiddenTag": false
+            },
+            "children": [
+                {
+                    "path": "/license/products/index",
+                    "name": "ProductList",
+                    "meta": {
+                        "title": "license.menu.productList",
+                        "rank": 0,
+                        "showLink": true,
+                        "icon": "ri:list-check",
+                        "showParent": false,
+                        "keepAlive": false,
+                        "frameLoading": false,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/products/index.vue"
+                },
+                {
+                    "path": "/license/products/create",
+                    "name": "ProductCreate",
+                    "meta": {
+                        "title": "license.menu.productCreate",
+                        "rank": 1,
+                        "showLink": false,
+                        "showParent": true,
+                        "keepAlive": false,
+                        "frameLoading": true,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/products/create.vue"
+                },
+                {
+                    "path": "/license/products/edit/:id",
+                    "name": "ProductEdit", 
+                    "meta": {
+                        "title": "license.menu.productEdit",
+                        "rank": 2,
+                        "showLink": false,
+                        "showParent": true,
+                        "keepAlive": false,
+                        "frameLoading": true,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/products/edit.vue"
+                },
+                {
+                    "path": "/license/products/detail/:id",
+                    "name": "ProductDetail",
+                    "meta": {
+                        "title": "license.menu.productDetail",
+                        "rank": 3,
+                        "showLink": false,
+                        "showParent": true,
+                        "keepAlive": false,
+                        "frameLoading": true,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/products/detail.vue"
+                }
+            ]
+        },
+        {
+            "path": "/license/plans",
+            "name": "PlanManagement",
+            "meta": {
+                "title": "license.menu.planManagement",
+                "rank": 1,
+                "showLink": true,
+                "icon": "ri:vip-crown-line",
+                "showParent": true,
+                "keepAlive": true,
+                "frameLoading": false,
+                "hiddenTag": false
+            },
+            "children": [
+                {
+                    "path": "/license/plans/index",
+                    "name": "PlanList",
+                    "meta": {
+                        "title": "license.menu.planList",
+                        "rank": 0,
+                        "showLink": true,
+                        "showParent": false,
+                        "keepAlive": false,
+                        "frameLoading": false,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/plans/index.vue"
+                },
+                {
+                    "path": "/license/plans/create",
+                    "name": "PlanCreate",
+                    "meta": {
+                        "title": "license.menu.planCreate",
+                        "rank": 1,
+                        "showLink": false,
+                        "showParent": true,
+                        "keepAlive": false,
+                        "frameLoading": true,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/plans/create.vue"
+                }
+            ]
+        },
+        {
+            "path": "/license/licenses",
+            "name": "LicenseList",
+            "meta": {
+                "title": "license.menu.licenseList",
+                "rank": 2,
+                "showLink": true,
+                "icon": "ri:key-line",
+                "showParent": true,
+                "keepAlive": true,
+                "frameLoading": false,
+                "hiddenTag": false
+            },
+            "children": [
+                {
+                    "path": "/license/licenses/index",
+                    "name": "LicenseIndex",
+                    "meta": {
+                        "title": "license.menu.licenseIndex",
+                        "rank": 0,
+                        "showLink": true,
+                        "showParent": false,
+                        "keepAlive": false,
+                        "frameLoading": false,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/licenses/index.vue"
+                },
+                {
+                    "path": "/license/licenses/create",
+                    "name": "LicenseCreate",
+                    "meta": {
+                        "title": "license.menu.licenseCreate",
+                        "rank": 1,
+                        "showLink": false,
+                        "showParent": true,
+                        "keepAlive": false,
+                        "frameLoading": true,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/licenses/create.vue"
+                },
+                {
+                    "path": "/license/licenses/detail/:id",
+                    "name": "LicenseDetail",
+                    "meta": {
+                        "title": "license.menu.licenseDetail",
+                        "rank": 2,
+                        "showLink": false,
+                        "showParent": true,
+                        "keepAlive": false,
+                        "frameLoading": true,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/licenses/detail.vue"
+                }
+            ]
+        },
+        {
+            "path": "/license/machines",
+            "name": "MachineManagement",
+            "meta": {
+                "title": "license.menu.machineManagement",
+                "rank": 3,
+                "showLink": true,
+                "icon": "ri:computer-line",
+                "showParent": true,
+                "keepAlive": true,
+                "frameLoading": false,
+                "hiddenTag": false
+            },
+            "children": [
+                {
+                    "path": "/license/machines/index",
+                    "name": "MachineList",
+                    "meta": {
+                        "title": "license.menu.machineList",
+                        "rank": 0,
+                        "showLink": true,
+                        "showParent": false,
+                        "keepAlive": false,
+                        "frameLoading": false,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/machines/index.vue"
+                }
+            ]
+        },
+        {
+            "path": "/license/activations",
+            "name": "ActivationManagement",
+            "meta": {
+                "title": "license.menu.activationManagement",
+                "rank": 4,
+                "showLink": true,
+                "icon": "ri:shield-check-line",
+                "showParent": true,
+                "keepAlive": true,
+                "frameLoading": false,
+                "hiddenTag": false
+            },
+            "children": [
+                {
+                    "path": "/license/activations/index",
+                    "name": "ActivationList",
+                    "meta": {
+                        "title": "license.menu.activationList",
+                        "rank": 0,
+                        "showLink": true,
+                        "showParent": false,
+                        "keepAlive": false,
+                        "frameLoading": false,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/activations/index.vue"
+                }
+            ]
+        },
+        {
+            "path": "/license/audit-logs",
+            "name": "AuditLogManagement",
+            "meta": {
+                "title": "license.menu.auditLogManagement", 
+                "rank": 5,
+                "showLink": true,
+                "icon": "ri:file-list-3-line",
+                "showParent": true,
+                "keepAlive": true,
+                "frameLoading": false,
+                "hiddenTag": false
+            },
+            "children": [
+                {
+                    "path": "/license/audit-logs/index",
+                    "name": "AuditLogList",
+                    "meta": {
+                        "title": "license.menu.auditLogList",
+                        "rank": 0,
+                        "showLink": true,
+                        "showParent": false,
+                        "keepAlive": false,
+                        "frameLoading": false,
+                        "hiddenTag": false
+                    },
+                    "component": "/src/views/license/audit-logs/index.vue"
+                }
+            ]
+        }
+    ]
+}
