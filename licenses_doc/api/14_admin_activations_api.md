@@ -4,7 +4,7 @@
 
 激活记录管理API提供许可证激活历史的查看和分析功能，用于追踪激活过程和监控异常行为。
 
-**Base URL**: `/api/v1/licenses/admin/activations/`  
+**Base URL**: `/licenses/admin/activations/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 **访问权限**: 只读
@@ -41,7 +41,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/activations/
+GET /licenses/admin/activations/
 Authorization: Bearer {access_token}
 ```
 
@@ -65,8 +65,8 @@ Authorization: Bearer {access_token}
     "success": true,
     "data": {
         "count": 234,
-        "next": "https://api.example.com/api/v1/licenses/admin/activations/?page=3",
-        "previous": "https://api.example.com/api/v1/licenses/admin/activations/?page=1",
+        "next": "https://api.example.com/licenses/admin/activations/?page=3",
+        "previous": "https://api.example.com/licenses/admin/activations/?page=1",
         "results": [
             {
                 "id": 1,
@@ -96,7 +96,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/activations/{id}/
+GET /licenses/admin/activations/{id}/
 Authorization: Bearer {access_token}
 ```
 
@@ -147,7 +147,7 @@ Authorization: Bearer {access_token}
 
 #### 获取激活统计
 ```http
-GET /api/v1/licenses/admin/activations/statistics/
+GET /licenses/admin/activations/statistics/
 Authorization: Bearer {access_token}
 ```
 
@@ -222,7 +222,7 @@ Authorization: Bearer {access_token}
 
 #### 获取异常激活记录
 ```http
-GET /api/v1/licenses/admin/activations/anomalies/
+GET /licenses/admin/activations/anomalies/
 Authorization: Bearer {access_token}
 ```
 

@@ -4,7 +4,7 @@
 
 许可证方案管理API提供软件产品下不同许可方案的管理功能，包括方案创建、复制、统计等。
 
-**Base URL**: `/api/v1/licenses/admin/plans/`  
+**Base URL**: `/licenses/admin/plans/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 
@@ -54,7 +54,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/plans/
+GET /licenses/admin/plans/
 Authorization: Bearer {access_token}
 ```
 
@@ -111,7 +111,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-POST /api/v1/licenses/admin/plans/
+POST /licenses/admin/plans/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -167,7 +167,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-POST /api/v1/licenses/admin/plans/{id}/copy/
+POST /licenses/admin/plans/{id}/copy/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 

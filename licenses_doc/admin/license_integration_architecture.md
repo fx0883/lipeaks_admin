@@ -140,7 +140,7 @@ import type {
 export function getProductList(params: ProductListParams) {
   return http.request<PaginationResponse<SoftwareProduct>>(
     "get", 
-    "/api/v1/licenses/products/", 
+    "/licenses/products/", 
     { params }
   );
 }
@@ -149,7 +149,7 @@ export function getProductList(params: ProductListParams) {
 export function getPlanList(params: PlanListParams) {
   return http.request<PaginationResponse<LicensePlan>>(
     "get", 
-    "/api/v1/licenses/plans/", 
+    "/licenses/plans/", 
     { params }
   );
 }
@@ -158,7 +158,7 @@ export function getPlanList(params: PlanListParams) {
 export function getLicenseList(params: LicenseListParams) {
   return http.request<PaginationResponse<License>>(
     "get", 
-    "/api/v1/licenses/licenses/", 
+    "/licenses/licenses/", 
     { params }
   );
 }

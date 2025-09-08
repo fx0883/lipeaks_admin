@@ -4,7 +4,7 @@
 
 报告API提供许可证系统的统计分析和数据报告功能，支持许可证使用情况、激活趋势、收入分析等多维度报告。
 
-**Base URL**: `/api/v1/licenses/reports/`  
+**Base URL**: `/licenses/reports/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 
@@ -14,7 +14,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/reports/
+GET /licenses/reports/
 Authorization: Bearer {access_token}
 ```
 
@@ -53,7 +53,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-POST /api/v1/licenses/reports/generate/
+POST /licenses/reports/generate/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -94,7 +94,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-GET /api/v1/licenses/reports/dashboard/
+GET /licenses/reports/dashboard/
 Authorization: Bearer {access_token}
 ```
 
@@ -176,7 +176,7 @@ Authorization: Bearer {access_token}
 
 #### 许可证统计
 ```http
-GET /api/v1/licenses/reports/dashboard/license_stats/
+GET /licenses/reports/dashboard/license_stats/
 Authorization: Bearer {access_token}
 ```
 
@@ -214,7 +214,7 @@ Authorization: Bearer {access_token}
 
 #### 激活统计
 ```http
-GET /api/v1/licenses/reports/dashboard/activation_stats/
+GET /licenses/reports/dashboard/activation_stats/
 Authorization: Bearer {access_token}
 ```
 
@@ -254,7 +254,7 @@ Authorization: Bearer {access_token}
 
 #### 收入统计
 ```http
-GET /api/v1/licenses/reports/dashboard/revenue_stats/
+GET /licenses/reports/dashboard/revenue_stats/
 Authorization: Bearer {access_token}
 ```
 

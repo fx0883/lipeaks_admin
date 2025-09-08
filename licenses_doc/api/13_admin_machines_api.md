@@ -4,7 +4,7 @@
 
 机器绑定管理API提供许可证与硬件设备绑定关系的查看和管理功能，确保许可证在授权设备上使用。
 
-**Base URL**: `/api/v1/licenses/admin/machine-bindings/`  
+**Base URL**: `/licenses/admin/machine-bindings/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 **访问权限**: 只读
@@ -39,7 +39,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/machine-bindings/
+GET /licenses/admin/machine-bindings/
 Authorization: Bearer {access_token}
 ```
 
@@ -90,7 +90,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/machine-bindings/{id}/
+GET /licenses/admin/machine-bindings/{id}/
 Authorization: Bearer {access_token}
 ```
 
@@ -143,7 +143,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-DELETE /api/v1/licenses/admin/machine-bindings/{id}/
+DELETE /licenses/admin/machine-bindings/{id}/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -170,7 +170,7 @@ HTTP/1.1 204 No Content
 
 #### 阻止机器
 ```http
-POST /api/v1/licenses/admin/machine-bindings/{id}/block/
+POST /licenses/admin/machine-bindings/{id}/block/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -182,7 +182,7 @@ Content-Type: application/json
 
 #### 解除阻止
 ```http
-POST /api/v1/licenses/admin/machine-bindings/{id}/unblock/
+POST /licenses/admin/machine-bindings/{id}/unblock/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 

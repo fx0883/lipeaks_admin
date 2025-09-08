@@ -38,10 +38,10 @@ import logger from "@/utils/logger";
  */
 export function getProductList(params: ProductListParams = {}) {
   logger.debug("API请求: 获取产品列表", params);
-  
+
   return http.request<PaginationResponse<SoftwareProduct>>(
     "get",
-    "/api/v1/licenses/products/",
+    "/licenses/admin/products/",
     { params }
   );
 }
@@ -51,10 +51,10 @@ export function getProductList(params: ProductListParams = {}) {
  */
 export function getProductDetail(id: number) {
   logger.debug("API请求: 获取产品详情", { id });
-  
+
   return http.request<ApiResponse<SoftwareProduct>>(
     "get",
-    `/api/v1/licenses/products/${id}/`
+    `/licenses/admin/products/${id}/`
   );
 }
 
@@ -63,10 +63,10 @@ export function getProductDetail(id: number) {
  */
 export function createProduct(data: ProductCreateParams) {
   logger.debug("API请求: 创建产品", data);
-  
+
   return http.request<ApiResponse<SoftwareProduct>>(
     "post",
-    "/api/v1/licenses/products/",
+    "/licenses/admin/products/",
     { data }
   );
 }
@@ -76,10 +76,23 @@ export function createProduct(data: ProductCreateParams) {
  */
 export function updateProduct(id: number, data: ProductUpdateParams) {
   logger.debug("API请求: 更新产品", { id, data });
-  
+
   return http.request<ApiResponse<SoftwareProduct>>(
     "put",
-    `/api/v1/licenses/products/${id}/`,
+    `/licenses/admin/products/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 部分更新产品
+ */
+export function patchProduct(id: number, data: Partial<ProductUpdateParams>) {
+  logger.debug("API请求: 部分更新产品", { id, data });
+
+  return http.request<ApiResponse<SoftwareProduct>>(
+    "patch",
+    `/licenses/admin/products/${id}/`,
     { data }
   );
 }
@@ -89,10 +102,34 @@ export function updateProduct(id: number, data: ProductUpdateParams) {
  */
 export function deleteProduct(id: number) {
   logger.debug("API请求: 删除产品", { id });
-  
+
   return http.request<ApiResponse<void>>(
     "delete",
-    `/api/v1/licenses/products/${id}/`
+    `/licenses/admin/products/${id}/`
+  );
+}
+
+/**
+ * 重新生成产品密钥对
+ */
+export function regenerateProductKeypair(id: number) {
+  logger.debug("API请求: 重新生成产品密钥对", { id });
+
+  return http.request<ApiResponse<{ public_key: string; private_key: string }>>(
+    "post",
+    `/licenses/admin/products/${id}/regenerate_keypair/`
+  );
+}
+
+/**
+ * 获取产品统计信息
+ */
+export function getProductStatistics(id: number) {
+  logger.debug("API请求: 获取产品统计信息", { id });
+
+  return http.request<ApiResponse<any>>(
+    "get",
+    `/licenses/admin/products/${id}/statistics/`
   );
 }
 
@@ -105,10 +142,10 @@ export function deleteProduct(id: number) {
  */
 export function getPlanList(params: PlanListParams = {}) {
   logger.debug("API请求: 获取计划列表", params);
-  
+
   return http.request<PaginationResponse<LicensePlan>>(
     "get",
-    "/api/v1/licenses/plans/",
+    "/licenses/admin/plans/",
     { params }
   );
 }
@@ -118,10 +155,10 @@ export function getPlanList(params: PlanListParams = {}) {
  */
 export function getPlanDetail(id: number) {
   logger.debug("API请求: 获取计划详情", { id });
-  
+
   return http.request<ApiResponse<LicensePlan>>(
     "get",
-    `/api/v1/licenses/plans/${id}/`
+    `/licenses/admin/plans/${id}/`
   );
 }
 
@@ -130,11 +167,13 @@ export function getPlanDetail(id: number) {
  */
 export function createPlan(data: PlanCreateParams) {
   logger.debug("API请求: 创建计划", data);
-  
+
   return http.request<ApiResponse<LicensePlan>>(
     "post",
-    "/api/v1/licenses/plans/",
-    { data }
+    "/licenses/admin/plans/",
+    {
+      data
+    }
   );
 }
 
@@ -143,10 +182,23 @@ export function createPlan(data: PlanCreateParams) {
  */
 export function updatePlan(id: number, data: PlanUpdateParams) {
   logger.debug("API请求: 更新计划", { id, data });
-  
+
   return http.request<ApiResponse<LicensePlan>>(
     "put",
-    `/api/v1/licenses/plans/${id}/`,
+    `/licenses/admin/plans/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 部分更新计划
+ */
+export function patchPlan(id: number, data: Partial<PlanUpdateParams>) {
+  logger.debug("API请求: 部分更新计划", { id, data });
+
+  return http.request<ApiResponse<LicensePlan>>(
+    "patch",
+    `/licenses/admin/plans/${id}/`,
     { data }
   );
 }
@@ -156,10 +208,22 @@ export function updatePlan(id: number, data: PlanUpdateParams) {
  */
 export function deletePlan(id: number) {
   logger.debug("API请求: 删除计划", { id });
-  
+
   return http.request<ApiResponse<void>>(
     "delete",
-    `/api/v1/licenses/plans/${id}/`
+    `/licenses/admin/plans/${id}/`
+  );
+}
+
+/**
+ * 复制许可证方案
+ */
+export function duplicatePlan(id: number) {
+  logger.debug("API请求: 复制许可证方案", { id });
+
+  return http.request<ApiResponse<LicensePlan>>(
+    "post",
+    `/licenses/admin/plans/${id}/duplicate/`
   );
 }
 
@@ -172,11 +236,13 @@ export function deletePlan(id: number) {
  */
 export function getLicenseList(params: LicenseListParams = {}) {
   logger.debug("API请求: 获取许可证列表", params);
-  
+
   return http.request<PaginationResponse<License>>(
     "get",
-    "/api/v1/licenses/licenses/",
-    { params }
+    "/licenses/admin/licenses/",
+    {
+      params
+    }
   );
 }
 
@@ -185,10 +251,10 @@ export function getLicenseList(params: LicenseListParams = {}) {
  */
 export function getLicenseDetail(id: string) {
   logger.debug("API请求: 获取许可证详情", { id });
-  
+
   return http.request<ApiResponse<License>>(
     "get",
-    `/api/v1/licenses/licenses/${id}/`
+    `/licenses/admin/licenses/${id}/`
   );
 }
 
@@ -197,24 +263,30 @@ export function getLicenseDetail(id: string) {
  */
 export function createLicense(data: LicenseCreateParams) {
   logger.debug("API请求: 创建许可证", data);
-  
+
   return http.request<ApiResponse<License>>(
     "post",
-    "/api/v1/licenses/licenses/",
-    { data }
+    "/licenses/admin/licenses/",
+    {
+      data
+    }
   );
 }
 
 /**
  * 批量创建许可证
  */
-export function batchCreateLicenses(data: LicenseCreateParams & { quantity: number }) {
+export function batchCreateLicenses(
+  data: LicenseCreateParams & { quantity: number }
+) {
   logger.debug("API请求: 批量创建许可证", data);
-  
+
   return http.request<ApiResponse<License[]>>(
     "post",
-    "/api/v1/licenses/licenses/batch/",
-    { data }
+    "/licenses/admin/licenses/batch/",
+    {
+      data
+    }
   );
 }
 
@@ -223,11 +295,28 @@ export function batchCreateLicenses(data: LicenseCreateParams & { quantity: numb
  */
 export function updateLicense(id: string, data: LicenseUpdateParams) {
   logger.debug("API请求: 更新许可证", { id, data });
-  
+
   return http.request<ApiResponse<License>>(
     "put",
-    `/api/v1/licenses/licenses/${id}/`,
-    { data }
+    `/licenses/admin/licenses/${id}/`,
+    {
+      data
+    }
+  );
+}
+
+/**
+ * 部分更新许可证
+ */
+export function patchLicense(id: string, data: Partial<LicenseUpdateParams>) {
+  logger.debug("API请求: 部分更新许可证", { id, data });
+
+  return http.request<ApiResponse<License>>(
+    "patch",
+    `/licenses/admin/licenses/${id}/`,
+    {
+      data
+    }
   );
 }
 
@@ -236,11 +325,13 @@ export function updateLicense(id: string, data: LicenseUpdateParams) {
  */
 export function revokeLicense(id: string, reason?: string) {
   logger.debug("API请求: 撤销许可证", { id, reason });
-  
+
   return http.request<ApiResponse<License>>(
     "post",
-    `/api/v1/licenses/licenses/${id}/revoke/`,
-    { data: { reason } }
+    `/licenses/admin/licenses/${id}/revoke/`,
+    {
+      data: { reason }
+    }
   );
 }
 
@@ -249,10 +340,40 @@ export function revokeLicense(id: string, reason?: string) {
  */
 export function restoreLicense(id: string) {
   logger.debug("API请求: 恢复许可证", { id });
-  
+
   return http.request<ApiResponse<License>>(
     "post",
-    `/api/v1/licenses/licenses/${id}/restore/`
+    `/licenses/admin/licenses/${id}/restore/`
+  );
+}
+
+/**
+ * 延长许可证有效期
+ */
+export function extendLicense(
+  id: string,
+  data: { extend_days: number; reason?: string }
+) {
+  logger.debug("API请求: 延长许可证有效期", { id, data });
+
+  return http.request<ApiResponse<License>>(
+    "post",
+    `/licenses/admin/licenses/${id}/extend/`,
+    {
+      data
+    }
+  );
+}
+
+/**
+ * 获取许可证使用统计
+ */
+export function getLicenseUsageStats(id: string) {
+  logger.debug("API请求: 获取许可证使用统计", { id });
+
+  return http.request<ApiResponse<any>>(
+    "get",
+    `/licenses/admin/licenses/${id}/usage_stats/`
   );
 }
 
@@ -265,10 +386,10 @@ export function restoreLicense(id: string) {
  */
 export function getMachineBindingList(params: MachineBindingListParams = {}) {
   logger.debug("API请求: 获取机器绑定列表", params);
-  
+
   return http.request<PaginationResponse<MachineBinding>>(
     "get",
-    "/api/v1/licenses/machine-bindings/",
+    "/licenses/admin/machine-bindings/",
     { params }
   );
 }
@@ -278,22 +399,22 @@ export function getMachineBindingList(params: MachineBindingListParams = {}) {
  */
 export function getMachineBindingDetail(id: number) {
   logger.debug("API请求: 获取机器绑定详情", { id });
-  
+
   return http.request<ApiResponse<MachineBinding>>(
     "get",
-    `/api/v1/licenses/machine-bindings/${id}/`
+    `/licenses/admin/machine-bindings/${id}/`
   );
 }
 
 /**
- * 解绑机器
+ * 阻止机器绑定
  */
-export function unbindMachine(id: number, reason?: string) {
-  logger.debug("API请求: 解绑机器", { id, reason });
-  
+export function blockMachine(id: number, reason?: string) {
+  logger.debug("API请求: 阻止机器绑定", { id, reason });
+
   return http.request<ApiResponse<void>>(
     "post",
-    `/api/v1/licenses/machine-bindings/${id}/unbind/`,
+    `/licenses/admin/machine-bindings/${id}/block/`,
     { data: { reason } }
   );
 }
@@ -307,10 +428,10 @@ export function unbindMachine(id: number, reason?: string) {
  */
 export function getActivationList(params: ActivationListParams = {}) {
   logger.debug("API请求: 获取激活记录列表", params);
-  
+
   return http.request<PaginationResponse<LicenseActivation>>(
     "get",
-    "/api/v1/licenses/activations/",
+    "/licenses/admin/activations/",
     { params }
   );
 }
@@ -320,10 +441,10 @@ export function getActivationList(params: ActivationListParams = {}) {
  */
 export function getActivationDetail(id: number) {
   logger.debug("API请求: 获取激活记录详情", { id });
-  
+
   return http.request<ApiResponse<LicenseActivation>>(
     "get",
-    `/api/v1/licenses/activations/${id}/`
+    `/licenses/admin/activations/${id}/`
   );
 }
 
@@ -332,10 +453,10 @@ export function getActivationDetail(id: number) {
  */
 export function deactivateActivation(id: number, reason?: string) {
   logger.debug("API请求: 停用激活", { id, reason });
-  
+
   return http.request<ApiResponse<void>>(
     "post",
-    `/api/v1/licenses/activations/${id}/deactivate/`,
+    `/licenses/admin/activations/${id}/deactivate/`,
     { data: { reason } }
   );
 }
@@ -349,10 +470,10 @@ export function deactivateActivation(id: number, reason?: string) {
  */
 export function getAuditLogList(params: AuditLogListParams = {}) {
   logger.debug("API请求: 获取审计日志列表", params);
-  
+
   return http.request<PaginationResponse<AuditLog>>(
     "get",
-    "/api/v1/licenses/audit-logs/",
+    "/licenses/admin/audit-logs/",
     { params }
   );
 }
@@ -362,10 +483,10 @@ export function getAuditLogList(params: AuditLogListParams = {}) {
  */
 export function getAuditLogDetail(id: number) {
   logger.debug("API请求: 获取审计日志详情", { id });
-  
+
   return http.request<ApiResponse<AuditLog>>(
     "get",
-    `/api/v1/licenses/audit-logs/${id}/`
+    `/licenses/admin/audit-logs/${id}/`
   );
 }
 
@@ -378,10 +499,10 @@ export function getAuditLogDetail(id: number) {
  */
 export function getLicenseStatistics() {
   logger.debug("API请求: 获取许可证统计数据");
-  
+
   return http.request<ApiResponse<LicenseStatistics>>(
     "get",
-    "/api/v1/licenses/statistics/"
+    "/licenses/statistics/"
   );
 }
 
@@ -390,10 +511,10 @@ export function getLicenseStatistics() {
  */
 export function getActivationTrend(params: { period: string; days?: number }) {
   logger.debug("API请求: 获取激活趋势数据", params);
-  
+
   return http.request<ApiResponse<ActivationTrend[]>>(
     "get",
-    "/api/v1/licenses/statistics/activation-trend/",
+    "/licenses/statistics/activation-trend/",
     { params }
   );
 }
@@ -401,12 +522,16 @@ export function getActivationTrend(params: { period: string; days?: number }) {
 /**
  * 获取收入报表
  */
-export function getRevenueReport(params: { period: string; start_date?: string; end_date?: string }) {
+export function getRevenueReport(params: {
+  period: string;
+  start_date?: string;
+  end_date?: string;
+}) {
   logger.debug("API请求: 获取收入报表", params);
-  
+
   return http.request<ApiResponse<RevenueReport[]>>(
     "get",
-    "/api/v1/licenses/statistics/revenue-report/",
+    "/licenses/statistics/revenue-report/",
     { params }
   );
 }
@@ -420,11 +545,11 @@ export function getRevenueReport(params: { period: string; start_date?: string; 
  */
 export function batchDeleteLicenses(ids: string[]) {
   logger.debug("API请求: 批量删除许可证", { ids });
-  
+
   return http.request<ApiResponse<BatchOperationResult>>(
     "post",
-    "/api/v1/licenses/licenses/batch-delete/",
-    { data: { ids } }
+    "/licenses/admin/licenses/batch_operation/",
+    { data: { operation: "delete", ids } }
   );
 }
 
@@ -433,11 +558,11 @@ export function batchDeleteLicenses(ids: string[]) {
  */
 export function batchRevokeLicenses(ids: string[], reason?: string) {
   logger.debug("API请求: 批量撤销许可证", { ids, reason });
-  
+
   return http.request<ApiResponse<BatchOperationResult>>(
     "post",
-    "/api/v1/licenses/licenses/batch-revoke/",
-    { data: { ids, reason } }
+    "/licenses/admin/licenses/batch_operation/",
+    { data: { operation: "revoke", ids, reason } }
   );
 }
 
@@ -446,10 +571,10 @@ export function batchRevokeLicenses(ids: string[], reason?: string) {
  */
 export function batchOperation(params: BatchOperationParams) {
   logger.debug("API请求: 批量操作", params);
-  
+
   return http.request<ApiResponse<BatchOperationResult>>(
     "post",
-    "/api/v1/licenses/batch-operation/",
+    "/licenses/admin/licenses/batch_operation/",
     { data: params }
   );
 }
@@ -463,12 +588,10 @@ export function batchOperation(params: BatchOperationParams) {
  */
 export function exportLicenses(params: ExportParams) {
   logger.debug("API请求: 导出许可证数据", params);
-  
-  return http.request<ApiResponse<ExportResult>>(
-    "post",
-    "/api/v1/licenses/licenses/export/",
-    { data: params }
-  );
+
+  return http.request<ApiResponse<ExportResult>>("post", "/licenses/export/", {
+    data: params
+  });
 }
 
 /**
@@ -476,10 +599,10 @@ export function exportLicenses(params: ExportParams) {
  */
 export function exportActivations(params: ExportParams) {
   logger.debug("API请求: 导出激活记录", params);
-  
+
   return http.request<ApiResponse<ExportResult>>(
     "post",
-    "/api/v1/licenses/activations/export/",
+    "/licenses/activations/export/",
     { data: params }
   );
 }
@@ -489,10 +612,143 @@ export function exportActivations(params: ExportParams) {
  */
 export function exportAuditLogs(params: ExportParams) {
   logger.debug("API请求: 导出审计日志", params);
-  
+
   return http.request<ApiResponse<ExportResult>>(
     "post",
-    "/api/v1/licenses/audit-logs/export/",
+    "/licenses/audit-logs/export/",
     { data: params }
   );
+}
+
+// ============================
+// 租户许可证配额管理 API
+// ============================
+
+/**
+ * 获取租户许可证配额列表
+ */
+export function getTenantQuotaList(params: any = {}) {
+  logger.debug("API请求: 获取租户许可证配额列表", params);
+
+  return http.request<PaginationResponse<any>>(
+    "get",
+    "/licenses/admin/quotas/",
+    { params }
+  );
+}
+
+/**
+ * 获取租户许可证配额详情
+ */
+export function getTenantQuotaDetail(id: number) {
+  logger.debug("API请求: 获取租户许可证配额详情", { id });
+
+  return http.request<ApiResponse<any>>("get", `/licenses/admin/quotas/${id}/`);
+}
+
+/**
+ * 创建租户许可证配额
+ */
+export function createTenantQuota(data: any) {
+  logger.debug("API请求: 创建租户许可证配额", data);
+
+  return http.request<ApiResponse<any>>("post", "/licenses/admin/quotas/", {
+    data
+  });
+}
+
+/**
+ * 更新租户许可证配额
+ */
+export function updateTenantQuota(id: number, data: any) {
+  logger.debug("API请求: 更新租户许可证配额", { id, data });
+
+  return http.request<ApiResponse<any>>(
+    "put",
+    `/licenses/admin/quotas/${id}/`,
+    {
+      data
+    }
+  );
+}
+
+/**
+ * 部分更新租户许可证配额
+ */
+export function patchTenantQuota(id: number, data: any) {
+  logger.debug("API请求: 部分更新租户许可证配额", { id, data });
+
+  return http.request<ApiResponse<any>>(
+    "patch",
+    `/licenses/admin/quotas/${id}/`,
+    {
+      data
+    }
+  );
+}
+
+/**
+ * 删除租户许可证配额
+ */
+export function deleteTenantQuota(id: number) {
+  logger.debug("API请求: 删除租户许可证配额", { id });
+
+  return http.request<ApiResponse<void>>(
+    "delete",
+    `/licenses/admin/quotas/${id}/`
+  );
+}
+
+// ============================
+// 许可证信息查询 API
+// ============================
+
+/**
+ * 获取许可证信息
+ */
+export function getLicenseInfo(licenseKey: string) {
+  logger.debug("API请求: 获取许可证信息", { licenseKey });
+
+  return http.request<ApiResponse<any>>("get", `/licenses/info/${licenseKey}/`);
+}
+
+// ============================
+// 许可证仪表板 API
+// ============================
+
+/**
+ * 获取仪表板统计数据
+ */
+export function getLicenseDashboard() {
+  logger.debug("API请求: 获取仪表板统计数据");
+
+  return http.request<ApiResponse<any>>("get", "/licenses/reports/dashboard/");
+}
+
+// ============================
+// 许可证报表 API
+// ============================
+
+/**
+ * 生成自定义报表
+ */
+export function generateCustomReport(data: any) {
+  logger.debug("API请求: 生成自定义报表", data);
+
+  return http.request<ApiResponse<any>>("post", "/licenses/reports/generate/", {
+    data
+  });
+}
+
+// ============================
+// 许可证服务状态 API
+// ============================
+
+/**
+ * 获取服务器状态
+ */
+export function getLicenseServiceStatus() {
+  logger.debug("API请求: 获取服务器状态");
+
+  return http.request<ApiResponse<any>>("get", "/licenses/status/");
 }

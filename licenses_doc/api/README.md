@@ -37,7 +37,7 @@
 
 ### Base URL
 ```
-https://your-domain.com/api/v1/licenses/
+https://your-domain.com/licenses/
 ```
 
 ### 认证方式

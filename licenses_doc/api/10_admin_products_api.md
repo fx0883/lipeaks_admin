@@ -4,7 +4,7 @@
 
 软件产品管理API提供软件产品的完整生命周期管理功能，包括产品创建、密钥对管理、统计信息查询等。
 
-**Base URL**: `/api/v1/licenses/admin/products/`  
+**Base URL**: `/licenses/admin/products/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 
@@ -42,7 +42,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/products/
+GET /licenses/admin/products/
 Authorization: Bearer {access_token}
 ```
 
@@ -68,8 +68,8 @@ Authorization: Bearer {access_token}
     "success": true,
     "data": {
         "count": 25,
-        "next": "https://api.example.com/api/v1/licenses/admin/products/?page=3",
-        "previous": "https://api.example.com/api/v1/licenses/admin/products/?page=1",
+        "next": "https://api.example.com/licenses/admin/products/?page=3",
+        "previous": "https://api.example.com/licenses/admin/products/?page=1",
         "results": [
             {
                 "id": 1,
@@ -98,7 +98,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-POST /api/v1/licenses/admin/products/
+POST /licenses/admin/products/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -186,7 +186,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/products/{id}/
+GET /licenses/admin/products/{id}/
 Authorization: Bearer {access_token}
 ```
 
@@ -218,7 +218,7 @@ Authorization: Bearer {access_token}
 
 #### 完整更新 (PUT)
 ```http
-PUT /api/v1/licenses/admin/products/{id}/
+PUT /licenses/admin/products/{id}/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -235,7 +235,7 @@ Content-Type: application/json
 
 #### 部分更新 (PATCH)
 ```http
-PATCH /api/v1/licenses/admin/products/{id}/
+PATCH /licenses/admin/products/{id}/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -254,7 +254,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-DELETE /api/v1/licenses/admin/products/{id}/
+DELETE /licenses/admin/products/{id}/
 Authorization: Bearer {access_token}
 ```
 
@@ -287,7 +287,7 @@ HTTP/1.1 204 No Content
 
 #### 请求
 ```http
-POST /api/v1/licenses/admin/products/{id}/regenerate_keypair/
+POST /licenses/admin/products/{id}/regenerate_keypair/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -322,7 +322,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/products/{id}/statistics/
+GET /licenses/admin/products/{id}/statistics/
 Authorization: Bearer {access_token}
 ```
 

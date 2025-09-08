@@ -4,7 +4,7 @@
 
 客户端激活API提供许可证激活、验证和心跳检测功能，供客户端软件集成使用。
 
-**Base URL**: `/api/v1/licenses/`  
+**Base URL**: `/licenses/`  
 **认证要求**: 无需JWT Token（基于许可证验证）  
 **权限要求**: 有效的许可证信息  
 
@@ -14,7 +14,7 @@
 
 #### 请求
 ```http
-POST /api/v1/licenses/activate/
+POST /licenses/activate/
 Content-Type: application/json
 
 {
@@ -85,7 +85,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-POST /api/v1/licenses/verify/
+POST /licenses/verify/
 Content-Type: application/json
 
 {
@@ -115,7 +115,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-POST /api/v1/licenses/heartbeat/
+POST /licenses/heartbeat/
 Content-Type: application/json
 
 {
@@ -141,7 +141,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-POST /api/v1/licenses/info/
+POST /licenses/info/
 Content-Type: application/json
 
 {
@@ -178,7 +178,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-GET /api/v1/licenses/status/
+GET /licenses/status/
 ```
 
 #### 响应

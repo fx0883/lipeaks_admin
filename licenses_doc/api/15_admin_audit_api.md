@@ -4,7 +4,7 @@
 
 安全审计日志API提供系统安全事件的查看和分析功能，用于监控系统安全状态和异常行为追踪。
 
-**Base URL**: `/api/v1/licenses/admin/audit-logs/`  
+**Base URL**: `/licenses/admin/audit-logs/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 **访问权限**: 只读
@@ -70,7 +70,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/audit-logs/
+GET /licenses/admin/audit-logs/
 Authorization: Bearer {access_token}
 ```
 
@@ -95,8 +95,8 @@ Authorization: Bearer {access_token}
     "success": true,
     "data": {
         "count": 1567,
-        "next": "https://api.example.com/api/v1/licenses/admin/audit-logs/?page=3",
-        "previous": "https://api.example.com/api/v1/licenses/admin/audit-logs/?page=1",
+        "next": "https://api.example.com/licenses/admin/audit-logs/?page=3",
+        "previous": "https://api.example.com/licenses/admin/audit-logs/?page=1",
         "results": [
             {
                 "id": 1,
@@ -129,7 +129,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/audit-logs/{id}/
+GET /licenses/admin/audit-logs/{id}/
 Authorization: Bearer {access_token}
 ```
 
@@ -181,7 +181,7 @@ Authorization: Bearer {access_token}
 
 #### 获取统计概览
 ```http
-GET /api/v1/licenses/admin/audit-logs/statistics/
+GET /licenses/admin/audit-logs/statistics/
 Authorization: Bearer {access_token}
 ```
 
@@ -237,7 +237,7 @@ Authorization: Bearer {access_token}
 
 #### 获取安全告警
 ```http
-GET /api/v1/licenses/admin/audit-logs/security_alerts/
+GET /licenses/admin/audit-logs/security_alerts/
 Authorization: Bearer {access_token}
 ```
 
@@ -315,7 +315,7 @@ Authorization: Bearer {access_token}
 
 #### 导出审计日志
 ```http
-GET /api/v1/licenses/admin/audit-logs/export/
+GET /licenses/admin/audit-logs/export/
 Authorization: Bearer {access_token}
 ```
 

@@ -52,8 +52,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { 
-  TrendChartUp, 
-  TrendChartDown, 
+  ArrowUp, 
+  ArrowDown, 
   Document, 
   Grid, 
   Key, 
@@ -110,8 +110,8 @@ const iconComponent = computed(() => {
 
 // Trend icon
 const trendIcon = computed(() => {
-  if (props.trend === undefined) return TrendChartUp
-  return props.trend >= 0 ? TrendChartUp : TrendChartDown
+  if (props.trend === undefined) return ArrowUp
+  return props.trend >= 0 ? ArrowUp : ArrowDown
 })
 
 // Trend icon class

@@ -53,7 +53,7 @@ import type { ApiResponse, PaginationResponse } from "@/types/api";
 export function getProductList(params = {}) {
   return http.request<PaginationResponse<SoftwareProduct>>(
     "get",
-    "/api/v1/licenses/products/",
+    "/licenses/products/",
     { params }
   );
 }
@@ -61,7 +61,7 @@ export function getProductList(params = {}) {
 export function createProduct(data: ProductCreateParams) {
   return http.request<ApiResponse<SoftwareProduct>>(
     "post", 
-    "/api/v1/licenses/products/",
+    "/licenses/products/",
     { data }
   );
 }

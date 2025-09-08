@@ -4,7 +4,7 @@
 
 租户配额管理API提供租户对软件产品访问权限的配置和管理功能，控制租户可以创建的许可证数量。
 
-**Base URL**: `/api/v1/licenses/admin/quotas/`  
+**Base URL**: `/licenses/admin/quotas/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 
@@ -30,7 +30,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/quotas/
+GET /licenses/admin/quotas/
 Authorization: Bearer {access_token}
 ```
 
@@ -85,7 +85,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-POST /api/v1/licenses/admin/quotas/
+POST /licenses/admin/quotas/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -126,7 +126,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-PATCH /api/v1/licenses/admin/quotas/{id}/
+PATCH /licenses/admin/quotas/{id}/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -140,7 +140,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/quotas/usage_statistics/
+GET /licenses/admin/quotas/usage_statistics/
 Authorization: Bearer {access_token}
 ```
 

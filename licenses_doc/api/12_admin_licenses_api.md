@@ -4,7 +4,7 @@
 
 许可证管理API提供许可证的完整生命周期管理，包括许可证创建、状态管理、批量操作等核心功能。
 
-**Base URL**: `/api/v1/licenses/admin/licenses/`  
+**Base URL**: `/licenses/admin/licenses/`  
 **认证要求**: JWT Bearer Token  
 **权限要求**: 超级管理员或租户管理员  
 
@@ -45,7 +45,7 @@
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/licenses/
+GET /licenses/admin/licenses/
 Authorization: Bearer {access_token}
 ```
 
@@ -74,8 +74,8 @@ Authorization: Bearer {access_token}
     "success": true,
     "data": {
         "count": 150,
-        "next": "https://api.example.com/api/v1/licenses/admin/licenses/?page=3",
-        "previous": "https://api.example.com/api/v1/licenses/admin/licenses/?page=1",
+        "next": "https://api.example.com/licenses/admin/licenses/?page=3",
+        "previous": "https://api.example.com/licenses/admin/licenses/?page=1",
         "results": [
             {
                 "id": 1,
@@ -113,7 +113,7 @@ Authorization: Bearer {access_token}
 
 #### 请求
 ```http
-POST /api/v1/licenses/admin/licenses/
+POST /licenses/admin/licenses/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -167,7 +167,7 @@ Content-Type: application/json
 
 #### 请求
 ```http
-GET /api/v1/licenses/admin/licenses/{id}/
+GET /licenses/admin/licenses/{id}/
 Authorization: Bearer {access_token}
 ```
 
@@ -224,7 +224,7 @@ Authorization: Bearer {access_token}
 
 #### 挂起许可证
 ```http
-PATCH /api/v1/licenses/admin/licenses/{id}/
+PATCH /licenses/admin/licenses/{id}/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -236,7 +236,7 @@ Content-Type: application/json
 
 #### 撤销许可证
 ```http
-PATCH /api/v1/licenses/admin/licenses/{id}/
+PATCH /licenses/admin/licenses/{id}/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -248,7 +248,7 @@ Content-Type: application/json
 
 #### 恢复许可证
 ```http
-PATCH /api/v1/licenses/admin/licenses/{id}/
+PATCH /licenses/admin/licenses/{id}/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -261,7 +261,7 @@ Content-Type: application/json
 
 #### 批量更新状态
 ```http
-POST /api/v1/licenses/admin/licenses/batch_update_status/
+POST /licenses/admin/licenses/batch_update_status/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -274,7 +274,7 @@ Content-Type: application/json
 
 #### 批量创建许可证
 ```http
-POST /api/v1/licenses/admin/licenses/batch_create/
+POST /licenses/admin/licenses/batch_create/
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
@@ -299,13 +299,13 @@ Content-Type: application/json
 
 #### 导出CSV
 ```http
-GET /api/v1/licenses/admin/licenses/export/?format=csv&status=active
+GET /licenses/admin/licenses/export/?format=csv&status=active
 Authorization: Bearer {access_token}
 ```
 
 #### 导出Excel
 ```http
-GET /api/v1/licenses/admin/licenses/export/?format=excel&license_plan=1
+GET /licenses/admin/licenses/export/?format=excel&license_plan=1
 Authorization: Bearer {access_token}
 ```
 

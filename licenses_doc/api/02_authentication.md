@@ -50,7 +50,7 @@ Content-Type: application/json
 在所有需要认证的API请求中包含Authorization头：
 
 ```http
-GET /api/v1/licenses/admin/products/
+GET /licenses/admin/products/
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 Content-Type: application/json
 ```

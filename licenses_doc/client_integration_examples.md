@@ -459,7 +459,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 ```bash
 # 获取许可证基本信息
-curl -X GET "https://your-api-domain.com/api/v1/licenses/info/ABCD1-EFGH2-IJKL3-MNOP4/" \
+curl -X GET "https://your-api-domain.com/licenses/info/ABCD1-EFGH2-IJKL3-MNOP4/" \
   -H "User-Agent: MyMacApp/1.0.0"
 ```
 
@@ -467,7 +467,7 @@ curl -X GET "https://your-api-domain.com/api/v1/licenses/info/ABCD1-EFGH2-IJKL3-
 
 ```bash
 # 激活许可证
-curl -X POST "https://your-api-domain.com/api/v1/licenses/activate/" \
+curl -X POST "https://your-api-domain.com/licenses/activate/" \
   -H "Content-Type: application/json" \
   -H "User-Agent: MyMacApp/1.0.0" \
   -d '{
@@ -504,7 +504,7 @@ curl -X POST "https://your-api-domain.com/api/v1/licenses/activate/" \
 
 ```bash
 # 验证激活状态
-curl -X POST "https://your-api-domain.com/api/v1/licenses/verify/" \
+curl -X POST "https://your-api-domain.com/licenses/verify/" \
   -H "Content-Type: application/json" \
   -H "User-Agent: MyMacApp/1.0.0" \
   -d '{
@@ -517,7 +517,7 @@ curl -X POST "https://your-api-domain.com/api/v1/licenses/verify/" \
 
 ```bash
 # 发送心跳
-curl -X POST "https://your-api-domain.com/api/v1/licenses/heartbeat/" \
+curl -X POST "https://your-api-domain.com/licenses/heartbeat/" \
   -H "Content-Type: application/json" \
   -H "User-Agent: MyMacApp/1.0.0" \
   -d '{

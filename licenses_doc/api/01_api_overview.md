@@ -33,7 +33,7 @@ Licenses API是一个基于多租户架构的许可证管理系统，提供完�
 
 ### API分类
 
-#### 管理API (`/api/v1/licenses/admin/`)
+#### 管理API (`/licenses/admin/`)
 **用途**：供管理员使用的后台管理接口
 **认证**：需要JWT Token，要求管理员权限
 **权限**：
@@ -49,7 +49,7 @@ Licenses API是一个基于多租户架构的许可证管理系统，提供完�
 - 安全审计日志 (`audit-logs/`)
 - 租户配额管理 (`quotas/`)
 
-#### 客户端API (`/api/v1/licenses/`)
+#### 客户端API (`/licenses/`)
 **用途**：供客户端软件调用的公开接口
 **认证**：通过许可证密钥验证，部分接口无需认证
 **权限**：基于许可证有效性验证
@@ -61,7 +61,7 @@ Licenses API是一个基于多租户架构的许可证管理系统，提供完�
 - 许可证信息查询 (`info/`)
 - 服务状态查询 (`status/`)
 
-#### 报告API (`/api/v1/licenses/reports/`)
+#### 报告API (`/licenses/reports/`)
 **用途**：提供统计分析和报告功能
 **认证**：需要JWT Token，要求管理员权限
 **权限**：基于租户隔离
@@ -74,8 +74,8 @@ Licenses API是一个基于多租户架构的许可证管理系统，提供完�
 
 ### Base URL
 ```
-生产环境: https://your-domain.com/api/v1/licenses/
-开发环境: http://localhost:8000/api/v1/licenses/
+生产环境: https://your-domain.com/licenses/
+开发环境: http://localhost:8000/licenses/
 ```
 
 ### HTTP方法约定
@@ -124,8 +124,8 @@ Accept: application/json
     "success": true,
     "data": {
         "count": 100,
-        "next": "https://api.example.com/api/v1/licenses/admin/products/?page=3",
-        "previous": "https://api.example.com/api/v1/licenses/admin/products/?page=1",
+        "next": "https://api.example.com/licenses/admin/products/?page=3",
+        "previous": "https://api.example.com/licenses/admin/products/?page=1",
         "results": [
             // 数据列表
         ]
