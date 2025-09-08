@@ -16,7 +16,7 @@
         "name": "license-dashboard",
         "title": "license.menu.dashboard",
         "path": "/license/dashboard",
-        "component": "views/license/dashboard/index",
+        "component": "/src/views/license/dashboard/index",
         "meta": {
           "title": "license.menu.dashboard",
           "icon": "Odometer",
@@ -30,7 +30,7 @@
         "name": "license-products",
         "title": "license.menu.products",
         "path": "/license/products",
-        "component": "views/license/products/index",
+        "component": "/src/views/license/products/index",
         "meta": {
           "title": "license.menu.products",
           "icon": "Box",
@@ -43,7 +43,7 @@
             "name": "product-create",
             "title": "license.products.create",
             "path": "/license/products/create",
-            "component": "views/license/products/create",
+            "component": "/src/views/license/products/create",
             "meta": {
               "title": "license.products.create",
               "activeMenu": "/license/products",
@@ -56,7 +56,7 @@
             "name": "product-edit",
             "title": "license.products.edit",
             "path": "/license/products/:id/edit",
-            "component": "views/license/products/edit",
+            "component": "/src/views/license/products/edit",
             "meta": {
               "title": "license.products.edit",
               "activeMenu": "/license/products",
@@ -69,7 +69,7 @@
             "name": "product-detail",
             "title": "license.products.detail",
             "path": "/license/products/:id",
-            "component": "views/license/products/detail",
+            "component": "/src/views/license/products/detail",
             "meta": {
               "title": "license.products.detail",
               "activeMenu": "/license/products",
@@ -84,7 +84,7 @@
         "name": "license-plans",
         "title": "license.menu.plans",
         "path": "/license/plans",
-        "component": "views/license/plans/index",
+        "component": "/src/views/license/plans/index",
         "meta": {
           "title": "license.menu.plans",
           "icon": "Calendar",
@@ -97,7 +97,7 @@
             "name": "plan-create",
             "title": "license.plans.create",
             "path": "/license/plans/create",
-            "component": "views/license/plans/create",
+            "component": "/src/views/license/plans/create",
             "meta": {
               "title": "license.plans.create",
               "activeMenu": "/license/plans",
@@ -110,7 +110,7 @@
             "name": "plan-edit",
             "title": "license.plans.edit",
             "path": "/license/plans/:id/edit",
-            "component": "views/license/plans/edit",
+            "component": "/src/views/license/plans/edit",
             "meta": {
               "title": "license.plans.edit",
               "activeMenu": "/license/plans",
@@ -123,7 +123,7 @@
             "name": "plan-detail",
             "title": "license.plans.detail",
             "path": "/license/plans/:id",
-            "component": "views/license/plans/detail",
+            "component": "/src/views/license/plans/detail",
             "meta": {
               "title": "license.plans.detail",
               "activeMenu": "/license/plans",
@@ -138,7 +138,7 @@
         "name": "license-licenses",
         "title": "license.menu.licenses",
         "path": "/license/licenses",
-        "component": "views/license/licenses/index",
+        "component": "/src/views/license/licenses/index",
         "meta": {
           "title": "license.menu.licenses",
           "icon": "Key",
@@ -151,7 +151,7 @@
             "name": "license-create",
             "title": "license.licenses.create",
             "path": "/license/licenses/create",
-            "component": "views/license/licenses/create",
+            "component": "/src/views/license/licenses/create",
             "meta": {
               "title": "license.licenses.create",
               "activeMenu": "/license/licenses",
@@ -164,7 +164,7 @@
             "name": "license-edit",
             "title": "license.licenses.edit",
             "path": "/license/licenses/:id/edit",
-            "component": "views/license/licenses/edit",
+            "component": "/src/views/license/licenses/edit",
             "meta": {
               "title": "license.licenses.edit",
               "activeMenu": "/license/licenses",
@@ -177,7 +177,7 @@
             "name": "license-detail",
             "title": "license.licenses.detail",
             "path": "/license/licenses/:id",
-            "component": "views/license/licenses/detail",
+            "component": "/src/views/license/licenses/detail",
             "meta": {
               "title": "license.licenses.detail",
               "activeMenu": "/license/licenses",
@@ -192,7 +192,7 @@
         "name": "license-machines",
         "title": "license.menu.machines",
         "path": "/license/machines",
-        "component": "views/license/machines/index",
+        "component": "/src/views/license/machines/index",
         "meta": {
           "title": "license.menu.machines",
           "icon": "Monitor",
@@ -205,7 +205,7 @@
             "name": "machine-detail",
             "title": "license.machines.detail",
             "path": "/license/machines/:id",
-            "component": "views/license/machines/detail",
+            "component": "/src/views/license/machines/detail",
             "meta": {
               "title": "license.machines.detail",
               "activeMenu": "/license/machines",
@@ -220,7 +220,7 @@
         "name": "license-activations",
         "title": "license.menu.activations",
         "path": "/license/activations",
-        "component": "views/license/activations/index",
+        "component": "/src/views/license/activations/index",
         "meta": {
           "title": "license.menu.activations",
           "icon": "Connection",
@@ -233,7 +233,7 @@
             "name": "activation-detail",
             "title": "license.activations.detail",
             "path": "/license/activations/:id",
-            "component": "views/license/activations/detail",
+            "component": "/src/views/license/activations/detail",
             "meta": {
               "title": "license.activations.detail",
               "activeMenu": "/license/activations",
@@ -248,7 +248,7 @@
         "name": "license-audit-logs",
         "title": "license.menu.auditLogs",
         "path": "/license/audit-logs",
-        "component": "views/license/audit-logs/index",
+        "component": "/src/views/license/audit-logs/index",
         "meta": {
           "title": "license.menu.auditLogs",
           "icon": "DocumentChecked",
@@ -261,7 +261,7 @@
             "name": "audit-log-detail",
             "title": "license.auditLogs.detail",
             "path": "/license/audit-logs/:id",
-            "component": "views/license/audit-logs/detail",
+            "component": "/src/views/license/audit-logs/detail",
             "meta": {
               "title": "license.auditLogs.detail",
               "activeMenu": "/license/audit-logs",
