@@ -4,11 +4,10 @@
     <div class="dashboard-header">
       <h1 class="page-title">{{ t('license.menu.dashboard') }}</h1>
       <div class="header-actions">
-        <el-button 
+        <el-button
           type="primary" 
           :icon="Plus" 
           @click="handleQuickCreate"
-          v-if="hasPerms('license:create')"
         >
           {{ t('license.licenses.create') }}
         </el-button>
@@ -125,7 +124,6 @@
               <div 
                 class="action-item" 
                 @click="navigateToProductCreate"
-                v-if="hasPerms('license:create')"
               >
                 <el-icon><Plus /></el-icon>
                 <span>{{ t('license.products.create') }}</span>
@@ -133,7 +131,6 @@
               <div 
                 class="action-item" 
                 @click="navigateToPlanCreate"
-                v-if="hasPerms('license:create')"
               >
                 <el-icon><Document /></el-icon>
                 <span>{{ t('license.plans.create') }}</span>
@@ -141,7 +138,6 @@
               <div 
                 class="action-item" 
                 @click="navigateToLicenseCreate"
-                v-if="hasPerms('license:create')"
               >
                 <el-icon><Key /></el-icon>
                 <span>{{ t('license.licenses.create') }}</span>

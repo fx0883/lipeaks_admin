@@ -37,26 +37,15 @@ const productId = Number(route.params.id);
 const pageLoading = ref(false);
 
 // 产品数据
-const product = ref<Product | null>(null);
-
-// 统计数据
-const stats = ref({
-  plansCount: 0,
-  licensesCount: 0,
-  activeLicensesCount: 0
-});
+const product = ref<any | null>(null);
 
 // 获取产品详情
 const fetchProduct = async () => {
   try {
     pageLoading.value = true;
-    
-    const productData = await licenseStore.fetchProductDetail(productId);
-    product.value = productData;
-    
-    // 获取统计数据
+    const response = await licenseStore.fetchProductDetail(productId);
+    product.value = response.data;
     await fetchStats();
-    
   } catch (error) {
     logger.error("获取产品详情失败", error);
     ElMessage.error(t("license.products.fetchError"));
@@ -69,35 +58,36 @@ const fetchProduct = async () => {
 // 获取统计数据
 const fetchStats = async () => {
   try {
-    // 获取计划数量
-    const plansResponse = await licenseStore.fetchPlanList({ 
-      product_id: productId, 
-      page: 1, 
-      page_size: 1 
+    const plansResponse = await licenseStore.fetchPlanList({
+      product_id: productId,
+      page: 1,
+      page_size: 1
     });
-    stats.value.plansCount = plansResponse.total || 0;
-    
-    // 获取许可证数量
-    const licensesResponse = await licenseStore.fetchLicenseList({ 
-      product_id: productId, 
-      page: 1, 
-      page_size: 1 
+    stats.value.plansCount = plansResponse.data.total || 0;
+    const licensesResponse = await licenseStore.fetchLicenseList({
+      product_id: productId,
+      page: 1,
+      page_size: 1
     });
-    stats.value.licensesCount = licensesResponse.total || 0;
-    
-    // 获取活跃许可证数量
-    const activeLicensesResponse = await licenseStore.fetchLicenseList({ 
-      product_id: productId, 
+    stats.value.licensesCount = licensesResponse.data.total || 0;
+    const activeLicensesResponse = await licenseStore.fetchLicenseList({
+      product_id: productId,
       status: "active",
-      page: 1, 
-      page_size: 1 
+      page: 1,
+      page_size: 1
     });
-    stats.value.activeLicensesCount = activeLicensesResponse.total || 0;
-    
+    stats.value.activeLicensesCount = activeLicensesResponse.data.total || 0;
   } catch (error) {
     logger.error("获取统计数据失败", error);
   }
 };
+
+// 统计数据
+const stats = ref({
+  plansCount: 0,
+  licensesCount: 0,
+  activeLicensesCount: 0
+});
 
 // 返回列表
 const handleBack = () => {
@@ -106,11 +96,7 @@ const handleBack = () => {
 
 // 编辑产品
 const handleEdit = () => {
-  if (!hasPerms("license:edit")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
-  router.push(`/license/products/edit/${productId}`);
+  router.push(`/license/products/${productId}/edit`);
 };
 
 // 查看计划
@@ -153,7 +139,6 @@ onMounted(() => {
         
         <div v-if="product" class="header-right">
           <el-button
-            v-if="hasPerms('license:edit')"
             type="primary"
             :icon="Edit"
             @click="handleEdit"
@@ -198,6 +183,9 @@ onMounted(() => {
             </el-col>
             
             <el-col :span="12">
+            </el-col>
+            
+            <el-col :span="12">
               <div class="info-item">
                 <span class="info-label">{{ t("license.products.createdAt") }}:</span>
                 <span class="info-value">{{ formatCreatedAt(product.created_at) }}</span>
@@ -230,7 +218,7 @@ onMounted(() => {
                     <el-icon><Key /></el-icon>
                   </div>
                   <div class="stat-info">
-                    <div class="stat-number">{{ stats.plansCount }}</div>
+                    <div class="stat-number">{{ product.license_plans_count || 0 }}</div>
                     <div class="stat-label">{{ t("license.products.plansCount") }}</div>
                   </div>
                 </div>
@@ -244,7 +232,7 @@ onMounted(() => {
                     <el-icon><Key /></el-icon>
                   </div>
                   <div class="stat-info">
-                    <div class="stat-number">{{ stats.licensesCount }}</div>
+                    <div class="stat-number">{{ product.total_licenses || 0 }}</div>
                     <div class="stat-label">{{ t("license.products.licensesCount") }}</div>
                   </div>
                 </div>
@@ -258,7 +246,7 @@ onMounted(() => {
                     <el-icon><Key /></el-icon>
                   </div>
                   <div class="stat-info">
-                    <div class="stat-number">{{ stats.activeLicensesCount }}</div>
+                    <div class="stat-number">{{ product.total_licenses || 0 }}</div>
                     <div class="stat-label">{{ t("license.products.activeLicensesCount") }}</div>
                   </div>
                 </div>
@@ -267,21 +255,6 @@ onMounted(() => {
           </el-row>
         </div>
 
-        <!-- 元数据信息 -->
-        <div v-if="product.metadata && Object.keys(product.metadata).length > 0" class="metadata-section">
-          <h4 class="section-title">{{ t("license.products.metadata") }}</h4>
-          
-          <div class="metadata-grid">
-            <div
-              v-for="(value, key) in product.metadata"
-              :key="key"
-              class="metadata-item"
-            >
-              <span class="metadata-key">{{ key }}:</span>
-              <span class="metadata-value">{{ value }}</span>
-            </div>
-          </div>
-        </div>
       </template>
     </el-card>
   </div>

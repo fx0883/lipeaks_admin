@@ -134,11 +134,6 @@ const handleView = (row: Machine) => {
 
 // 解绑机器
 const handleUnbind = async (row: Machine) => {
-  if (!hasPerms("license:manage")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
-
   try {
     await ElMessageBox.confirm(
       t("license.machines.unbindConfirm", {
@@ -165,11 +160,6 @@ const handleUnbind = async (row: Machine) => {
 
 // 删除机器记录
 const handleDelete = async (row: Machine) => {
-  if (!hasPerms("license:delete")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
-
   try {
     await ElMessageBox.confirm(
       t("license.machines.deleteConfirm", {
@@ -196,11 +186,6 @@ const handleDelete = async (row: Machine) => {
 
 // 批量解绑
 const handleBatchUnbind = async () => {
-  if (!hasPerms("license:manage")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
-
   if (multipleSelection.value.length === 0) {
     ElMessage.warning(t("license.machines.selectMachines"));
     return;
@@ -355,7 +340,6 @@ onMounted(() => {
       <div class="action-header">
         <div class="action-left">
           <el-button
-            v-if="hasPerms('license:manage')"
             type="warning"
             :icon="Warning"
             :disabled="multipleSelection.length === 0"
@@ -519,7 +503,7 @@ onMounted(() => {
             </el-button>
 
             <el-button
-              v-if="hasPerms('license:manage') && row.is_active"
+              v-if="row.is_active"
               type="warning"
               size="small"
               @click="handleUnbind(row)"
@@ -528,7 +512,6 @@ onMounted(() => {
             </el-button>
 
             <el-button
-              v-if="hasPerms('license:delete')"
               type="danger"
               :icon="Delete"
               size="small"

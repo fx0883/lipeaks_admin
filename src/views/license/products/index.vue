@@ -13,10 +13,7 @@ import {
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
 import { useUserStoreHook } from "@/store/modules/user";
-import type {
-  SoftwareProduct,
-  ProductListParams
-} from "@/types/license";
+import type { SoftwareProduct, ProductListParams } from "@/types/license";
 import { hasPerms } from "@/utils/auth";
 import logger from "@/utils/logger";
 
@@ -111,34 +108,21 @@ const handleRefresh = () => {
 
 // 创建产品
 const handleCreate = () => {
-  if (!hasPerms("license:create")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   router.push("/license/products/create");
 };
 
 // 查看详情
 const handleView = (row: SoftwareProduct) => {
-  router.push(`/license/products/detail/${row.id}`);
+  router.push(`/license/products/${row.id}`);
 };
 
 // 编辑产品
 const handleEdit = (row: SoftwareProduct) => {
-  if (!hasPerms("license:edit")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
-  router.push(`/license/products/edit/${row.id}`);
+  router.push(`/license/products/${row.id}/edit`);
 };
 
 // 删除产品
 const handleDelete = async (row: SoftwareProduct) => {
-  if (!hasPerms("license:delete")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
-  
   try {
     await ElMessageBox.confirm(
       t("license.products.deleteConfirm", { name: row.name }),
@@ -149,7 +133,7 @@ const handleDelete = async (row: SoftwareProduct) => {
         type: "warning"
       }
     );
-    
+
     await licenseStore.deleteProduct(row.id);
     ElMessage.success(t("license.products.deleteSuccess"));
     await fetchProducts();
@@ -192,7 +176,7 @@ onMounted(() => {
             @keyup.enter="handleSearch"
           />
         </el-form-item>
-        
+
         <el-form-item :label="t('license.products.status')">
           <el-select
             v-model="searchForm.is_active"
@@ -207,7 +191,7 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleSearch">
             {{ t("common.search") }}
@@ -226,16 +210,11 @@ onMounted(() => {
     <el-card class="action-card">
       <div class="action-header">
         <div class="action-left">
-          <el-button
-            v-if="hasPerms('license:create')"
-            type="primary"
-            :icon="Plus"
-            @click="handleCreate"
-          >
+          <el-button type="primary" :icon="Plus" @click="handleCreate">
             {{ t("license.products.create") }}
           </el-button>
         </div>
-        
+
         <div class="action-right">
           <span class="total-info">
             {{ t("license.products.total", { count: pagination.total }) }}
@@ -249,50 +228,54 @@ onMounted(() => {
       <el-table
         :data="products"
         :loading="tableLoading"
-        @selection-change="handleSelectionChange"
         stripe
         border
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        
+
         <el-table-column
           prop="id"
           :label="t('license.products.id')"
           width="80"
         />
-        
+
         <el-table-column
           prop="name"
           :label="t('license.products.name')"
           min-width="150"
           show-overflow-tooltip
         />
-        
+
         <el-table-column
           prop="version"
           :label="t('license.products.version')"
           width="120"
         />
-        
+
         <el-table-column
-          prop="product_key"
+          prop="code"
           :label="t('license.products.productKey')"
           width="200"
           show-overflow-tooltip
         />
-        
+
         <el-table-column
-          prop="is_active"
+          prop="status"
           :label="t('license.products.status')"
           width="100"
         >
           <template #default="{ row }">
-            <el-tag :type="row.is_active ? 'success' : 'info'">
-              {{ row.is_active ? t('common.active') : t('common.inactive') }}
+            <el-tag :type="row.status === 'active' ? 'success' : 'danger'">
+              {{
+                row.status === "active"
+                  ? t("common.active")
+                  : t("common.inactive")
+              }}
             </el-tag>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="created_at"
           :label="t('license.products.createdAt')"
@@ -302,12 +285,8 @@ onMounted(() => {
             {{ new Date(row.created_at).toLocaleString() }}
           </template>
         </el-table-column>
-        
-        <el-table-column
-          :label="t('common.actions')"
-          width="200"
-          fixed="right"
-        >
+
+        <el-table-column :label="t('common.actions')" width="200" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -317,9 +296,8 @@ onMounted(() => {
             >
               {{ t("common.view") }}
             </el-button>
-            
+
             <el-button
-              v-if="hasPerms('license:edit')"
               type="warning"
               :icon="Edit"
               size="small"
@@ -327,9 +305,8 @@ onMounted(() => {
             >
               {{ t("common.edit") }}
             </el-button>
-            
+
             <el-button
-              v-if="hasPerms('license:delete')"
               type="danger"
               :icon="Delete"
               size="small"
@@ -340,7 +317,7 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
-      
+
       <!-- 分页 -->
       <div class="pagination-container">
         <el-pagination

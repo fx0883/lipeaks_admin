@@ -155,10 +155,6 @@ const handleRefresh = () => {
 
 // 创建许可证
 const handleCreate = () => {
-  if (!hasPerms("license:create")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   router.push("/license/licenses/create");
 };
 
@@ -169,10 +165,6 @@ const handleView = (row: License) => {
 
 // 编辑许可证
 const handleEdit = (row: License) => {
-  if (!hasPerms("license:edit")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   router.push(`/license/licenses/edit/${row.id}`);
 };
 
@@ -187,10 +179,6 @@ const handleCopyLicenseKey = (key: string) => {
 
 // 下载许可证文件
 const handleDownloadLicense = async (row: License) => {
-  if (!hasPerms("license:download")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   
   try {
     await licenseStore.downloadLicense(row.id);
@@ -203,10 +191,6 @@ const handleDownloadLicense = async (row: License) => {
 
 // 撤销许可证
 const handleRevokeLicense = async (row: License) => {
-  if (!hasPerms("license:revoke")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   
   try {
     await ElMessageBox.confirm(
@@ -232,10 +216,6 @@ const handleRevokeLicense = async (row: License) => {
 
 // 删除许可证
 const handleDelete = async (row: License) => {
-  if (!hasPerms("license:delete")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   
   try {
     await ElMessageBox.confirm(
@@ -393,7 +373,6 @@ onMounted(() => {
       <div class="action-header">
         <div class="action-left">
           <el-button
-            v-if="hasPerms('license:create')"
             type="primary"
             :icon="Plus"
             @click="handleCreate"
@@ -549,7 +528,6 @@ onMounted(() => {
             </el-button>
             
             <el-button
-              v-if="hasPerms('license:download')"
               type="info"
               :icon="Download"
               size="small"
@@ -559,7 +537,7 @@ onMounted(() => {
             </el-button>
             
             <el-button
-              v-if="hasPerms('license:revoke') && row.status === 'active'"
+              v-if="row.status === 'active'"
               type="warning"
               size="small"
               @click="handleRevokeLicense(row)"
@@ -568,7 +546,6 @@ onMounted(() => {
             </el-button>
             
             <el-button
-              v-if="hasPerms('license:delete')"
               type="danger"
               :icon="Delete"
               size="small"

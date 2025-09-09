@@ -9,7 +9,7 @@ import {
   Close
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
-import type { ProductCreateData } from "@/types/license";
+import type { ProductCreateParams } from "@/types/license";
 import { hasPerms } from "@/utils/auth";
 import logger from "@/utils/logger";
 
@@ -34,8 +34,9 @@ const formRef = ref();
 const submitLoading = computed(() => licenseStore.loading.productCreate);
 
 // 表单数据
-const formData = reactive<ProductCreateData>({
+const formData = reactive<ProductCreateParams>({
   name: "",
+  code: "",
   version: "",
   description: "",
   is_active: true,
@@ -51,6 +52,11 @@ const formRules = {
   name: [
     { required: true, message: t("license.products.nameRequired"), trigger: "blur" },
     { min: 2, max: 100, message: t("license.products.nameLength"), trigger: "blur" }
+  ],
+  code: [
+    { required: true, message: t("license.products.codeRequired"), trigger: "blur" },
+    { min: 2, max: 50, message: t("license.products.codeLength"), trigger: "blur" },
+    { pattern: /^[a-zA-Z0-9_-]+$/, message: t("license.products.codeFormat"), trigger: "blur" }
   ],
   version: [
     { required: true, message: t("license.products.versionRequired"), trigger: "blur" },
@@ -160,6 +166,18 @@ addMetadataField();
             </el-form-item>
           </el-col>
           
+          <el-col :span="12">
+            <el-form-item :label="t('license.products.code')" prop="code">
+              <el-input
+                v-model="formData.code"
+                :placeholder="t('license.products.codePlaceholder')"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item :label="t('license.products.version')" prop="version">
               <el-input

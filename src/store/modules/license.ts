@@ -8,21 +8,15 @@ import type {
   LicensePlan,
   PlanListParams,
   PlanCreateParams,
-  PlanUpdateParams,
   License,
   LicenseListParams,
   LicenseCreateParams,
-  LicenseUpdateParams,
   MachineBinding,
-  MachineBindingListParams,
   LicenseActivation,
-  ActivationListParams,
   AuditLog,
-  AuditLogListParams,
   LicenseStatistics,
   ActivationTrend,
-  RevenueReport,
-  BatchOperationResult
+  RevenueReport
 } from "@/types/license";
 import type { PaginationData } from "@/types/api";
 import logger from "@/utils/logger";
@@ -184,7 +178,13 @@ export const useLicenseStore = defineStore("license", {
       try {
         const response = await licenseApi.getProductList(params);
         if (response.success) {
-          this.products = response.data;
+          // 正确解构后端返回的数据结构
+          this.products = {
+            data: response.data.results,
+            total: response.data.pagination.count,
+            page: response.data.pagination.current_page,
+            limit: response.data.pagination.page_size
+          };
           return response;
         } else {
           logger.error(response.message || "获取产品列表失败");

@@ -153,10 +153,6 @@ const handleView = (row: Activation) => {
 
 // 撤销激活
 const handleRevoke = async (row: Activation) => {
-  if (!hasPerms("license:revoke")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   
   try {
     await ElMessageBox.confirm(
@@ -182,10 +178,6 @@ const handleRevoke = async (row: Activation) => {
 
 // 删除激活记录
 const handleDelete = async (row: Activation) => {
-  if (!hasPerms("license:delete")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   
   try {
     await ElMessageBox.confirm(
@@ -211,10 +203,6 @@ const handleDelete = async (row: Activation) => {
 
 // 批量撤销
 const handleBatchRevoke = async () => {
-  if (!hasPerms("license:revoke")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   
   if (multipleSelection.value.length === 0) {
     ElMessage.warning(t("license.activations.selectActivations"));
@@ -389,7 +377,6 @@ onMounted(() => {
       <div class="action-header">
         <div class="action-left">
           <el-button
-            v-if="hasPerms('license:revoke')"
             type="warning"
             :icon="Warning"
             :disabled="multipleSelection.length === 0"
@@ -552,7 +539,7 @@ onMounted(() => {
             </el-button>
             
             <el-button
-              v-if="hasPerms('license:revoke') && row.status === 'active'"
+              v-if="row.status === 'active'"
               type="warning"
               size="small"
               @click="handleRevoke(row)"
@@ -561,7 +548,6 @@ onMounted(() => {
             </el-button>
             
             <el-button
-              v-if="hasPerms('license:delete')"
               type="danger"
               :icon="Delete"
               size="small"

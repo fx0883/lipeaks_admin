@@ -141,10 +141,6 @@ const handleRefresh = () => {
 
 // 创建计划
 const handleCreate = () => {
-  if (!hasPerms("license:create")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   router.push("/license/plans/create");
 };
 
@@ -155,19 +151,11 @@ const handleView = (row: LicensePlan) => {
 
 // 编辑计划
 const handleEdit = (row: LicensePlan) => {
-  if (!hasPerms("license:edit")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   router.push(`/license/plans/edit/${row.id}`);
 };
 
 // 删除计划
 const handleDelete = async (row: LicensePlan) => {
-  if (!hasPerms("license:delete")) {
-    ElMessage.error("无权限执行此操作");
-    return;
-  }
   
   try {
     await ElMessageBox.confirm(
@@ -319,7 +307,6 @@ onMounted(() => {
       <div class="action-header">
         <div class="action-left">
           <el-button
-            v-if="hasPerms('license:create')"
             type="primary"
             :icon="Plus"
             @click="handleCreate"
@@ -474,7 +461,6 @@ onMounted(() => {
             </el-button>
             
             <el-button
-              v-if="hasPerms('license:edit')"
               type="warning"
               :icon="Edit"
               size="small"
@@ -484,7 +470,6 @@ onMounted(() => {
             </el-button>
             
             <el-button
-              v-if="hasPerms('license:delete')"
               type="danger"
               :icon="Delete"
               size="small"

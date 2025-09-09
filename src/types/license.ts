@@ -9,12 +9,14 @@ export interface SoftwareProduct {
   name: string;
   version: string;
   description: string;
-  product_key: string;
-  is_active: boolean;
+  code: string;
+  status: string;
+  max_activations: number;
+  offline_days: number;
+  license_plans_count: number;
+  total_licenses: number;
   created_at: string;
   updated_at: string;
-  created_by: number;
-  tenant_id?: number;
 }
 
 export interface ProductListParams {
@@ -26,13 +28,24 @@ export interface ProductListParams {
 
 export interface ProductCreateParams {
   name: string;
+  code: string;
   version: string;
   description: string;
-  product_key: string;
   is_active?: boolean;
+  metadata?: Record<string, any>;
 }
 
 export interface ProductUpdateParams extends Partial<ProductCreateParams> {}
+
+// 产品创建表单数据类型
+export interface ProductCreateData {
+  name: string;
+  code: string;
+  version: string;
+  description: string;
+  is_active: boolean;
+  metadata: Record<string, any>;
+}
 
 // 许可证计划相关类型
 export type PlanType = 'trial' | 'basic' | 'professional' | 'enterprise';
