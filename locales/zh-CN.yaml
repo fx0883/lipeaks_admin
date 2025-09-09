@@ -10,6 +10,7 @@ common:
   generate: 生成
   view: 查看
   reset: 重置
+  refresh: 刷新
   noData: 暂无数据
   search: 搜索
   actions: 操作
@@ -999,6 +1000,7 @@ panel:
   pureSystemSet: 系统设置
   pureCloseSystemSet: 关闭系统设置
   pureClearCacheAndToLogin: 清除缓存并重新登录
+  pureClearCache: 清除缓存
   pureOverallStyle: 整体风格
   pureOverallStyleLight: 亮色模式
   pureOverallStyleLightTip: 亮色背景配色
@@ -1013,9 +1015,25 @@ panel:
   pureMixTip: 混合菜单布局
   pureTagsStyle: 标签风格
   pureTagsStyleSmart: 灵动模式
+  pureTagsStyleSmartTip: 灵动的标签页模式
+  pureTagsStyleCard: 卡片模式
+  pureTagsStyleCardTip: 卡片标签页模式
+  pureTagsStyleChrome: 浏览器模式
+  pureTagsStyleChromeTip: 浏览器标签页模式
+  pureInterfaceDisplay: 界面显示
+  pureGreyModel: 灰色模式
+  pureWeakModel: 色弱模式
+  pureHiddenTags: 隐藏标签页
+  pureHiddenFooter: 隐藏页脚
+  pureMultiTagsCache: 多标签页持久化
 
 license:
   menu:
+    title: 许可证管理
+    dashboard: 仪表板
+    products: 产品管理
+    plans: 计划管理
+    licenses: 许可证管理
     licenseManagement: 许可证管理
     productManagement: 产品管理
     productList: 产品列表
@@ -1025,19 +1043,45 @@ license:
     planManagement: 计划管理
     planList: 计划列表
     planCreate: 创建计划
+    planEdit: 编辑计划
+    planDetail: 计划详情
     licenseList: 许可证列表
     licenseIndex: 许可证管理
     licenseCreate: 创建许可证
+    licenseEdit: 编辑许可证
     licenseDetail: 许可证详情
+    machines: 机器管理
     machineManagement: 机器管理
     machineList: 机器列表
+    activations: 激活管理
     activationManagement: 激活管理
     activationList: 激活列表
+    audit:
+      logs: 审计日志
+    auditLogs:
+      title: 审计日志
     auditLogManagement: 审计日志管理
     auditLogList: 审计日志列表
 
+  # 通用组件
+  common:
+    view: 查看
+    noData: 暂无数据
+    viewAll: 查看全部
+
+  # 仪表板
+  dashboard:
+    licenseTrend: 许可证趋势
+    statusDistribution: 状态分布
+    quickActions: 快速操作
+    recentLicenses: 最近许可证
+    expiringLicenses: 即将过期的许可证
+    noExpiringLicenses: 暂无即将过期的许可证
+
   products:
     management: 产品管理
+    totalProducts: 产品总数
+    productKey: 产品密钥
     list: 产品列表
     create: 创建产品
     edit: 编辑产品
@@ -1088,6 +1132,11 @@ license:
 
   plans:
     management: 计划管理
+    totalPlans: 计划总数
+    list: 计划列表
+    create: 创建计划
+    edit: 编辑计划
+    detail: 计划详情
     search: 搜索计划
     searchPlaceholder: 搜索计划名称或类型
     product: 产品
@@ -1106,7 +1155,6 @@ license:
     statusInactive: 未激活
     total: 共 {count} 个计划
     fetchError: 获取计划列表失败
-    create: 创建计划
     deleteConfirm: 确认删除计划 "{name}" 吗？
     deleteSuccess: 计划删除成功
     deleteError: 计划删除失败
@@ -1126,6 +1174,15 @@ license:
 
   licenses:
     management: 许可证管理
+    totalLicenses: 许可证总数
+    activeLicenses: 活跃许可证数量
+    created: 已创建
+    activated: 已激活
+    createdAt: 创建时间
+    list: 许可证列表
+    create: 创建许可证
+    edit: 编辑许可证
+    detail: 许可证详情
     search: 搜索许可证
     searchPlaceholder: 搜索许可证密钥或客户
     product: 产品
@@ -1141,7 +1198,6 @@ license:
     statusSuspended: 已暂停
     total: 共 {count} 个许可证
     fetchError: 获取许可证列表失败
-    create: 创建许可证
     download: 下载
     revoke: 撤销
     revokeConfirm: 确认撤销许可证 {key} 吗？
@@ -1165,7 +1221,9 @@ license:
     expiringSoon: "{days}天后过期"
 
   machines:
+    title: 机器管理
     management: 机器管理
+    list: 机器列表
     search: 搜索机器
     searchPlaceholder: 搜索主机名或指纹
     license: 许可证
@@ -1204,7 +1262,11 @@ license:
     daysAgo: "{days}天前"
 
   activations:
+    title: 激活管理
     management: 激活管理
+    createdAt: 创建时间
+    never: 从未
+    list: 激活列表
     search: 搜索激活记录
     searchPlaceholder: 搜索激活ID或IP地址
     license: 许可证
@@ -1243,6 +1305,7 @@ license:
 
   auditLogs:
     management: 审计日志管理
+    list: 审计日志列表
     search: 搜索日志
     searchPlaceholder: 搜索操作描述或资源ID
     action: 操作类型
@@ -1271,40 +1334,30 @@ license:
     endDate: 结束日期
     total: 共 {count} 条日志
     fetchError: 获取审计日志失败
-    description: 记录详情页面，显示完整的审计日志信息
-    
-    id: ID
-    resourceId: 资源ID
+    detail: 审计日志详情
+    metadata: 元数据
     user: 操作用户
-    system: 系统
+    changes: 变更记录
+    id: 日志ID
+    resourceId: 资源ID
+    description: 操作描述
+    userId: 用户ID
+    timestamp: 操作时间
     ipAddress: IP地址
     userAgent: 用户代理
-    changes: 变更内容
+    requestData: 请求数据
+    responseData: 响应数据
+    status: 状态
+    duration: 持续时间
+    errorMessage: 错误信息
+    sessionId: 会话ID
     changesCount: "{count}个变更"
     createdAt: 操作时间
 
-  common:
-    active: 已激活
-    inactive: 未激活
-    warning: 警告
-    refresh: 刷新
-  pureTagsStyleSmartTip: 灵动的标签页模式
-  pureTagsStyleCard: 卡片模式
-  pureTagsStyleCardTip: 卡片标签页模式
-  pureTagsStyleChrome: 浏览器模式
-  pureTagsStyleChromeTip: 浏览器标签页模式
-  pureInterfaceDisplay: 界面显示
-  pureGreyModel: 灰色模式
-  pureWeakModel: 色弱模式
-  pureHiddenTags: 隐藏标签页
-  pureHiddenFooter: 隐藏页脚
-  pureMultiTagsCache: 多标签页持久化
-  pureClearCache: 清除缓存
-  pureStretch: 布局拉伸
-  pureStretchFixed: 固定拉伸
-  pureStretchFixedTip: 固定宽高比拉伸
-  pureStretchCustom: 自定义拉伸
-  pureStretchCustomTip: 自定义宽高比拉伸
+  # 审计日志
+  audit:
+    logs:
+      list: 审计日志列表
 
 status:
   pureNotify: 通知

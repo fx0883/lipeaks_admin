@@ -10,6 +10,7 @@ common:
   generate: Generate
   view: View
   reset: Reset
+  refresh: Refresh
   noData: No Data
   search: Search
   actions: Actions
@@ -986,6 +987,7 @@ panel:
   pureSystemSet: System Settings
   pureCloseSystemSet: Close System Settings
   pureClearCacheAndToLogin: Clear Cache and Login Again
+  pureClearCache: Clear Cache
   pureOverallStyle: Overall Style
   pureOverallStyleLight: Light Mode
   pureOverallStyleLightTip: Light background color scheme
@@ -998,25 +1000,19 @@ panel:
   pureVerticalTip: Vertical menu layout
   pureHorizontalTip: Horizontal menu layout
   pureMixTip: Mixed menu layout
-  pureTagsStyle: Tabs Style
+  pureTagsStyle: Tags Style
   pureTagsStyleSmart: Smart Mode
-  pureTagsStyleSmartTip: Dynamic tabs mode
+  pureTagsStyleSmartTip: Smart tab mode
   pureTagsStyleCard: Card Mode
-  pureTagsStyleCardTip: Card tabs mode
-  pureTagsStyleChrome: Browser Mode
-  pureTagsStyleChromeTip: Browser tabs mode
+  pureTagsStyleCardTip: Card tab mode
+  pureTagsStyleChrome: Chrome Mode
+  pureTagsStyleChromeTip: Chrome tab mode
   pureInterfaceDisplay: Interface Display
   pureGreyModel: Grey Mode
-  pureWeakModel: Color Weak Mode
-  pureHiddenTags: Hide Tabs
-  pureHiddenFooter: Hide Footer
-  pureMultiTagsCache: Persistent Tabs
-  pureClearCache: Clear Cache
-  pureStretch: Layout Stretch
-  pureStretchFixed: Fixed Stretch
-  pureStretchFixedTip: Fixed aspect ratio stretch
-  pureStretchCustom: Custom Stretch
-  pureStretchCustomTip: Custom aspect ratio stretch
+  pureWeakModel: Weak Mode
+  pureHiddenTags: Hidden Tags
+  pureHiddenFooter: Hidden Footer
+  pureMultiTagsCache: Multi-tab Cache
 
 status:
   pureNotify: Notifications
@@ -1546,6 +1542,11 @@ member:
 license:
   # Menu items
   menu:
+    title: License Management
+    dashboard: Dashboard
+    products: Product Management
+    plans: Plan Management
+    licenses: License Management
     licenseManagement: License Management
     productManagement: Product Management
     productList: Product List
@@ -1561,18 +1562,40 @@ license:
     licenseCreate: Create License
     licenseEdit: Edit License
     licenseDetail: License Detail
+    machines: Machine Management
     machineManagement: Machine Management
     machineList: Machine List
     machineDetail: Machine Detail
+    activations: Activation Management
     activationManagement: Activation Management
     activationList: Activation List
     activationDetail: Activation Detail
+    audit:
+      logs: Audit Logs
+    auditLogs:
+      title: Audit Logs
     auditLogManagement: Audit Log Management
     auditLogList: Audit Log List
-    dashboard: License Dashboard
+
+  # Common Components
+  common:
+    view: View
+    noData: No Data
+    viewAll: View All
+
+  # Dashboard
+  dashboard:
+    licenseTrend: License Trend
+    statusDistribution: Status Distribution
+    quickActions: Quick Actions
+    recentLicenses: Recent Licenses
+    expiringLicenses: Expiring Licenses
+    noExpiringLicenses: No Expiring Licenses
 
   # Product Management
   products:
+    totalProducts: Total Products
+    productKey: Product Key
     title: Product Management
     list: Product List
     create: Create Product
@@ -1651,6 +1674,7 @@ license:
 
   # Plan Management
   plans:
+    totalPlans: Total Plans
     title: Plan Management
     list: Plan List
     create: Create Plan
@@ -1734,6 +1758,11 @@ license:
 
   # License Management
   licenses:
+    totalLicenses: Total Licenses
+    activeLicenses: Active Licenses
+    created: Created
+    activated: Activated
+    createdAt: Created At
     title: License Management
     list: License List
     create: Create License
@@ -1779,7 +1808,6 @@ license:
     statusSuspended: Suspended
     statusAll: All Status
     isActive: Active
-    createdAt: Created At
     updatedAt: Updated At
     actions: Actions
     metadata: Metadata
@@ -1814,7 +1842,6 @@ license:
     downloadBtn: Download
     copyBtn: Copy Key
 
-  # Machine Management
   machines:
     title: Machine Management
     list: Machine List
@@ -1883,9 +1910,10 @@ license:
     deleteBtn: Delete
     unbindBtn: Unbind
 
-  # Activation Management
   activations:
     title: Activation Management
+    createdAt: Created At
+    never: Never
     list: Activation List
     detail: Activation Detail
     view: View Activation
@@ -1915,9 +1943,6 @@ license:
     statusExpired: Expired
     statusRevoked: Revoked
     statusAll: All Status
-    isActive: Active
-    createdAt: Created At
-    updatedAt: Updated At
     actions: Actions
     metadata: Metadata
     
@@ -1949,6 +1974,11 @@ license:
     title: Audit Log Management
     list: Audit Log List
     detail: Audit Log Detail
+    user: Operator
+    changes: Changes
+    id: Log ID
+    resourceId: Resource ID
+    description: Description
     view: View Audit Log
     search: Search Audit Log
     searchPlaceholder: Search by user or resource
@@ -1957,7 +1987,6 @@ license:
     backToList: Back to List
     
     # Form fields
-    id: Log ID
     action: Action
     actionCreate: Create
     actionUpdate: Update
@@ -1978,12 +2007,10 @@ license:
     resourceTypeActivation: Activation
     resourceTypeUser: User
     resourceTypeAll: All Types
-    resourceId: Resource ID
-    user: User
+    timestamp: Timestamp
     userAgent: User Agent
     ipAddress: IP Address
     location: Location
-    timestamp: Timestamp
     createdAt: Created At
     metadata: Metadata
     details: Details
@@ -1996,30 +2023,10 @@ license:
     fetchDetailFailed: Failed to fetch audit log details
     viewBtn: View
 
-  # Common
-  common:
-    id: ID
-    name: Name
-    description: Description
-    status: Status
-    createdAt: Created At
-    updatedAt: Updated At
-    actions: Actions
-    search: Search
-    filter: Filter
-    reset: Reset
-    cancel: Cancel
-    save: Save
-    edit: Edit
-    view: View
-    delete: Delete
-    create: Create
-    update: Update
-    back: Back
-    confirm: Confirm
-    yes: Yes
-    no: No
-    active: Active
+  # Audit Logs  
+  audit:
+    logs:
+      list: Audit Log List
     inactive: Inactive
     loading: Loading...
     noData: No Data

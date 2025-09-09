@@ -11,7 +11,7 @@ import {
   View,
   Refresh,
   Key,
-  Copy,
+  CopyDocument,
   Download
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
@@ -43,13 +43,13 @@ if (!checkPermission()) {
 const tableLoading = computed(() => licenseStore.loading.licenseList);
 
 // 表格数据
-const licenses = computed(() => licenseStore.licenses.data);
+const licenses = computed(() => licenseStore.licenses?.data || []);
 
 // 分页信息
 const pagination = reactive({
   currentPage: 1,
   pageSize: 10,
-  total: computed(() => licenseStore.licenses.total)
+  total: computed(() => licenseStore.licenses?.total || 0)
 });
 
 // 搜索表单
@@ -437,7 +437,7 @@ onMounted(() => {
               <code class="license-key">{{ formatLicenseKey(row.license_key) }}</code>
               <el-button
                 type="text"
-                :icon="Copy"
+                :icon="CopyDocument"
                 size="small"
                 @click="handleCopyLicenseKey(row.license_key)"
               />

@@ -13,10 +13,7 @@ import {
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
 import { useUserStoreHook } from "@/store/modules/user";
-import type {
-  Machine,
-  MachineListParams
-} from "@/types/license";
+import type { Machine, MachineListParams } from "@/types/license";
 import { hasPerms } from "@/utils/auth";
 import logger from "@/utils/logger";
 
@@ -39,13 +36,13 @@ if (!checkPermission()) {
 const tableLoading = computed(() => licenseStore.loading.machineList);
 
 // 表格数据
-const machines = computed(() => licenseStore.machines.data);
+const machines = computed(() => licenseStore.machines?.data || []);
 
 // 分页信息
 const pagination = reactive({
   currentPage: 1,
   pageSize: 10,
-  total: computed(() => licenseStore.machines.total)
+  total: computed(() => licenseStore.machines?.total || 0)
 });
 
 // 搜索表单
@@ -92,10 +89,14 @@ const fetchMachines = async () => {
 // 获取许可证选项
 const fetchLicenseOptions = async () => {
   try {
-    await licenseStore.fetchLicenseList({ page: 1, page_size: 100, status: "active" });
+    await licenseStore.fetchLicenseList({
+      page: 1,
+      page_size: 100,
+      status: "active"
+    });
     licenseOptions.value = licenseStore.licenses.data.map(license => ({
       value: license.id,
-      label: `${license.license_key.substring(0, 8)}...${license.license_key.slice(-4)} (${license.product?.name || 'N/A'})`
+      label: `${license.license_key.substring(0, 8)}...${license.license_key.slice(-4)} (${license.product?.name || "N/A"})`
     }));
   } catch (error) {
     logger.error("获取许可证选项失败", error);
@@ -137,10 +138,12 @@ const handleUnbind = async (row: Machine) => {
     ElMessage.error("无权限执行此操作");
     return;
   }
-  
+
   try {
     await ElMessageBox.confirm(
-      t("license.machines.unbindConfirm", { fingerprint: row.fingerprint.substring(0, 12) + "..." }),
+      t("license.machines.unbindConfirm", {
+        fingerprint: row.fingerprint.substring(0, 12) + "..."
+      }),
       t("common.warning"),
       {
         confirmButtonText: t("common.confirm"),
@@ -148,7 +151,7 @@ const handleUnbind = async (row: Machine) => {
         type: "warning"
       }
     );
-    
+
     await licenseStore.unbindMachine(row.id);
     ElMessage.success(t("license.machines.unbindSuccess"));
     await fetchMachines();
@@ -166,10 +169,12 @@ const handleDelete = async (row: Machine) => {
     ElMessage.error("无权限执行此操作");
     return;
   }
-  
+
   try {
     await ElMessageBox.confirm(
-      t("license.machines.deleteConfirm", { fingerprint: row.fingerprint.substring(0, 12) + "..." }),
+      t("license.machines.deleteConfirm", {
+        fingerprint: row.fingerprint.substring(0, 12) + "..."
+      }),
       t("common.warning"),
       {
         confirmButtonText: t("common.confirm"),
@@ -177,7 +182,7 @@ const handleDelete = async (row: Machine) => {
         type: "warning"
       }
     );
-    
+
     await licenseStore.deleteMachine(row.id);
     ElMessage.success(t("license.machines.deleteSuccess"));
     await fetchMachines();
@@ -195,15 +200,17 @@ const handleBatchUnbind = async () => {
     ElMessage.error("无权限执行此操作");
     return;
   }
-  
+
   if (multipleSelection.value.length === 0) {
     ElMessage.warning(t("license.machines.selectMachines"));
     return;
   }
-  
+
   try {
     await ElMessageBox.confirm(
-      t("license.machines.batchUnbindConfirm", { count: multipleSelection.value.length }),
+      t("license.machines.batchUnbindConfirm", {
+        count: multipleSelection.value.length
+      }),
       t("common.warning"),
       {
         confirmButtonText: t("common.confirm"),
@@ -211,10 +218,10 @@ const handleBatchUnbind = async () => {
         type: "warning"
       }
     );
-    
+
     const machineIds = multipleSelection.value.map(machine => machine.id);
     await licenseStore.batchUnbindMachines(machineIds);
-    
+
     ElMessage.success(t("license.machines.batchUnbindSuccess"));
     await fetchMachines();
     multipleSelection.value = [];
@@ -228,37 +235,41 @@ const handleBatchUnbind = async () => {
 
 // 格式化机器指纹
 const formatFingerprint = (fingerprint: string) => {
-  return fingerprint.length > 24 ? 
-    `${fingerprint.substring(0, 12)}...${fingerprint.substring(fingerprint.length - 12)}` : 
-    fingerprint;
+  return fingerprint.length > 24
+    ? `${fingerprint.substring(0, 12)}...${fingerprint.substring(fingerprint.length - 12)}`
+    : fingerprint;
 };
 
 // 格式化最后活跃时间
 const formatLastSeen = (lastSeen: string | null) => {
   if (!lastSeen) return t("license.machines.never");
-  
+
   const date = new Date(lastSeen);
   const now = new Date();
-  const diffMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-  
+  const diffMinutes = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60)
+  );
+
   if (diffMinutes < 5) return t("license.machines.justNow");
-  if (diffMinutes < 60) return t("license.machines.minutesAgo", { minutes: diffMinutes });
-  
+  if (diffMinutes < 60)
+    return t("license.machines.minutesAgo", { minutes: diffMinutes });
+
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return t("license.machines.hoursAgo", { hours: diffHours });
-  
+  if (diffHours < 24)
+    return t("license.machines.hoursAgo", { hours: diffHours });
+
   const diffDays = Math.floor(diffHours / 24);
   if (diffDays < 7) return t("license.machines.daysAgo", { days: diffDays });
-  
+
   return date.toLocaleDateString();
 };
 
 // 获取操作系统图标
 const getOSIcon = (os: string) => {
-  if (os.toLowerCase().includes('windows')) return 'ri:windows-fill';
-  if (os.toLowerCase().includes('mac')) return 'ri:apple-fill';
-  if (os.toLowerCase().includes('linux')) return 'ri:ubuntu-fill';
-  return 'ri:computer-line';
+  if (os.toLowerCase().includes("windows")) return "ri:windows-fill";
+  if (os.toLowerCase().includes("mac")) return "ri:apple-fill";
+  if (os.toLowerCase().includes("linux")) return "ri:ubuntu-fill";
+  return "ri:computer-line";
 };
 
 // 分页变化
@@ -293,7 +304,7 @@ onMounted(() => {
             @keyup.enter="handleSearch"
           />
         </el-form-item>
-        
+
         <el-form-item :label="t('license.machines.license')">
           <el-select
             v-model="searchForm.license_id"
@@ -309,7 +320,7 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item :label="t('license.machines.status')">
           <el-select
             v-model="searchForm.is_active"
@@ -324,7 +335,7 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleSearch">
             {{ t("common.search") }}
@@ -351,10 +362,12 @@ onMounted(() => {
             @click="handleBatchUnbind"
           >
             {{ t("license.machines.batchUnbind") }}
-            <span v-if="multipleSelection.length > 0">({{ multipleSelection.length }})</span>
+            <span v-if="multipleSelection.length > 0"
+              >({{ multipleSelection.length }})</span
+            >
           </el-button>
         </div>
-        
+
         <div class="action-right">
           <span class="total-info">
             {{ t("license.machines.total", { count: pagination.total }) }}
@@ -373,30 +386,32 @@ onMounted(() => {
         border
       >
         <el-table-column type="selection" width="55" />
-        
+
         <el-table-column
           prop="id"
           :label="t('license.machines.id')"
           width="80"
         />
-        
+
         <el-table-column
           prop="fingerprint"
           :label="t('license.machines.fingerprint')"
           min-width="200"
         >
           <template #default="{ row }">
-            <code class="machine-fingerprint">{{ formatFingerprint(row.fingerprint) }}</code>
+            <code class="machine-fingerprint">{{
+              formatFingerprint(row.fingerprint)
+            }}</code>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="hostname"
           :label="t('license.machines.hostname')"
           min-width="150"
           show-overflow-tooltip
         />
-        
+
         <el-table-column
           prop="os_info"
           :label="t('license.machines.osInfo')"
@@ -412,7 +427,7 @@ onMounted(() => {
             </div>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="hardware_info"
           :label="t('license.machines.hardwareInfo')"
@@ -434,7 +449,7 @@ onMounted(() => {
             <span v-else>-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="license"
           :label="t('license.machines.license')"
@@ -443,12 +458,14 @@ onMounted(() => {
         >
           <template #default="{ row }">
             <span v-if="row.license">
-              {{ row.license.license_key.substring(0, 8) }}...{{ row.license.license_key.slice(-4) }}
+              {{ row.license.license_key.substring(0, 8) }}...{{
+                row.license.license_key.slice(-4)
+              }}
             </span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="is_active"
           :label="t('license.machines.status')"
@@ -456,23 +473,30 @@ onMounted(() => {
         >
           <template #default="{ row }">
             <el-tag :type="row.is_active ? 'success' : 'info'">
-              {{ row.is_active ? t('common.active') : t('common.inactive') }}
+              {{ row.is_active ? t("common.active") : t("common.inactive") }}
             </el-tag>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="last_seen_at"
           :label="t('license.machines.lastSeen')"
           width="150"
         >
           <template #default="{ row }">
-            <span :class="{ 'recent-activity': row.last_seen_at && new Date(row.last_seen_at) > new Date(Date.now() - 5 * 60 * 1000) }">
+            <span
+              :class="{
+                'recent-activity':
+                  row.last_seen_at &&
+                  new Date(row.last_seen_at) >
+                    new Date(Date.now() - 5 * 60 * 1000)
+              }"
+            >
               {{ formatLastSeen(row.last_seen_at) }}
             </span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="created_at"
           :label="t('license.machines.firstSeen')"
@@ -482,12 +506,8 @@ onMounted(() => {
             {{ new Date(row.created_at).toLocaleString() }}
           </template>
         </el-table-column>
-        
-        <el-table-column
-          :label="t('common.actions')"
-          width="200"
-          fixed="right"
-        >
+
+        <el-table-column :label="t('common.actions')" width="200" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -497,7 +517,7 @@ onMounted(() => {
             >
               {{ t("common.view") }}
             </el-button>
-            
+
             <el-button
               v-if="hasPerms('license:manage') && row.is_active"
               type="warning"
@@ -506,7 +526,7 @@ onMounted(() => {
             >
               {{ t("license.machines.unbind") }}
             </el-button>
-            
+
             <el-button
               v-if="hasPerms('license:delete')"
               type="danger"
@@ -519,7 +539,7 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
-      
+
       <!-- 分页 -->
       <div class="pagination-container">
         <el-pagination
@@ -565,7 +585,7 @@ onMounted(() => {
   background: #f5f7fa;
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 12px;
   color: #909399;
 }
