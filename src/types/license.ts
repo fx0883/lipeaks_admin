@@ -11,6 +11,7 @@ export interface SoftwareProduct {
   description: string;
   code: string;
   status: string;
+  is_active: boolean;
   max_activations: number;
   offline_days: number;
   license_plans_count: number;
@@ -32,10 +33,18 @@ export interface ProductCreateParams {
   version: string;
   description: string;
   is_active?: boolean;
-  metadata?: Record<string, any>;
 }
 
 export interface ProductUpdateParams extends Partial<ProductCreateParams> {}
+
+// 产品编辑表单数据类型
+export interface ProductEditFormData {
+  name: string;
+  code: string;
+  version: string;
+  description: string;
+  is_active: boolean;
+}
 
 // 产品创建表单数据类型
 export interface ProductCreateData {
@@ -44,7 +53,6 @@ export interface ProductCreateData {
   version: string;
   description: string;
   is_active: boolean;
-  metadata: Record<string, any>;
 }
 
 // 许可证计划相关类型
@@ -114,6 +122,7 @@ export interface License {
 
 export interface LicenseListParams {
   search?: string;
+  product?: number;
   plan_id?: number;
   customer_email?: string;
   status?: LicenseStatus;

@@ -3,13 +3,13 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from "element-plus";
-import {
-  ArrowLeft,
-  Check,
-  Close
-} from "@element-plus/icons-vue";
+import { ArrowLeft, Check, Close } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
-import type { Product, ProductUpdateData } from "@/types/license";
+import type {
+  SoftwareProduct,
+  ProductEditFormData,
+  ProductUpdateParams
+} from "@/types/license";
 import { hasPerms } from "@/utils/auth";
 import logger from "@/utils/logger";
 
@@ -39,33 +39,68 @@ const pageLoading = ref(false);
 const submitLoading = computed(() => licenseStore.loading.productUpdate);
 
 // 产品数据
-const product = ref<Product | null>(null);
+const product = ref<SoftwareProduct | null>(null);
 
 // 表单数据
-const formData = reactive<ProductUpdateData>({
+const formData = reactive<ProductEditFormData>({
   name: "",
+  code: "",
   version: "",
   description: "",
-  is_active: true,
-  metadata: {}
+  is_active: true
 });
-
-// 动态元数据字段
-const metadataFields = ref<Array<{ key: string; value: string; id: number }>>([]);
-let metadataIdCounter = 0;
 
 // 表单验证规则
 const formRules = {
   name: [
-    { required: true, message: t("license.products.nameRequired"), trigger: "blur" },
-    { min: 2, max: 100, message: t("license.products.nameLength"), trigger: "blur" }
+    {
+      required: true,
+      message: t("license.products.nameRequired"),
+      trigger: "blur"
+    },
+    {
+      min: 2,
+      max: 100,
+      message: t("license.products.nameLength"),
+      trigger: "blur"
+    }
+  ],
+  code: [
+    {
+      required: true,
+      message: t("license.products.codeRequired"),
+      trigger: "blur"
+    },
+    {
+      min: 2,
+      max: 50,
+      message: t("license.products.codeLength"),
+      trigger: "blur"
+    },
+    {
+      pattern: /^[a-zA-Z0-9_-]+$/,
+      message: t("license.products.codeFormat"),
+      trigger: "blur"
+    }
   ],
   version: [
-    { required: true, message: t("license.products.versionRequired"), trigger: "blur" },
-    { pattern: /^\d+\.\d+\.\d+$/, message: t("license.products.versionFormat"), trigger: "blur" }
+    {
+      required: true,
+      message: t("license.products.versionRequired"),
+      trigger: "blur"
+    },
+    {
+      pattern: /^\d+\.\d+\.\d+$/,
+      message: t("license.products.versionFormat"),
+      trigger: "blur"
+    }
   ],
   description: [
-    { max: 500, message: t("license.products.descriptionLength"), trigger: "blur" }
+    {
+      max: 500,
+      message: t("license.products.descriptionLength"),
+      trigger: "blur"
+    }
   ]
 };
 
@@ -73,22 +108,20 @@ const formRules = {
 const fetchProduct = async () => {
   try {
     pageLoading.value = true;
-    
-    const productData = await licenseStore.fetchProductDetail(productId);
-    product.value = productData;
-    
-    // 填充表单数据
-    Object.assign(formData, {
-      name: productData.name,
-      version: productData.version,
-      description: productData.description || "",
-      is_active: productData.is_active,
-      metadata: productData.metadata || {}
-    });
-    
-    // 初始化元数据字段
-    initMetadataFields();
-    
+
+    const response = await licenseStore.fetchProductDetail(productId);
+    if (response.success) {
+      product.value = response.data;
+
+      // 填充表单数据
+      Object.assign(formData, {
+        name: response.data.name,
+        code: response.data.code,
+        version: response.data.version,
+        description: response.data.description || "",
+        is_active: response.data.is_active
+      });
+    }
   } catch (error) {
     logger.error("获取产品详情失败", error);
     ElMessage.error(t("license.products.fetchError"));
@@ -98,66 +131,28 @@ const fetchProduct = async () => {
   }
 };
 
-// 初始化元数据字段
-const initMetadataFields = () => {
-  metadataFields.value = [];
-  metadataIdCounter = 0;
-  
-  if (formData.metadata && Object.keys(formData.metadata).length > 0) {
-    Object.entries(formData.metadata).forEach(([key, value]) => {
-      metadataFields.value.push({
-        key,
-        value: String(value),
-        id: metadataIdCounter++
-      });
-    });
-  } else {
-    // 添加一个空字段
-    addMetadataField();
-  }
-};
-
-// 添加元数据字段
-const addMetadataField = () => {
-  metadataFields.value.push({
-    key: "",
-    value: "",
-    id: metadataIdCounter++
-  });
-};
-
-// 删除元数据字段
-const removeMetadataField = (id: number) => {
-  const index = metadataFields.value.findIndex(field => field.id === id);
-  if (index > -1) {
-    metadataFields.value.splice(index, 1);
-  }
-};
-
-// 处理元数据变化
-const handleMetadataChange = () => {
-  const metadata: Record<string, any> = {};
-  metadataFields.value.forEach(field => {
-    if (field.key && field.value) {
-      metadata[field.key] = field.value;
-    }
-  });
-  formData.metadata = metadata;
-};
-
 // 提交表单
 const handleSubmit = async () => {
   try {
     const valid = await formRef.value?.validate();
     if (!valid) return;
 
-    // 处理元数据
-    handleMetadataChange();
+    // 转换为API期望的格式
+    const updateData: ProductUpdateParams = {
+      name: formData.name,
+      code: formData.code,
+      version: formData.version,
+      description: formData.description,
+      is_active: formData.is_active
+    };
 
-    logger.debug("[ProductEdit] 更新产品数据:", { id: productId, data: formData });
+    logger.debug("[ProductEdit] 更新产品数据:", {
+      id: productId,
+      data: updateData
+    });
 
-    await licenseStore.updateProduct(productId, formData);
-    
+    await licenseStore.updateProduct(productId, updateData);
+
     ElMessage.success(t("license.products.updateSuccess"));
     router.push("/license/products");
   } catch (error) {
@@ -176,12 +171,11 @@ const handleReset = () => {
   if (product.value) {
     Object.assign(formData, {
       name: product.value.name,
+      code: product.value.code,
       version: product.value.version,
       description: product.value.description || "",
-      is_active: product.value.is_active,
-      metadata: product.value.metadata || {}
+      is_active: product.value.is_active
     });
-    initMetadataFields();
   }
 };
 
@@ -227,7 +221,19 @@ onMounted(() => {
               />
             </el-form-item>
           </el-col>
-          
+
+          <el-col :span="12">
+            <el-form-item :label="t('license.products.code')" prop="code">
+              <el-input
+                v-model="formData.code"
+                :placeholder="t('license.products.codePlaceholder')"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item :label="t('license.products.version')" prop="version">
               <el-input
@@ -239,7 +245,10 @@ onMounted(() => {
           </el-col>
         </el-row>
 
-        <el-form-item :label="t('license.products.description')" prop="description">
+        <el-form-item
+          :label="t('license.products.description')"
+          prop="description"
+        >
           <el-input
             v-model="formData.description"
             type="textarea"
@@ -256,49 +265,6 @@ onMounted(() => {
             :active-text="t('common.active')"
             :inactive-text="t('common.inactive')"
           />
-        </el-form-item>
-
-        <!-- 元数据配置 -->
-        <el-form-item :label="t('license.products.metadata')">
-          <div class="metadata-container">
-            <div class="metadata-header">
-              <span class="metadata-title">{{ t("license.products.metadataConfig") }}</span>
-              <el-button type="primary" size="small" @click="addMetadataField">
-                {{ t("license.products.addMetadata") }}
-              </el-button>
-            </div>
-            
-            <div v-if="metadataFields.length === 0" class="metadata-empty">
-              <span>{{ t("license.products.noMetadata") }}</span>
-            </div>
-            
-            <div v-else class="metadata-fields">
-              <div
-                v-for="field in metadataFields"
-                :key="field.id"
-                class="metadata-field"
-              >
-                <el-input
-                  v-model="field.key"
-                  :placeholder="t('license.products.metadataKey')"
-                  style="width: 200px"
-                  @input="handleMetadataChange"
-                />
-                <el-input
-                  v-model="field.value"
-                  :placeholder="t('license.products.metadataValue')"
-                  style="width: 300px"
-                  @input="handleMetadataChange"
-                />
-                <el-button
-                  type="danger"
-                  :icon="Close"
-                  size="small"
-                  @click="removeMetadataField(field.id)"
-                />
-              </div>
-            </div>
-          </div>
         </el-form-item>
 
         <!-- 提交按钮 -->
@@ -363,45 +329,6 @@ onMounted(() => {
   background: #f5f7fa;
   padding: 4px 8px;
   border-radius: 4px;
-}
-
-.metadata-container {
-  width: 100%;
-}
-
-.metadata-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.metadata-title {
-  font-weight: 500;
-  color: #303133;
-}
-
-.metadata-empty {
-  padding: 20px;
-  text-align: center;
-  color: #909399;
-  border: 1px dashed #dcdfe6;
-  border-radius: 4px;
-}
-
-.metadata-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.metadata-field {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
 }
 
 .form-actions {

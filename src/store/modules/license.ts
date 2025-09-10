@@ -28,24 +28,24 @@ import { store } from "../index";
 interface LicenseState {
   // 数据状态
   products: PaginationData<SoftwareProduct>;
-  plans: PaginationData<LicensePlan>;  
+  plans: PaginationData<LicensePlan>;
   licenses: PaginationData<License>;
   machineBindings: PaginationData<MachineBinding>;
   activations: PaginationData<LicenseActivation>;
   auditLogs: PaginationData<AuditLog>;
-  
+
   // 当前选中项
   currentProduct: SoftwareProduct | null;
   currentPlan: LicensePlan | null;
   currentLicense: License | null;
   currentMachineBinding: MachineBinding | null;
   currentActivation: LicenseActivation | null;
-  
+
   // 统计数据
   statistics: LicenseStatistics | null;
   activationTrend: ActivationTrend[];
   revenueReport: RevenueReport[];
-  
+
   // 加载状态
   loading: {
     // 产品相关
@@ -54,14 +54,14 @@ interface LicenseState {
     productCreate: boolean;
     productUpdate: boolean;
     productDelete: boolean;
-    
+
     // 计划相关
     planList: boolean;
     planDetail: boolean;
     planCreate: boolean;
     planUpdate: boolean;
     planDelete: boolean;
-    
+
     // 许可证相关
     licenseList: boolean;
     licenseDetail: boolean;
@@ -70,26 +70,26 @@ interface LicenseState {
     licenseRevoke: boolean;
     licenseRestore: boolean;
     batchLicenseOperation: boolean;
-    
+
     // 机器绑定相关
     machineBindingList: boolean;
     machineBindingDetail: boolean;
     machineUnbind: boolean;
-    
+
     // 激活相关
     activationList: boolean;
     activationDetail: boolean;
     activationDeactivate: boolean;
-    
+
     // 审计日志相关
     auditLogList: boolean;
     auditLogDetail: boolean;
-    
+
     // 统计报表相关
     statistics: boolean;
     activationTrend: boolean;
     revenueReport: boolean;
-    
+
     // 导出相关
     exportLicenses: boolean;
     exportActivations: boolean;
@@ -109,19 +109,19 @@ export const useLicenseStore = defineStore("license", {
     machineBindings: { data: [], total: 0, page: 1, limit: 10 },
     activations: { data: [], total: 0, page: 1, limit: 10 },
     auditLogs: { data: [], total: 0, page: 1, limit: 10 },
-    
+
     // 当前选中项初始化
     currentProduct: null,
     currentPlan: null,
     currentLicense: null,
     currentMachineBinding: null,
     currentActivation: null,
-    
+
     // 统计数据初始化
     statistics: null,
     activationTrend: [],
     revenueReport: [],
-    
+
     // 加载状态初始化
     loading: {
       productList: false,
@@ -129,13 +129,13 @@ export const useLicenseStore = defineStore("license", {
       productCreate: false,
       productUpdate: false,
       productDelete: false,
-      
+
       planList: false,
       planDetail: false,
       planCreate: false,
       planUpdate: false,
       planDelete: false,
-      
+
       licenseList: false,
       licenseDetail: false,
       licenseCreate: false,
@@ -143,47 +143,47 @@ export const useLicenseStore = defineStore("license", {
       licenseRevoke: false,
       licenseRestore: false,
       batchLicenseOperation: false,
-      
+
       machineBindingList: false,
       machineBindingDetail: false,
       machineUnbind: false,
-      
+
       activationList: false,
       activationDetail: false,
       activationDeactivate: false,
-      
+
       auditLogList: false,
       auditLogDetail: false,
-      
+
       statistics: false,
       activationTrend: false,
       revenueReport: false,
-      
+
       exportLicenses: false,
       exportActivations: false,
       exportAuditLogs: false
     }
   }),
-  
+
   actions: {
     // ============================
     // 软件产品管理 Actions
     // ============================
-    
+
     /**
      * 获取产品列表
      */
     async fetchProductList(params: ProductListParams = {}) {
       this.loading.productList = true;
       try {
-        const response = await licenseApi.getProductList(params);
+        const response = (await licenseApi.getProductList(params)) as any;
         if (response.success) {
-          // 正确解构后端返回的数据结构
+          // 正确解构Django REST Framework返回的数据结构
           this.products = {
-            data: response.data.results,
-            total: response.data.pagination.count,
-            page: response.data.pagination.current_page,
-            limit: response.data.pagination.page_size
+            data: response.data.results || [],
+            total: response.data.count || 0,
+            page: params.page || 1,
+            limit: params.page_size || 10
           };
           return response;
         } else {
@@ -197,7 +197,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.productList = false;
       }
     },
-    
+
     /**
      * 获取产品详情
      */
@@ -219,7 +219,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.productDetail = false;
       }
     },
-    
+
     /**
      * 创建产品
      */
@@ -240,7 +240,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.productCreate = false;
       }
     },
-    
+
     /**
      * 更新产品
      */
@@ -264,7 +264,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.productUpdate = false;
       }
     },
-    
+
     /**
      * 删除产品
      */
@@ -288,20 +288,26 @@ export const useLicenseStore = defineStore("license", {
         this.loading.productDelete = false;
       }
     },
-    
+
     // ============================
     // 许可证计划管理 Actions
     // ============================
-    
+
     /**
      * 获取计划列表
      */
     async fetchPlanList(params: PlanListParams = {}) {
       this.loading.planList = true;
       try {
-        const response = await licenseApi.getPlanList(params);
+        const response = (await licenseApi.getPlanList(params)) as any;
         if (response.success) {
-          this.plans = response.data;
+          // 正确解构Django REST Framework返回的数据结构
+          this.plans = {
+            data: response.data.results || [],
+            total: response.data.count || 0,
+            page: params.page || 1,
+            limit: params.page_size || 10
+          };
           return response;
         } else {
           logger.error(response.message || "获取计划列表失败");
@@ -314,7 +320,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.planList = false;
       }
     },
-    
+
     /**
      * 创建计划
      */
@@ -335,20 +341,26 @@ export const useLicenseStore = defineStore("license", {
         this.loading.planCreate = false;
       }
     },
-    
+
     // ============================
     // 许可证管理 Actions
     // ============================
-    
+
     /**
      * 获取许可证列表
      */
     async fetchLicenseList(params: LicenseListParams = {}) {
       this.loading.licenseList = true;
       try {
-        const response = await licenseApi.getLicenseList(params);
+        const response = (await licenseApi.getLicenseList(params)) as any;
         if (response.success) {
-          this.licenses = response.data;
+          // 正确解构Django REST Framework返回的数据结构
+          this.licenses = {
+            data: response.data.results || [],
+            total: response.data.count || 0,
+            page: params.page || 1,
+            limit: params.page_size || 10
+          };
           return response;
         } else {
           logger.error(response.message || "获取许可证列表失败");
@@ -361,7 +373,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.licenseList = false;
       }
     },
-    
+
     /**
      * 创建许可证
      */
@@ -382,11 +394,13 @@ export const useLicenseStore = defineStore("license", {
         this.loading.licenseCreate = false;
       }
     },
-    
+
     /**
      * 批量创建许可证
      */
-    async batchCreateLicenses(data: LicenseCreateParams & { quantity: number }) {
+    async batchCreateLicenses(
+      data: LicenseCreateParams & { quantity: number }
+    ) {
       this.loading.licenseCreate = true;
       try {
         const response = await licenseApi.batchCreateLicenses(data);
@@ -403,7 +417,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.licenseCreate = false;
       }
     },
-    
+
     /**
      * 撤销许可证
      */
@@ -427,11 +441,11 @@ export const useLicenseStore = defineStore("license", {
         this.loading.licenseRevoke = false;
       }
     },
-    
+
     // ============================
     // 统计报表 Actions
     // ============================
-    
+
     /**
      * 获取许可证统计数据
      */
@@ -453,7 +467,7 @@ export const useLicenseStore = defineStore("license", {
         this.loading.statistics = false;
       }
     },
-    
+
     /**
      * 获取激活趋势数据
      */
@@ -473,6 +487,53 @@ export const useLicenseStore = defineStore("license", {
         throw error;
       } finally {
         this.loading.activationTrend = false;
+      }
+    },
+
+    /**
+     * 获取产品统计信息
+     */
+    async fetchProductStatistics(id: number) {
+      this.loading.statistics = true;
+      try {
+        const response = await licenseApi.getProductStatistics(id);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "获取产品统计信息失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("获取产品统计信息失败", error);
+        throw error;
+      } finally {
+        this.loading.statistics = false;
+      }
+    },
+
+    /**
+     * 重新生成产品密钥对
+     */
+    async regenerateProductKeypair(id: number) {
+      this.loading.productUpdate = true;
+      try {
+        const response = await licenseApi.regenerateProductKeypair(id);
+        if (response.success) {
+          // 更新当前产品信息
+          if (this.currentProduct && this.currentProduct.id === id) {
+            // 重新获取产品详情以获取最新信息
+            await this.fetchProductDetail(id);
+          }
+          return response;
+        } else {
+          logger.error(response.message || "重新生成密钥对失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("重新生成密钥对失败", error);
+        throw error;
+      } finally {
+        this.loading.productUpdate = false;
       }
     }
   }

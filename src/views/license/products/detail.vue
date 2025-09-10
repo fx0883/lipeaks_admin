@@ -2,16 +2,17 @@
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import {
   ArrowLeft,
   Edit,
   Delete,
   Key,
-  Box
+  Box,
+  Refresh
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
-import type { Product } from "@/types/license";
+import type { SoftwareProduct } from "@/types/license";
 import { hasPerms } from "@/utils/auth";
 import logger from "@/utils/logger";
 
@@ -37,7 +38,7 @@ const productId = Number(route.params.id);
 const pageLoading = ref(false);
 
 // 产品数据
-const product = ref<any | null>(null);
+const product = ref<SoftwareProduct | null>(null);
 
 // 获取产品详情
 const fetchProduct = async () => {
@@ -58,35 +59,50 @@ const fetchProduct = async () => {
 // 获取统计数据
 const fetchStats = async () => {
   try {
-    const plansResponse = await licenseStore.fetchPlanList({
-      product_id: productId,
-      page: 1,
-      page_size: 1
-    });
-    stats.value.plansCount = plansResponse.data.total || 0;
-    const licensesResponse = await licenseStore.fetchLicenseList({
-      product_id: productId,
-      page: 1,
-      page_size: 1
-    });
-    stats.value.licensesCount = licensesResponse.data.total || 0;
-    const activeLicensesResponse = await licenseStore.fetchLicenseList({
-      product_id: productId,
-      status: "active",
-      page: 1,
-      page_size: 1
-    });
-    stats.value.activeLicensesCount = activeLicensesResponse.data.total || 0;
+    const statsResponse = await licenseStore.fetchProductStatistics(productId);
+    if (statsResponse.success) {
+      stats.value = statsResponse.data;
+    }
   } catch (error) {
     logger.error("获取统计数据失败", error);
+    // 如果统计API失败，回退到原有方式
+    try {
+      await licenseStore.fetchPlanList({
+        product_id: productId,
+        page: 1,
+        page_size: 1
+      });
+      stats.value.plansCount = licenseStore.plans.total || 0;
+
+      await licenseStore.fetchLicenseList({
+        product: productId,
+        page: 1,
+        page_size: 1
+      });
+      stats.value.licensesCount = licenseStore.licenses.total || 0;
+
+      await licenseStore.fetchLicenseList({
+        product: productId,
+        status: "active",
+        page: 1,
+        page_size: 1
+      });
+      stats.value.activeLicensesCount = licenseStore.licenses.total || 0;
+    } catch (fallbackError) {
+      logger.error("回退统计数据获取失败", fallbackError);
+    }
   }
 };
 
 // 统计数据
-const stats = ref({
+const stats = ref<any>({
   plansCount: 0,
   licensesCount: 0,
-  activeLicensesCount: 0
+  activeLicensesCount: 0,
+  totalRevenue: 0,
+  monthlyRevenue: 0,
+  totalActivations: 0,
+  activeMachines: 0
 });
 
 // 返回列表
@@ -107,6 +123,33 @@ const handleViewPlans = () => {
 // 查看许可证
 const handleViewLicenses = () => {
   router.push(`/license/licenses?product_id=${productId}`);
+};
+
+// 重新生成密钥对
+const handleRegenerateKeypair = async () => {
+  try {
+    await ElMessageBox.confirm(
+      "重新生成密钥对将使所有使用旧密钥的许可证失效。此操作不可逆，确定继续？",
+      "警告",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }
+    );
+
+    const response = await licenseStore.regenerateProductKeypair(productId);
+    if (response.success) {
+      ElMessage.success("密钥对重新生成成功");
+      // 重新获取产品信息
+      await fetchProduct();
+    }
+  } catch (error: any) {
+    if (error !== "cancel") {
+      logger.error("重新生成密钥对失败", error);
+      ElMessage.error("重新生成密钥对失败");
+    }
+  }
 };
 
 // 格式化创建时间
@@ -136,13 +179,18 @@ onMounted(() => {
           </el-button>
           <h2 class="page-title">{{ t("license.products.detail") }}</h2>
         </div>
-        
+
         <div v-if="product" class="header-right">
           <el-button
-            type="primary"
-            :icon="Edit"
-            @click="handleEdit"
+            type="warning"
+            :icon="Refresh"
+            :loading="licenseStore.loading.productUpdate"
+            style="margin-right: 8px"
+            @click="handleRegenerateKeypair"
           >
+            {{ t("license.products.regenerateKeypair") }}
+          </el-button>
+          <el-button type="primary" :icon="Edit" @click="handleEdit">
             {{ t("common.edit") }}
           </el-button>
         </div>
@@ -158,11 +206,15 @@ onMounted(() => {
               <el-icon class="product-icon"><Box /></el-icon>
               <h3>{{ product.name }}</h3>
               <el-tag :type="product.is_active ? 'success' : 'info'">
-                {{ product.is_active ? t('common.active') : t('common.inactive') }}
+                {{
+                  product.is_active ? t("common.active") : t("common.inactive")
+                }}
               </el-tag>
             </div>
             <div class="product-version">
-              <span class="version-label">{{ t("license.products.version") }}:</span>
+              <span class="version-label"
+                >{{ t("license.products.version") }}:</span
+              >
               <code class="version-code">v{{ product.version }}</code>
             </div>
           </div>
@@ -173,7 +225,7 @@ onMounted(() => {
         <!-- 基本信息 -->
         <div class="info-section">
           <h4 class="section-title">{{ t("license.products.basicInfo") }}</h4>
-          
+
           <el-row :gutter="24">
             <el-col :span="12">
               <div class="info-item">
@@ -181,27 +233,36 @@ onMounted(() => {
                 <span class="info-value">{{ product.id }}</span>
               </div>
             </el-col>
-            
-            <el-col :span="12">
-            </el-col>
-            
+
+            <el-col :span="12" />
+
             <el-col :span="12">
               <div class="info-item">
-                <span class="info-label">{{ t("license.products.createdAt") }}:</span>
-                <span class="info-value">{{ formatCreatedAt(product.created_at) }}</span>
+                <span class="info-label"
+                  >{{ t("license.products.createdAt") }}:</span
+                >
+                <span class="info-value">{{
+                  formatCreatedAt(product.created_at)
+                }}</span>
               </div>
             </el-col>
-            
+
             <el-col :span="12">
               <div class="info-item">
-                <span class="info-label">{{ t("license.products.updatedAt") }}:</span>
-                <span class="info-value">{{ formatUpdatedAt(product.updated_at) }}</span>
+                <span class="info-label"
+                  >{{ t("license.products.updatedAt") }}:</span
+                >
+                <span class="info-value">{{
+                  formatUpdatedAt(product.updated_at)
+                }}</span>
               </div>
             </el-col>
           </el-row>
 
           <div v-if="product.description" class="info-item full-width">
-            <span class="info-label">{{ t("license.products.description") }}:</span>
+            <span class="info-label"
+              >{{ t("license.products.description") }}:</span
+            >
             <p class="info-value description">{{ product.description }}</p>
           </div>
         </div>
@@ -209,52 +270,81 @@ onMounted(() => {
         <!-- 统计信息 -->
         <div class="stats-section">
           <h4 class="section-title">{{ t("license.products.statistics") }}</h4>
-          
+
           <el-row :gutter="24">
-            <el-col :span="8">
+            <el-col :span="6">
               <el-card class="stat-card" @click="handleViewPlans">
                 <div class="stat-content">
                   <div class="stat-icon plans">
                     <el-icon><Key /></el-icon>
                   </div>
                   <div class="stat-info">
-                    <div class="stat-number">{{ product.license_plans_count || 0 }}</div>
-                    <div class="stat-label">{{ t("license.products.plansCount") }}</div>
+                    <div class="stat-number">
+                      {{ stats.plansCount || product.license_plans_count || 0 }}
+                    </div>
+                    <div class="stat-label">
+                      {{ t("license.products.plansCount") }}
+                    </div>
                   </div>
                 </div>
               </el-card>
             </el-col>
-            
-            <el-col :span="8">
+
+            <el-col :span="6">
               <el-card class="stat-card" @click="handleViewLicenses">
                 <div class="stat-content">
                   <div class="stat-icon licenses">
                     <el-icon><Key /></el-icon>
                   </div>
                   <div class="stat-info">
-                    <div class="stat-number">{{ product.total_licenses || 0 }}</div>
-                    <div class="stat-label">{{ t("license.products.licensesCount") }}</div>
+                    <div class="stat-number">
+                      {{ stats.licensesCount || product.total_licenses || 0 }}
+                    </div>
+                    <div class="stat-label">
+                      {{ t("license.products.licensesCount") }}
+                    </div>
                   </div>
                 </div>
               </el-card>
             </el-col>
-            
-            <el-col :span="8">
+
+            <el-col :span="6">
               <el-card class="stat-card">
                 <div class="stat-content">
                   <div class="stat-icon active">
                     <el-icon><Key /></el-icon>
                   </div>
                   <div class="stat-info">
-                    <div class="stat-number">{{ product.total_licenses || 0 }}</div>
-                    <div class="stat-label">{{ t("license.products.activeLicensesCount") }}</div>
+                    <div class="stat-number">
+                      {{ stats.activeLicensesCount || 0 }}
+                    </div>
+                    <div class="stat-label">
+                      {{ t("license.products.activeLicensesCount") }}
+                    </div>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+
+            <el-col :span="6">
+              <el-card class="stat-card">
+                <div class="stat-content">
+                  <div class="stat-icon revenue">
+                    <el-icon><Key /></el-icon>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-number">
+                      {{ stats.totalActivations || 0 }}
+                    </div>
+                    <div class="stat-label">
+                      {{ t("license.products.totalActivations") }}
+                    </div>
                   </div>
                 </div>
               </el-card>
             </el-col>
           </el-row>
         </div>
-
       </template>
     </el-card>
   </div>
@@ -336,14 +426,13 @@ onMounted(() => {
   color: #0369a1;
   padding: 4px 8px;
   border-radius: 4px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 14px;
   font-weight: 500;
 }
 
 .info-section,
-.stats-section,
-.metadata-section {
+.stats-section {
   margin-bottom: 32px;
 }
 
@@ -425,6 +514,11 @@ onMounted(() => {
   color: #388e3c;
 }
 
+.stat-icon.revenue {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
 .stat-info {
   flex: 1;
 }
@@ -440,31 +534,5 @@ onMounted(() => {
   font-size: 14px;
   color: #606266;
   margin-top: 4px;
-}
-
-.metadata-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
-}
-
-.metadata-item {
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  display: flex;
-  gap: 8px;
-}
-
-.metadata-key {
-  color: #606266;
-  font-weight: 500;
-  min-width: 120px;
-  flex-shrink: 0;
-}
-
-.metadata-value {
-  color: #303133;
-  word-break: break-word;
 }
 </style>

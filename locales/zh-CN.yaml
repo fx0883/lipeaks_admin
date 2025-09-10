@@ -1081,6 +1081,7 @@ license:
   products:
     management: 产品管理
     totalProducts: 产品总数
+    productCode: 产品代码
     productKey: 产品密钥
     list: 产品列表
     create: 创建产品
@@ -1105,6 +1106,11 @@ license:
     namePlaceholder: 请输入产品名称
     nameRequired: 产品名称不能为空
     nameLength: 产品名称长度应为2-100个字符
+    code: 产品代码
+    codePlaceholder: 请输入产品代码，如 PROD-001
+    codeRequired: 产品代码不能为空
+    codeLength: 产品代码长度应为2-50个字符
+    codeFormat: 产品代码格式不正确，只能包含大写字母、数字、下划线和横线
     version: 版本
     versionPlaceholder: 请输入版本号，如 1.0.0
     versionRequired: 版本号不能为空
@@ -1129,6 +1135,8 @@ license:
     plansCount: 计划数量
     licensesCount: 许可证数量
     activeLicensesCount: 活跃许可证数量
+    totalActivations: 总激活数
+    regenerateKeypair: 重新生成密钥对
 
   plans:
     management: 计划管理

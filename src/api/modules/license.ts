@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import type { ApiResponse, PaginationResponse } from "@/types/api";
+import type { ApiResponse, DRFPaginationResponse } from "@/types/api";
 import type {
   SoftwareProduct,
   ProductListParams,
@@ -39,7 +39,7 @@ import logger from "@/utils/logger";
 export function getProductList(params: ProductListParams = {}) {
   logger.debug("API请求: 获取产品列表", params);
 
-  return http.request<PaginationResponse<SoftwareProduct>>(
+  return http.request<DRFDRFPaginationResponse<SoftwareProduct>>(
     "get",
     "/licenses/admin/products/",
     { params }
@@ -143,7 +143,7 @@ export function getProductStatistics(id: number) {
 export function getPlanList(params: PlanListParams = {}) {
   logger.debug("API请求: 获取计划列表", params);
 
-  return http.request<PaginationResponse<LicensePlan>>(
+  return http.request<DRFPaginationResponse<LicensePlan>>(
     "get",
     "/licenses/admin/plans/",
     { params }
@@ -237,7 +237,7 @@ export function duplicatePlan(id: number) {
 export function getLicenseList(params: LicenseListParams = {}) {
   logger.debug("API请求: 获取许可证列表", params);
 
-  return http.request<PaginationResponse<License>>(
+  return http.request<DRFPaginationResponse<License>>(
     "get",
     "/licenses/admin/licenses/",
     {
@@ -387,7 +387,7 @@ export function getLicenseUsageStats(id: string) {
 export function getMachineBindingList(params: MachineBindingListParams = {}) {
   logger.debug("API请求: 获取机器绑定列表", params);
 
-  return http.request<PaginationResponse<MachineBinding>>(
+  return http.request<DRFPaginationResponse<MachineBinding>>(
     "get",
     "/licenses/admin/machine-bindings/",
     { params }
@@ -429,7 +429,7 @@ export function blockMachine(id: number, reason?: string) {
 export function getActivationList(params: ActivationListParams = {}) {
   logger.debug("API请求: 获取激活记录列表", params);
 
-  return http.request<PaginationResponse<LicenseActivation>>(
+  return http.request<DRFPaginationResponse<LicenseActivation>>(
     "get",
     "/licenses/admin/activations/",
     { params }
@@ -471,7 +471,7 @@ export function deactivateActivation(id: number, reason?: string) {
 export function getAuditLogList(params: AuditLogListParams = {}) {
   logger.debug("API请求: 获取审计日志列表", params);
 
-  return http.request<PaginationResponse<AuditLog>>(
+  return http.request<DRFPaginationResponse<AuditLog>>(
     "get",
     "/licenses/admin/audit-logs/",
     { params }
@@ -630,7 +630,7 @@ export function exportAuditLogs(params: ExportParams) {
 export function getTenantQuotaList(params: any = {}) {
   logger.debug("API请求: 获取租户许可证配额列表", params);
 
-  return http.request<PaginationResponse<any>>(
+  return http.request<DRFPaginationResponse<any>>(
     "get",
     "/licenses/admin/quotas/",
     { params }

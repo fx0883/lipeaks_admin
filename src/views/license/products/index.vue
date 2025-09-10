@@ -2,7 +2,7 @@
 import { ref, reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import {
   Search,
   Plus,
@@ -67,9 +67,19 @@ const handleSelectionChange = (val: SoftwareProduct[]) => {
   multipleSelection.value = val;
 };
 
+// 防止重复请求的标志
+const isLoading = ref(false);
+
 // 获取产品列表
 const fetchProducts = async () => {
+  // 防止重复请求
+  if (isLoading.value || licenseStore.loading.productList) {
+    logger.debug("[ProductIndex] 请求正在进行中，跳过重复调用");
+    return;
+  }
+
   try {
+    isLoading.value = true;
     searchForm.page = pagination.currentPage;
     searchForm.page_size = pagination.pageSize;
 
@@ -80,6 +90,8 @@ const fetchProducts = async () => {
   } catch (error) {
     logger.error("获取产品列表失败", error);
     ElMessage.error(t("license.products.fetchError"));
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -185,7 +197,7 @@ onMounted(() => {
           >
             <el-option
               v-for="option in statusOptions"
-              :key="option.value"
+              :key="String(option.value)"
               :label="option.label"
               :value="option.value"
             />
@@ -235,15 +247,9 @@ onMounted(() => {
         <el-table-column type="selection" width="55" />
 
         <el-table-column
-          prop="id"
-          :label="t('license.products.id')"
-          width="80"
-        />
-
-        <el-table-column
           prop="name"
           :label="t('license.products.name')"
-          min-width="150"
+          min-width="75"
           show-overflow-tooltip
         />
 
@@ -255,7 +261,7 @@ onMounted(() => {
 
         <el-table-column
           prop="code"
-          :label="t('license.products.productKey')"
+          :label="t('license.products.productCode')"
           width="200"
           show-overflow-tooltip
         />
@@ -286,7 +292,7 @@ onMounted(() => {
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" width="200" fixed="right">
+        <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"

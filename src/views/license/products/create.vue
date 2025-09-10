@@ -3,11 +3,7 @@ import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import {
-  ArrowLeft,
-  Check,
-  Close
-} from "@element-plus/icons-vue";
+import { ArrowLeft, Check, Close } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
 import type { ProductCreateParams } from "@/types/license";
 import { hasPerms } from "@/utils/auth";
@@ -39,60 +35,61 @@ const formData = reactive<ProductCreateParams>({
   code: "",
   version: "",
   description: "",
-  is_active: true,
-  metadata: {}
+  is_active: true
 });
-
-// 动态元数据字段
-const metadataFields = ref<Array<{ key: string; value: string; id: number }>>([]);
-let metadataIdCounter = 0;
 
 // 表单验证规则
 const formRules = {
   name: [
-    { required: true, message: t("license.products.nameRequired"), trigger: "blur" },
-    { min: 2, max: 100, message: t("license.products.nameLength"), trigger: "blur" }
+    {
+      required: true,
+      message: t("license.products.nameRequired"),
+      trigger: "blur"
+    },
+    {
+      min: 2,
+      max: 100,
+      message: t("license.products.nameLength"),
+      trigger: "blur"
+    }
   ],
   code: [
-    { required: true, message: t("license.products.codeRequired"), trigger: "blur" },
-    { min: 2, max: 50, message: t("license.products.codeLength"), trigger: "blur" },
-    { pattern: /^[a-zA-Z0-9_-]+$/, message: t("license.products.codeFormat"), trigger: "blur" }
+    {
+      required: true,
+      message: t("license.products.codeRequired"),
+      trigger: "blur"
+    },
+    {
+      min: 2,
+      max: 50,
+      message: t("license.products.codeLength"),
+      trigger: "blur"
+    },
+    {
+      pattern: /^[a-zA-Z0-9_-]+$/,
+      message: t("license.products.codeFormat"),
+      trigger: "blur"
+    }
   ],
   version: [
-    { required: true, message: t("license.products.versionRequired"), trigger: "blur" },
-    { pattern: /^\d+\.\d+\.\d+$/, message: t("license.products.versionFormat"), trigger: "blur" }
+    {
+      required: true,
+      message: t("license.products.versionRequired"),
+      trigger: "blur"
+    },
+    {
+      pattern: /^\d+\.\d+\.\d+$/,
+      message: t("license.products.versionFormat"),
+      trigger: "blur"
+    }
   ],
   description: [
-    { max: 500, message: t("license.products.descriptionLength"), trigger: "blur" }
-  ]
-};
-
-// 添加元数据字段
-const addMetadataField = () => {
-  metadataFields.value.push({
-    key: "",
-    value: "",
-    id: metadataIdCounter++
-  });
-};
-
-// 删除元数据字段
-const removeMetadataField = (id: number) => {
-  const index = metadataFields.value.findIndex(field => field.id === id);
-  if (index > -1) {
-    metadataFields.value.splice(index, 1);
-  }
-};
-
-// 处理元数据变化
-const handleMetadataChange = () => {
-  const metadata: Record<string, any> = {};
-  metadataFields.value.forEach(field => {
-    if (field.key && field.value) {
-      metadata[field.key] = field.value;
+    {
+      max: 500,
+      message: t("license.products.descriptionLength"),
+      trigger: "blur"
     }
-  });
-  formData.metadata = metadata;
+  ]
 };
 
 // 提交表单
@@ -101,13 +98,10 @@ const handleSubmit = async () => {
     const valid = await formRef.value?.validate();
     if (!valid) return;
 
-    // 处理元数据
-    handleMetadataChange();
-
     logger.debug("[ProductCreate] 提交产品数据:", formData);
 
     await licenseStore.createProduct(formData);
-    
+
     ElMessage.success(t("license.products.createSuccess"));
     router.push("/license/products");
   } catch (error) {
@@ -124,12 +118,7 @@ const handleBack = () => {
 // 重置表单
 const handleReset = () => {
   formRef.value?.resetFields();
-  metadataFields.value = [];
-  formData.metadata = {};
 };
-
-// 初始化一个元数据字段
-addMetadataField();
 </script>
 
 <template>
@@ -165,7 +154,7 @@ addMetadataField();
               />
             </el-form-item>
           </el-col>
-          
+
           <el-col :span="12">
             <el-form-item :label="t('license.products.code')" prop="code">
               <el-input
@@ -189,7 +178,10 @@ addMetadataField();
           </el-col>
         </el-row>
 
-        <el-form-item :label="t('license.products.description')" prop="description">
+        <el-form-item
+          :label="t('license.products.description')"
+          prop="description"
+        >
           <el-input
             v-model="formData.description"
             type="textarea"
@@ -206,49 +198,6 @@ addMetadataField();
             :active-text="t('common.active')"
             :inactive-text="t('common.inactive')"
           />
-        </el-form-item>
-
-        <!-- 元数据配置 -->
-        <el-form-item :label="t('license.products.metadata')">
-          <div class="metadata-container">
-            <div class="metadata-header">
-              <span class="metadata-title">{{ t("license.products.metadataConfig") }}</span>
-              <el-button type="primary" size="small" @click="addMetadataField">
-                {{ t("license.products.addMetadata") }}
-              </el-button>
-            </div>
-            
-            <div v-if="metadataFields.length === 0" class="metadata-empty">
-              <span>{{ t("license.products.noMetadata") }}</span>
-            </div>
-            
-            <div v-else class="metadata-fields">
-              <div
-                v-for="field in metadataFields"
-                :key="field.id"
-                class="metadata-field"
-              >
-                <el-input
-                  v-model="field.key"
-                  :placeholder="t('license.products.metadataKey')"
-                  style="width: 200px"
-                  @input="handleMetadataChange"
-                />
-                <el-input
-                  v-model="field.value"
-                  :placeholder="t('license.products.metadataValue')"
-                  style="width: 300px"
-                  @input="handleMetadataChange"
-                />
-                <el-button
-                  type="danger"
-                  :icon="Close"
-                  size="small"
-                  @click="removeMetadataField(field.id)"
-                />
-              </div>
-            </div>
-          </div>
         </el-form-item>
 
         <!-- 提交按钮 -->
@@ -305,45 +254,6 @@ addMetadataField();
   color: #303133;
   font-size: 20px;
   font-weight: 600;
-}
-
-.metadata-container {
-  width: 100%;
-}
-
-.metadata-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.metadata-title {
-  font-weight: 500;
-  color: #303133;
-}
-
-.metadata-empty {
-  padding: 20px;
-  text-align: center;
-  color: #909399;
-  border: 1px dashed #dcdfe6;
-  border-radius: 4px;
-}
-
-.metadata-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.metadata-field {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
 }
 
 .form-actions {

@@ -1595,6 +1595,7 @@ license:
   # Product Management
   products:
     totalProducts: Total Products
+    productCode: Product Code
     productKey: Product Key
     title: Product Management
     list: Product List
