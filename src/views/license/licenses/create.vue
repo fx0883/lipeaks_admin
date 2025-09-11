@@ -45,27 +45,16 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                :label="$t('license.licenses.product')"
-                prop="productId"
-              >
-                <el-select
-                  v-model="form.productId"
-                  :placeholder="$t('license.licenses.selectProduct')"
-                  style="width: 100%"
-                  :disabled="productLocked"
-                  @change="onProductChange"
-                >
-                  <el-option
-                    v-for="product in availableProducts"
-                    :key="product.id"
-                    :label="`${product.name} v${product.version}`"
-                    :value="product.id"
-                  />
-                </el-select>
-                <!-- 根据文档建议：当产品被锁定时显示提示 -->
-                <div v-if="productLocked" class="form-tip">
-                  {{ $t("license.licenses.productAutoSetByPlan") }}
+              <el-form-item :label="$t('license.licenses.product')">
+                <div class="product-display">
+                  <span v-if="form.productId && getSelectedProduct()">
+                    {{ getSelectedProduct()?.name }} v{{
+                      getSelectedProduct()?.version
+                    }}
+                  </span>
+                  <span v-else class="placeholder-text">
+                    {{ $t("license.licenses.selectPlanFirst") }}
+                  </span>
                 </div>
               </el-form-item>
             </el-col>
@@ -113,25 +102,6 @@
                     })
                   }}
                 </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                :label="$t('license.licenses.tenant')"
-                prop="tenantId"
-              >
-                <el-select
-                  v-model="form.tenantId"
-                  :placeholder="$t('license.licenses.selectTenant')"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="tenant in availableTenants"
-                    :key="tenant.id"
-                    :label="tenant.name"
-                    :value="tenant.id"
-                  />
-                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -268,10 +238,12 @@ import {
   type FormRules
 } from "element-plus";
 import { useI18n } from "vue-i18n";
-import { getProductList, getPlanList } from "@/api/modules/license";
-import { getTenantList } from "@/api/modules/tenantManagement";
+import {
+  getProductList,
+  getPlanList,
+  createLicense
+} from "@/api/modules/license";
 import type { SoftwareProduct, LicensePlan } from "@/types/license";
-import type { Tenant } from "@/types/tenant";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -284,7 +256,6 @@ interface LicenseForm {
   licenseKey: string;
   productId: number | null;
   planId: number | null;
-  tenantId: number | null;
   customerInfo: {
     name: string;
     email: string;
@@ -299,13 +270,11 @@ interface LicenseForm {
 // 使用真实的API类型
 type Product = SoftwareProduct;
 type Plan = LicensePlan;
-type TenantType = Tenant;
 
 const form = reactive<LicenseForm>({
   licenseKey: "",
   productId: null,
   planId: null,
-  tenantId: null,
   customerInfo: {
     name: "",
     email: "",
@@ -319,9 +288,7 @@ const form = reactive<LicenseForm>({
 
 const availableProducts = ref<Product[]>([]);
 const availablePlans = ref<Plan[]>([]);
-const availableTenants = ref<TenantType[]>([]);
 const allPlans = ref<Plan[]>([]); // 存储所有方案，用于过滤
-const productLocked = ref(false);
 
 const rules = reactive<FormRules<LicenseForm>>({
   // 根据API文档：plan是必填字段，product可由plan自动设置
@@ -329,14 +296,6 @@ const rules = reactive<FormRules<LicenseForm>>({
     {
       required: true,
       message: t("license.licenses.planRequired"),
-      trigger: "change"
-    }
-  ],
-  // 租户是必填字段
-  tenantId: [
-    {
-      required: true,
-      message: t("license.licenses.tenantRequired"),
       trigger: "change"
     }
   ],
@@ -436,63 +395,20 @@ const loadAllPlans = async () => {
   }
 };
 
-// 加载租户列表
-const loadAvailableTenants = async () => {
-  try {
-    const result = await getTenantList({ page_size: 100 });
-    if (result.success && result.data?.data) {
-      availableTenants.value = result.data.data;
-    } else {
-      availableTenants.value = [];
-      ElMessage.warning(t("license.licenses.noTenantsAvailable"));
-    }
-  } catch (error) {
-    console.error("Load tenants failed:", error);
-    ElMessage.error(t("license.licenses.loadTenantsFailed"));
-    availableTenants.value = [];
-  }
+// 获取选中的产品信息
+const getSelectedProduct = () => {
+  if (!form.productId) return null;
+  return availableProducts.value.find(product => product.id === form.productId);
 };
 
-// 产品变化时的处理逻辑（级联选择 - 方案A）
-const onProductChange = (productId: number | null) => {
-  if (productId) {
-    // 根据文档建议：当用户选择产品时，动态加载该产品下的方案
-    availablePlans.value = allPlans.value.filter(
-      plan => plan.product === productId
-    );
-
-    // 如果当前选择的方案不属于新选择的产品，清空方案选择并提示
-    if (form.planId) {
-      const currentPlan = allPlans.value.find(plan => plan.id === form.planId);
-      if (!currentPlan || currentPlan.product !== productId) {
-        form.planId = null;
-        ElMessage.info(t("license.licenses.planFilteredByProduct"));
-      }
-    }
-  } else {
-    // 清空产品选择时，显示所有方案
-    availablePlans.value = [...allPlans.value];
-  }
-
-  productLocked.value = false;
-  validateProductPlanConsistency();
-};
-
-// 方案变化时的处理逻辑（级联选择 - 方案A）
+// 方案变化时的处理逻辑（级联选择）
 const onPlanChange = (planId: number | null) => {
   if (planId) {
     const selectedPlan = allPlans.value.find(plan => plan.id === planId);
     if (selectedPlan) {
-      // 根据文档建议：当用户选择方案时，自动设置产品并禁用产品选择
+      // 当用户选择方案时，自动设置对应的产品
       if (form.productId !== selectedPlan.product) {
         form.productId = selectedPlan.product;
-        productLocked.value = true;
-
-        // 过滤出属于该产品的方案
-        availablePlans.value = allPlans.value.filter(
-          plan => plan.product === selectedPlan.product
-        );
-
         ElMessage.success(
           t("license.licenses.productAutoSelectedByPlan", {
             product: selectedPlan.product_name
@@ -501,9 +417,7 @@ const onPlanChange = (planId: number | null) => {
       }
     }
   } else {
-    // 清空方案选择时，解锁产品并显示所有方案
-    productLocked.value = false;
-    form.productId = null;
+    // 清空方案选择时，显示所有方案
     availablePlans.value = [...allPlans.value];
   }
 
@@ -561,9 +475,9 @@ const handleSubmit = async () => {
     submitting.value = true;
 
     // 根据API文档推荐做法：只提供plan参数，让系统自动设置product
+    // 租户信息将由后端从管理员token中获取
     const submitData = {
       plan: form.planId!,
-      tenant: form.tenantId!,
       customer_info: {
         name: form.customerInfo.name,
         email: form.customerInfo.email,
@@ -582,39 +496,70 @@ const handleSubmit = async () => {
 
     console.log("提交数据（遵循API推荐格式）:", submitData);
 
-    // TODO: 实现创建许可证的API调用
-    // const result = await licenseStore.createLicense(submitData)
+    // 调用真实的API (类型断言，因为租户信息由后端从token获取)
+    const result = await createLicense(submitData as any);
 
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    ElMessage.success(
-      t("license.licenses.createSuccess", {
-        planName: allPlans.value.find(p => p.id === form.planId)?.name
-      })
-    );
-    router.push("/license/licenses");
+    if (result.success) {
+      ElMessage.success(
+        t("license.licenses.createSuccess", {
+          planName: allPlans.value.find(p => p.id === form.planId)?.name
+        })
+      );
+      router.push("/license/licenses");
+    } else {
+      throw new Error(result.message || "创建失败");
+    }
   } catch (error) {
     console.error("Create license failed:", error);
 
-    // 根据API文档，提供更详细的错误处理
-    if (error.response?.data?.data) {
-      const errorData = error.response.data.data;
-      if (errorData.plan) {
-        ElMessage.error(
-          t("license.licenses.planValidationError", {
-            message: errorData.plan[0]
-          })
-        );
-      } else if (errorData.customer_info) {
-        ElMessage.error(
-          t("license.licenses.customerInfoError", {
-            message: errorData.customer_info[0]
-          })
-        );
+    // 根据API文档的错误处理格式
+    if (error.response?.data) {
+      const responseData = error.response.data;
+
+      // 处理验证错误（400 Bad Request）
+      if (responseData.data && typeof responseData.data === "object") {
+        const errorData = responseData.data;
+
+        if (errorData.plan && errorData.plan.length > 0) {
+          ElMessage.error(
+            t("license.licenses.planValidationError", {
+              message: errorData.plan[0]
+            })
+          );
+        } else if (
+          errorData.customer_info &&
+          errorData.customer_info.length > 0
+        ) {
+          ElMessage.error(
+            t("license.licenses.customerInfoError", {
+              message: errorData.customer_info[0]
+            })
+          );
+        } else if (
+          errorData.max_activations &&
+          errorData.max_activations.length > 0
+        ) {
+          ElMessage.error(errorData.max_activations[0]);
+        } else if (
+          errorData.validity_days &&
+          errorData.validity_days.length > 0
+        ) {
+          ElMessage.error(errorData.validity_days[0]);
+        } else {
+          // 显示第一个错误信息
+          const firstError = Object.values(errorData)[0];
+          const errorMessage = Array.isArray(firstError)
+            ? firstError[0]
+            : firstError;
+          ElMessage.error(errorMessage || t("license.licenses.createFailed"));
+        }
+      } else if (responseData.message) {
+        ElMessage.error(responseData.message);
       } else {
         ElMessage.error(t("license.licenses.createFailed"));
       }
+    } else if (error.message) {
+      ElMessage.error(error.message);
     } else {
       ElMessage.error(t("license.licenses.createFailed"));
     }
@@ -642,11 +587,7 @@ const handleCancel = () => {
 };
 
 onMounted(() => {
-  Promise.all([
-    loadAvailableProducts(),
-    loadAllPlans(),
-    loadAvailableTenants()
-  ]);
+  Promise.all([loadAvailableProducts(), loadAllPlans()]);
   generateLicenseKey();
 });
 </script>
@@ -665,6 +606,21 @@ onMounted(() => {
   font-size: 12px;
   color: var(--el-text-color-secondary);
   margin-top: 5px;
+}
+
+.product-display {
+  min-height: 32px;
+  line-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
+  background-color: var(--el-fill-color-light);
+  color: var(--el-text-color-regular);
+  font-size: 14px;
+}
+
+.placeholder-text {
+  color: var(--el-text-color-placeholder);
 }
 
 :deep(.el-form-item__label) {
