@@ -79,6 +79,7 @@ common:
     import: Import
     upload: Upload
     download: Download
+  more: More
   table:
     noData: No data
     loading: Loading...
@@ -1826,6 +1827,10 @@ license:
     planPlaceholder: Please select plan
     planRequired: Plan is required
     planIdRequired: Plan ID is required
+    tenant: Tenant
+    tenantPlaceholder: Please select tenant
+    selectTenant: Select Tenant
+    selectPlanFirst: Please select a plan first
     customer: Customer
     customerPlaceholder: Please enter customer name
     customerRequired: Customer is required
@@ -1890,6 +1895,43 @@ license:
     featureMultiUser: Multi-User Support
     featureCustomIntegration: Custom Integration
     
+    # License creation form fields
+    customerCompany: Company
+    customerCompanyPlaceholder: Please enter company name
+    customerPhone: Phone
+    customerPhonePlaceholder: Please enter phone number
+    maxActivationsPlaceholder: Please enter max activations
+    maxActivationsTip: Specify the maximum number of times this license can be activated
+    validityDaysPlaceholder: Please enter validity days
+    validityDaysTip: The validity period of the license (in days)
+    plansFilteredByProduct: Filtered {count} plans for selected product (total {total})
+    
+    # Validation messages
+    customerCompanyMaxLength: Company name cannot exceed {max} characters
+    maxActivationsMinValue: Max activations must be greater than 0
+    validityDaysMinValue: Validity days must be greater than 0
+    notesMaxLength: Notes cannot exceed {max} characters
+    
+    # Success messages
+    productAutoSelectedByPlan: "Product automatically selected: {product}"
+    createSuccess: "License created successfully! Plan: {planName}"
+    
+    # Error messages
+    noProductsAvailable: No products available
+    loadProductsFailed: Failed to load products
+    noPlansAvailable: No plans available
+    loadPlansFailed: Failed to load plans
+    invalidPlanSelection: Invalid plan selection
+    productPlanMismatchDetailed: "Plan {planName} belongs to product {planProduct}, but selected {selectedProduct}"
+    createFailed: Failed to create license
+    planValidationError: "Plan validation error: {message}"
+    customerInfoError: "Customer info error: {message}"
+    
+    # New missing keys
+    statusGenerated: Generated
+    statusActivated: Activated
+    extend: Extend
+    
     # Actions
     copySuccess: License key copied successfully
     copyError: Failed to copy license key
@@ -1899,8 +1941,6 @@ license:
     revokeError: Failed to revoke license
     
     # Messages
-    createSuccess: License created successfully
-    createFailed: Failed to create license
     updateSuccess: License updated successfully
     updateFailed: Failed to update license
     deleteSuccess: License deleted successfully
