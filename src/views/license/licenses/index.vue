@@ -2,7 +2,7 @@
 import { ref, reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import {
   Search,
   Plus,
@@ -12,7 +12,8 @@ import {
   Refresh,
   Key,
   CopyDocument,
-  Download
+  Download,
+  ArrowDown
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -55,29 +56,31 @@ const pagination = reactive({
 // 搜索表单
 const searchForm = reactive<LicenseListParams>({
   search: "",
-  product_id: undefined,
-  plan_id: undefined,
+  product: undefined,
+  plan: undefined,
   status: undefined,
-  customer_id: undefined,
+  tenant: undefined,
   page: 1,
-  page_size: 10
+  page_size: 10,
+  ordering: "-issued_at"
 });
 
 // 许可证状态选项
 const statusOptions = [
   { value: undefined, label: t("license.licenses.statusAll") },
-  { value: "active", label: t("license.licenses.statusActive") },
-  { value: "expired", label: t("license.licenses.statusExpired") },
+  { value: "generated", label: t("license.licenses.statusGenerated") },
+  { value: "activated", label: t("license.licenses.statusActivated") },
+  { value: "suspended", label: t("license.licenses.statusSuspended") },
   { value: "revoked", label: t("license.licenses.statusRevoked") },
-  { value: "suspended", label: t("license.licenses.statusSuspended") }
+  { value: "expired", label: t("license.licenses.statusExpired") }
 ];
 
 // 产品选项
 const productOptions = ref([]);
 // 计划选项
 const planOptions = ref([]);
-// 客户选项
-const customerOptions = ref([]);
+// 租户选项
+const tenantOptions = ref([]);
 
 // 多选相关
 const multipleSelection = ref<License[]>([]);
@@ -104,7 +107,11 @@ const fetchLicenses = async () => {
 // 获取产品选项
 const fetchProductOptions = async () => {
   try {
-    await licenseStore.fetchProductList({ page: 1, page_size: 100, is_active: true });
+    await licenseStore.fetchProductList({
+      page: 1,
+      page_size: 100,
+      is_active: true
+    });
     productOptions.value = licenseStore.products.data.map(product => ({
       value: product.id,
       label: `${product.name} v${product.version}`
@@ -117,13 +124,34 @@ const fetchProductOptions = async () => {
 // 获取计划选项
 const fetchPlanOptions = async () => {
   try {
-    await licenseStore.fetchPlanList({ page: 1, page_size: 100, is_active: true });
+    await licenseStore.fetchPlanList({
+      page: 1,
+      page_size: 100,
+      status: "active"
+    });
     planOptions.value = licenseStore.plans.data.map(plan => ({
       value: plan.id,
       label: `${plan.name} (${plan.plan_type})`
     }));
   } catch (error) {
     logger.error("获取计划选项失败", error);
+  }
+};
+
+// 获取租户选项
+const fetchTenantOptions = async () => {
+  try {
+    // TODO: 实现获取租户列表的API调用
+    // await tenantStore.fetchTenantList({ page: 1, page_size: 100, is_active: true });
+
+    // 模拟数据
+    tenantOptions.value = [
+      { value: 1, label: "科技有限公司" },
+      { value: 2, label: "创新科技" },
+      { value: 3, label: "未来软件" }
+    ];
+  } catch (error) {
+    logger.error("获取租户选项失败", error);
   }
 };
 
@@ -137,12 +165,13 @@ const handleSearch = () => {
 const handleResetSearch = () => {
   Object.assign(searchForm, {
     search: "",
-    product_id: undefined,
-    plan_id: undefined,
+    product: undefined,
+    plan: undefined,
     status: undefined,
-    customer_id: undefined,
+    tenant: undefined,
     page: 1,
-    page_size: 10
+    page_size: 10,
+    ordering: "-issued_at"
   });
   pagination.currentPage = 1;
   fetchLicenses();
@@ -170,16 +199,18 @@ const handleEdit = (row: License) => {
 
 // 复制许可证密钥
 const handleCopyLicenseKey = (key: string) => {
-  navigator.clipboard.writeText(key).then(() => {
-    ElMessage.success(t("license.licenses.copySuccess"));
-  }).catch(() => {
-    ElMessage.error(t("license.licenses.copyError"));
-  });
+  navigator.clipboard
+    .writeText(key)
+    .then(() => {
+      ElMessage.success(t("license.licenses.copySuccess"));
+    })
+    .catch(() => {
+      ElMessage.error(t("license.licenses.copyError"));
+    });
 };
 
 // 下载许可证文件
 const handleDownloadLicense = async (row: License) => {
-  
   try {
     await licenseStore.downloadLicense(row.id);
     ElMessage.success(t("license.licenses.downloadSuccess"));
@@ -191,19 +222,21 @@ const handleDownloadLicense = async (row: License) => {
 
 // 撤销许可证
 const handleRevokeLicense = async (row: License) => {
-  
   try {
-    await ElMessageBox.confirm(
-      t("license.licenses.revokeConfirm", { key: row.license_key.substring(0, 8) + "..." }),
-      t("common.warning"),
+    const { value: reason } = await ElMessageBox.prompt(
+      t("license.licenses.revokeConfirm", {
+        key: row.license_key.substring(0, 8) + "..."
+      }),
+      t("license.licenses.revokeReason"),
       {
         confirmButtonText: t("common.confirm"),
         cancelButtonText: t("common.cancel"),
-        type: "warning"
+        inputPlaceholder: t("license.licenses.revokeReasonPlaceholder"),
+        inputType: "textarea"
       }
     );
-    
-    await licenseStore.revokeLicense(row.id);
+
+    await licenseStore.revokeLicense(row.id, { reason: reason || "" });
     ElMessage.success(t("license.licenses.revokeSuccess"));
     await fetchLicenses();
   } catch (error) {
@@ -214,12 +247,50 @@ const handleRevokeLicense = async (row: License) => {
   }
 };
 
+// 延长许可证
+const handleExtendLicense = async (row: License) => {
+  try {
+    const { value: days } = await ElMessageBox.prompt(
+      t("license.licenses.extendConfirm", {
+        key: row.license_key.substring(0, 8) + "..."
+      }),
+      t("license.licenses.extendDays"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        inputPlaceholder: t("license.licenses.extendDaysPlaceholder"),
+        inputType: "number",
+        inputPattern: /^\d+$/,
+        inputErrorMessage: t("license.licenses.extendDaysError")
+      }
+    );
+
+    const extendDays = parseInt(days);
+    if (extendDays <= 0) {
+      ElMessage.error(t("license.licenses.extendDaysInvalid"));
+      return;
+    }
+
+    await licenseStore.extendLicense(row.id, extendDays);
+    ElMessage.success(
+      t("license.licenses.extendSuccess", { days: extendDays })
+    );
+    await fetchLicenses();
+  } catch (error) {
+    if (error !== "cancel") {
+      logger.error("延长许可证失败", error);
+      ElMessage.error(t("license.licenses.extendError"));
+    }
+  }
+};
+
 // 删除许可证
 const handleDelete = async (row: License) => {
-  
   try {
     await ElMessageBox.confirm(
-      t("license.licenses.deleteConfirm", { key: row.license_key.substring(0, 8) + "..." }),
+      t("license.licenses.deleteConfirm", {
+        key: row.license_key.substring(0, 8) + "..."
+      }),
       t("common.warning"),
       {
         confirmButtonText: t("common.confirm"),
@@ -227,7 +298,7 @@ const handleDelete = async (row: License) => {
         type: "warning"
       }
     );
-    
+
     await licenseStore.deleteLicense(row.id);
     ElMessage.success(t("license.licenses.deleteSuccess"));
     await fetchLicenses();
@@ -241,16 +312,19 @@ const handleDelete = async (row: License) => {
 
 // 格式化许可证密钥显示
 const formatLicenseKey = (key: string) => {
-  return key.length > 16 ? `${key.substring(0, 8)}...${key.substring(key.length - 8)}` : key;
+  return key.length > 16
+    ? `${key.substring(0, 8)}...${key.substring(key.length - 8)}`
+    : key;
 };
 
 // 获取状态标签类型
 const getStatusTagType = (status: LicenseStatus) => {
   const statusMap = {
-    active: "success",
-    expired: "warning",
+    generated: "info",
+    activated: "success",
+    suspended: "warning",
     revoked: "danger",
-    suspended: "info"
+    expired: "error"
   };
   return statusMap[status] || "";
 };
@@ -258,20 +332,22 @@ const getStatusTagType = (status: LicenseStatus) => {
 // 格式化过期时间
 const formatExpiresAt = (expiresAt: string | null) => {
   if (!expiresAt) return t("license.licenses.permanent");
-  
+
   const date = new Date(expiresAt);
   const now = new Date();
-  
+
   if (date < now) {
     return `${date.toLocaleDateString()} (${t("license.licenses.expired")})`;
   }
-  
-  const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  
+
+  const diffDays = Math.ceil(
+    (date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
   if (diffDays <= 7) {
     return `${date.toLocaleDateString()} (${t("license.licenses.expiringSoon", { days: diffDays })})`;
   }
-  
+
   return date.toLocaleDateString();
 };
 
@@ -287,10 +363,220 @@ const handleCurrentChange = (page: number) => {
   fetchLicenses();
 };
 
+// 处理更多操作
+const handleMoreAction = (command: string, row: License) => {
+  switch (command) {
+    case "extend":
+      handleExtendLicense(row);
+      break;
+    case "revoke":
+      handleRevokeLicense(row);
+      break;
+    case "delete":
+      handleDelete(row);
+      break;
+    default:
+      break;
+  }
+};
+
+// 批量操作处理
+const handleBatchOperation = (command: string) => {
+  if (multipleSelection.value.length === 0) {
+    ElMessage.warning(t("license.licenses.pleaseSelectLicenses"));
+    return;
+  }
+
+  switch (command) {
+    case "batch-extend":
+      handleBatchExtend();
+      break;
+    case "batch-revoke":
+      handleBatchRevoke();
+      break;
+    case "batch-delete":
+      handleBatchDelete();
+      break;
+    default:
+      break;
+  }
+};
+
+// 批量延期许可证
+const handleBatchExtend = async () => {
+  try {
+    const { value: days } = await ElMessageBox.prompt(
+      t("license.licenses.batchExtendConfirm", {
+        count: multipleSelection.value.length
+      }),
+      t("license.licenses.extendDays"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        inputPattern: /^\d+$/,
+        inputErrorMessage: t("license.licenses.extendDaysInvalid"),
+        inputPlaceholder: t("license.licenses.enterExtendDays")
+      }
+    );
+
+    const extendDays = parseInt(days);
+    if (extendDays <= 0) {
+      ElMessage.error(t("license.licenses.extendDaysInvalid"));
+      return;
+    }
+
+    const loading = ElLoading.service({
+      lock: true,
+      text: t("license.licenses.batchExtending"),
+      background: "rgba(0, 0, 0, 0.7)"
+    });
+
+    try {
+      const licenseIds = multipleSelection.value.map(license => license.id);
+      const result = await licenseStore.batchOperationLicenses({
+        license_ids: licenseIds,
+        operation: "extend",
+        parameters: { days: extendDays }
+      });
+
+      if (result.success) {
+        ElMessage.success(
+          t("license.licenses.batchExtendSuccess", {
+            success: result.results.filter(r => r.success).length,
+            total: result.results.length
+          })
+        );
+      } else {
+        ElMessage.error(
+          result.message || t("license.licenses.batchExtendFailed")
+        );
+      }
+
+      await fetchLicenses();
+      multipleSelection.value = [];
+    } finally {
+      loading.close();
+    }
+  } catch (error) {
+    if (error !== "cancel") {
+      logger.error("批量延期许可证失败", error);
+      ElMessage.error(t("license.licenses.batchExtendError"));
+    }
+  }
+};
+
+// 批量撤销许可证
+const handleBatchRevoke = async () => {
+  try {
+    const { value: reason } = await ElMessageBox.prompt(
+      t("license.licenses.batchRevokeConfirm", {
+        count: multipleSelection.value.length
+      }),
+      t("license.licenses.revokeReason"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        inputPlaceholder: t("license.licenses.enterRevokeReason")
+      }
+    );
+
+    const loading = ElLoading.service({
+      lock: true,
+      text: t("license.licenses.batchRevoking"),
+      background: "rgba(0, 0, 0, 0.7)"
+    });
+
+    try {
+      const licenseIds = multipleSelection.value.map(license => license.id);
+      const result = await licenseStore.batchOperationLicenses({
+        license_ids: licenseIds,
+        operation: "revoke",
+        reason: reason || ""
+      });
+
+      if (result.success) {
+        ElMessage.success(
+          t("license.licenses.batchRevokeSuccess", {
+            success: result.results.filter(r => r.success).length,
+            total: result.results.length
+          })
+        );
+      } else {
+        ElMessage.error(
+          result.message || t("license.licenses.batchRevokeFailed")
+        );
+      }
+
+      await fetchLicenses();
+      multipleSelection.value = [];
+    } finally {
+      loading.close();
+    }
+  } catch (error) {
+    if (error !== "cancel") {
+      logger.error("批量撤销许可证失败", error);
+      ElMessage.error(t("license.licenses.batchRevokeError"));
+    }
+  }
+};
+
+// 批量删除许可证
+const handleBatchDelete = async () => {
+  try {
+    await ElMessageBox.confirm(
+      t("license.licenses.batchDeleteConfirm", {
+        count: multipleSelection.value.length
+      }),
+      t("common.warning"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+        dangerouslyUseHTMLString: false
+      }
+    );
+
+    const loading = ElLoading.service({
+      lock: true,
+      text: t("license.licenses.batchDeleting"),
+      background: "rgba(0, 0, 0, 0.7)"
+    });
+
+    try {
+      const licenseIds = multipleSelection.value.map(license => license.id);
+      const result = await licenseStore.batchDeleteLicenses(licenseIds);
+
+      if (result.success) {
+        ElMessage.success(
+          t("license.licenses.batchDeleteSuccess", {
+            success: result.results.filter(r => r.success).length,
+            total: result.results.length
+          })
+        );
+      } else {
+        ElMessage.error(
+          result.message || t("license.licenses.batchDeleteFailed")
+        );
+      }
+
+      await fetchLicenses();
+      multipleSelection.value = [];
+    } finally {
+      loading.close();
+    }
+  } catch (error) {
+    if (error !== "cancel") {
+      logger.error("批量删除许可证失败", error);
+      ElMessage.error(t("license.licenses.batchDeleteError"));
+    }
+  }
+};
+
 // 页面加载时获取数据
 onMounted(() => {
   fetchProductOptions();
   fetchPlanOptions();
+  fetchTenantOptions();
   fetchLicenses();
 });
 </script>
@@ -308,10 +594,10 @@ onMounted(() => {
             @keyup.enter="handleSearch"
           />
         </el-form-item>
-        
+
         <el-form-item :label="t('license.licenses.product')">
           <el-select
-            v-model="searchForm.product_id"
+            v-model="searchForm.product"
             :placeholder="t('license.licenses.productPlaceholder')"
             clearable
           >
@@ -323,10 +609,10 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item :label="t('license.licenses.plan')">
           <el-select
-            v-model="searchForm.plan_id"
+            v-model="searchForm.plan"
             :placeholder="t('license.licenses.planPlaceholder')"
             clearable
           >
@@ -338,7 +624,22 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
+        <el-form-item :label="t('license.licenses.tenant')">
+          <el-select
+            v-model="searchForm.tenant"
+            :placeholder="t('license.licenses.tenantPlaceholder')"
+            clearable
+          >
+            <el-option
+              v-for="option in tenantOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item :label="t('license.licenses.status')">
           <el-select
             v-model="searchForm.status"
@@ -353,7 +654,7 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleSearch">
             {{ t("common.search") }}
@@ -372,15 +673,38 @@ onMounted(() => {
     <el-card class="action-card">
       <div class="action-header">
         <div class="action-left">
-          <el-button
-            type="primary"
-            :icon="Plus"
-            @click="handleCreate"
-          >
+          <el-button type="primary" :icon="Plus" @click="handleCreate">
             {{ t("license.licenses.create") }}
           </el-button>
+
+          <!-- 批量操作按钮 -->
+          <el-dropdown
+            v-if="multipleSelection.length > 0"
+            trigger="click"
+            @command="handleBatchOperation"
+          >
+            <el-button type="warning">
+              {{ t("license.licenses.batchOperation") }} ({{
+                multipleSelection.length
+              }})
+              <el-icon class="el-icon--right"><arrow-down /></el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="batch-extend">
+                  {{ t("license.licenses.batchExtend") }}
+                </el-dropdown-item>
+                <el-dropdown-item command="batch-revoke">
+                  {{ t("license.licenses.batchRevoke") }}
+                </el-dropdown-item>
+                <el-dropdown-item command="batch-delete" divided>
+                  {{ t("license.licenses.batchDelete") }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
-        
+
         <div class="action-right">
           <span class="total-info">
             {{ t("license.licenses.total", { count: pagination.total }) }}
@@ -399,13 +723,13 @@ onMounted(() => {
         border
       >
         <el-table-column type="selection" width="55" />
-        
+
         <el-table-column
           prop="id"
           :label="t('license.licenses.id')"
           width="80"
         />
-        
+
         <el-table-column
           prop="license_key"
           :label="t('license.licenses.licenseKey')"
@@ -413,7 +737,9 @@ onMounted(() => {
         >
           <template #default="{ row }">
             <div class="license-key-cell">
-              <code class="license-key">{{ formatLicenseKey(row.license_key) }}</code>
+              <code class="license-key">{{
+                formatLicenseKey(row.license_key)
+              }}</code>
               <el-button
                 type="text"
                 :icon="CopyDocument"
@@ -423,31 +749,43 @@ onMounted(() => {
             </div>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="product"
+          prop="product_name"
           :label="t('license.licenses.product')"
           min-width="150"
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <span v-if="row.product">{{ row.product.name }} v{{ row.product.version }}</span>
+            <span v-if="row.product_name">{{ row.product_name }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="plan"
+          prop="plan_name"
           :label="t('license.licenses.plan')"
           width="120"
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <span v-if="row.plan">{{ row.plan.name }}</span>
+            <span v-if="row.plan_name">{{ row.plan_name }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        
+
+        <el-table-column
+          prop="tenant_name"
+          :label="t('license.licenses.tenant')"
+          width="140"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">
+            <span v-if="row.tenant_name">{{ row.tenant_name }}</span>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+
         <el-table-column
           prop="status"
           :label="t('license.licenses.status')"
@@ -455,53 +793,68 @@ onMounted(() => {
         >
           <template #default="{ row }">
             <el-tag :type="getStatusTagType(row.status)">
-              {{ t(`license.licenses.status${row.status.charAt(0).toUpperCase() + row.status.slice(1)}`) }}
+              {{
+                t(
+                  `license.licenses.status${row.status.charAt(0).toUpperCase() + row.status.slice(1)}`
+                )
+              }}
             </el-tag>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="activations_count"
+          prop="current_activations"
           :label="t('license.licenses.activations')"
           width="100"
         >
           <template #default="{ row }">
             <span class="activation-count">
-              {{ row.activations_count }}
-              <span v-if="row.plan && row.plan.max_activations !== -1">
-                / {{ row.plan.max_activations }}
+              {{ row.current_activations }}
+              <span v-if="row.max_activations !== -1">
+                / {{ row.max_activations }}
               </span>
-              <span v-else-if="row.plan && row.plan.max_activations === -1">
-                / ∞
-              </span>
+              <span v-else-if="row.max_activations === -1"> / ∞ </span>
             </span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="expires_at"
           :label="t('license.licenses.expiresAt')"
           width="150"
         >
           <template #default="{ row }">
-            <span :class="{ 'expired-text': row.status === 'expired', 'expiring-text': row.expires_at && new Date(row.expires_at) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }">
+            <span
+              :class="{
+                'expired-text': row.status === 'expired',
+                'expiring-text':
+                  row.expires_at &&
+                  new Date(row.expires_at) <=
+                    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+              }"
+            >
               {{ formatExpiresAt(row.expires_at) }}
             </span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="customer"
+          prop="customer_name"
           :label="t('license.licenses.customer')"
           min-width="150"
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <span v-if="row.customer">{{ row.customer.name }}</span>
+            <div v-if="row.customer_name">
+              <div>{{ row.customer_name }}</div>
+              <div class="customer-email" v-if="row.customer_email">
+                {{ row.customer_email }}
+              </div>
+            </div>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="created_at"
           :label="t('license.licenses.createdAt')"
@@ -511,12 +864,8 @@ onMounted(() => {
             {{ new Date(row.created_at).toLocaleString() }}
           </template>
         </el-table-column>
-        
-        <el-table-column
-          :label="t('common.actions')"
-          width="260"
-          fixed="right"
-        >
+
+        <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -526,7 +875,7 @@ onMounted(() => {
             >
               {{ t("common.view") }}
             </el-button>
-            
+
             <el-button
               type="info"
               :icon="Download"
@@ -535,28 +884,38 @@ onMounted(() => {
             >
               {{ t("license.licenses.download") }}
             </el-button>
-            
-            <el-button
-              v-if="row.status === 'active'"
-              type="warning"
-              size="small"
-              @click="handleRevokeLicense(row)"
-            >
-              {{ t("license.licenses.revoke") }}
-            </el-button>
-            
-            <el-button
-              type="danger"
-              :icon="Delete"
-              size="small"
-              @click="handleDelete(row)"
-            >
-              {{ t("common.delete") }}
-            </el-button>
+
+            <el-dropdown @command="command => handleMoreAction(command, row)">
+              <el-button type="primary" size="small">
+                {{ t("common.more") }}
+                <el-icon class="el-icon--right">
+                  <arrow-down />
+                </el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item
+                    command="extend"
+                    :disabled="row.status !== 'activated'"
+                  >
+                    {{ t("license.licenses.extend") }}
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    command="revoke"
+                    :disabled="row.status !== 'activated'"
+                  >
+                    {{ t("license.licenses.revoke") }}
+                  </el-dropdown-item>
+                  <el-dropdown-item command="delete" divided>
+                    {{ t("common.delete") }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      
+
       <!-- 分页 -->
       <div class="pagination-container">
         <el-pagination
@@ -608,7 +967,7 @@ onMounted(() => {
   background: #f5f7fa;
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 12px;
   color: #409eff;
 }
@@ -624,6 +983,12 @@ onMounted(() => {
 
 .expiring-text {
   color: #e6a23c;
+}
+
+.customer-email {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 2px;
 }
 
 .pagination-container {

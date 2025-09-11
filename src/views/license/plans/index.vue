@@ -14,11 +14,7 @@ import {
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
 import { useUserStoreHook } from "@/store/modules/user";
-import type {
-  LicensePlan,
-  PlanListParams,
-  PlanType
-} from "@/types/license";
+import type { LicensePlan, PlanListParams, PlanType } from "@/types/license";
 import { hasPerms } from "@/utils/auth";
 import logger from "@/utils/logger";
 
@@ -53,9 +49,9 @@ const pagination = reactive({
 // 搜索表单
 const searchForm = reactive<PlanListParams>({
   search: "",
-  product_id: undefined,
+  product: undefined,
   plan_type: undefined,
-  is_active: undefined,
+  status: undefined,
   page: 1,
   page_size: 10
 });
@@ -66,14 +62,15 @@ const planTypeOptions = [
   { value: "trial", label: t("license.plans.typeTrial") },
   { value: "basic", label: t("license.plans.typeBasic") },
   { value: "professional", label: t("license.plans.typeProfessional") },
-  { value: "enterprise", label: t("license.plans.typeEnterprise") }
+  { value: "enterprise", label: t("license.plans.typeEnterprise") },
+  { value: "custom", label: t("license.plans.typeCustom") }
 ];
 
 // 状态选项
 const statusOptions = [
   { value: undefined, label: t("license.plans.statusAll") },
-  { value: true, label: t("license.plans.statusActive") },
-  { value: false, label: t("license.plans.statusInactive") }
+  { value: "active", label: t("license.plans.statusActive") },
+  { value: "inactive", label: t("license.plans.statusInactive") }
 ];
 
 // 产品选项
@@ -91,7 +88,15 @@ const fetchPlans = async () => {
     searchForm.page = pagination.currentPage;
     searchForm.page_size = pagination.pageSize;
 
-    const params = { ...searchForm };
+    // 过滤掉 undefined 和空字符串，只传递有效的搜索参数
+    const params: Record<string, any> = {};
+    Object.keys(searchForm).forEach(key => {
+      const value = searchForm[key as keyof typeof searchForm];
+      if (value !== undefined && value !== null && value !== "") {
+        params[key] = value;
+      }
+    });
+
     logger.debug("[PlanIndex] 计划列表请求参数:", params);
 
     await licenseStore.fetchPlanList(params);
@@ -104,7 +109,11 @@ const fetchPlans = async () => {
 // 获取产品选项
 const fetchProductOptions = async () => {
   try {
-    await licenseStore.fetchProductList({ page: 1, page_size: 100, is_active: true });
+    await licenseStore.fetchProductList({
+      page: 1,
+      page_size: 100,
+      is_active: true
+    });
     productOptions.value = licenseStore.products.data.map(product => ({
       value: product.id,
       label: `${product.name} v${product.version}`
@@ -124,9 +133,9 @@ const handleSearch = () => {
 const handleResetSearch = () => {
   Object.assign(searchForm, {
     search: "",
-    product_id: undefined,
+    product: undefined,
     plan_type: undefined,
-    is_active: undefined,
+    status: undefined,
     page: 1,
     page_size: 10
   });
@@ -146,17 +155,16 @@ const handleCreate = () => {
 
 // 查看详情
 const handleView = (row: LicensePlan) => {
-  router.push(`/license/plans/detail/${row.id}`);
+  router.push(`/license/plans/${row.id}`);
 };
 
 // 编辑计划
 const handleEdit = (row: LicensePlan) => {
-  router.push(`/license/plans/edit/${row.id}`);
+  router.push(`/license/plans/${row.id}/edit`);
 };
 
 // 删除计划
 const handleDelete = async (row: LicensePlan) => {
-  
   try {
     await ElMessageBox.confirm(
       t("license.plans.deleteConfirm", { name: row.name }),
@@ -167,7 +175,7 @@ const handleDelete = async (row: LicensePlan) => {
         type: "warning"
       }
     );
-    
+
     await licenseStore.deletePlan(row.id);
     ElMessage.success(t("license.plans.deleteSuccess"));
     await fetchPlans();
@@ -180,13 +188,18 @@ const handleDelete = async (row: LicensePlan) => {
 };
 
 // 格式化价格
-const formatPrice = (price: number, currency: string = "USD") => {
-  return `${currency} ${price.toFixed(2)}`;
+const formatPrice = (price: string, currency: string = "USD") => {
+  return `${currency} ${price}`;
 };
 
 // 格式化特性
-const formatFeatures = (features: string[]) => {
-  return features.slice(0, 3).join(", ") + (features.length > 3 ? "..." : "");
+const formatFeatures = (features?: Record<string, any>) => {
+  if (!features || typeof features !== "object") return "-";
+  const featuresList = Object.keys(features);
+  if (featuresList.length === 0) return "-";
+  return (
+    featuresList.slice(0, 3).join(", ") + (featuresList.length > 3 ? "..." : "")
+  );
 };
 
 // 格式化持续时间
@@ -200,14 +213,20 @@ const formatDuration = (days: number) => {
 };
 
 // 获取计划类型标签类型
-const getPlanTypeTagType = (type: PlanType) => {
-  const typeMap = {
-    trial: "",
+const getPlanTypeTagType = (
+  type: PlanType
+): "success" | "info" | "warning" | "danger" | undefined => {
+  const typeMap: Record<
+    PlanType,
+    "success" | "info" | "warning" | "danger" | undefined
+  > = {
+    trial: undefined,
     basic: "success",
-    professional: "warning", 
-    enterprise: "danger"
+    professional: "warning",
+    enterprise: "danger",
+    custom: "info"
   };
-  return typeMap[type] || "";
+  return typeMap[type] || undefined;
 };
 
 // 分页变化
@@ -242,12 +261,14 @@ onMounted(() => {
             @keyup.enter="handleSearch"
           />
         </el-form-item>
-        
+
         <el-form-item :label="t('license.plans.product')">
           <el-select
-            v-model="searchForm.product_id"
+            v-model="searchForm.product"
             :placeholder="t('license.plans.productPlaceholder')"
             clearable
+            style="width: 240px"
+            @change="handleSearch"
           >
             <el-option
               v-for="option in productOptions"
@@ -257,12 +278,14 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item :label="t('license.plans.type')">
           <el-select
             v-model="searchForm.plan_type"
             :placeholder="t('license.plans.typePlaceholder')"
             clearable
+            style="width: 160px"
+            @change="handleSearch"
           >
             <el-option
               v-for="option in planTypeOptions"
@@ -272,22 +295,24 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item :label="t('license.plans.status')">
           <el-select
-            v-model="searchForm.is_active"
+            v-model="searchForm.status"
             :placeholder="t('license.plans.statusPlaceholder')"
             clearable
+            style="width: 140px"
+            @change="handleSearch"
           >
             <el-option
               v-for="option in statusOptions"
-              :key="option.value"
+              :key="String(option.value)"
               :label="option.label"
               :value="option.value"
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleSearch">
             {{ t("common.search") }}
@@ -306,15 +331,11 @@ onMounted(() => {
     <el-card class="action-card">
       <div class="action-header">
         <div class="action-left">
-          <el-button
-            type="primary"
-            :icon="Plus"
-            @click="handleCreate"
-          >
+          <el-button type="primary" :icon="Plus" @click="handleCreate">
             {{ t("license.plans.create") }}
           </el-button>
         </div>
-        
+
         <div class="action-right">
           <span class="total-info">
             {{ t("license.plans.total", { count: pagination.total }) }}
@@ -328,25 +349,26 @@ onMounted(() => {
       <el-table
         :data="plans"
         :loading="tableLoading"
-        @selection-change="handleSelectionChange"
         stripe
         border
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        
-        <el-table-column
-          prop="id"
-          :label="t('license.plans.id')"
-          width="80"
-        />
-        
+
         <el-table-column
           prop="name"
           :label="t('license.plans.name')"
           min-width="150"
           show-overflow-tooltip
         />
-        
+
+        <el-table-column
+          prop="code"
+          :label="t('license.plans.code')"
+          width="120"
+          show-overflow-tooltip
+        />
+
         <el-table-column
           prop="plan_type"
           :label="t('license.plans.type')"
@@ -354,44 +376,50 @@ onMounted(() => {
         >
           <template #default="{ row }">
             <el-tag :type="getPlanTypeTagType(row.plan_type)">
-              {{ t(`license.plans.type${row.plan_type.charAt(0).toUpperCase() + row.plan_type.slice(1)}`) }}
+              {{
+                t(
+                  `license.plans.type${row.plan_type.charAt(0).toUpperCase() + row.plan_type.slice(1)}`
+                )
+              }}
             </el-tag>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="product"
+          prop="product_name"
           :label="t('license.plans.product')"
           width="200"
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <span v-if="row.product">{{ row.product.name }} v{{ row.product.version }}</span>
+            <span v-if="row.product_name">{{ row.product_name }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="max_activations"
-          :label="t('license.plans.maxActivations')"
+          prop="max_machines"
+          :label="t('license.plans.maxMachines')"
           width="120"
         >
           <template #default="{ row }">
-            <span v-if="row.max_activations === -1">{{ t("license.plans.unlimited") }}</span>
-            <span v-else>{{ row.max_activations }}</span>
+            <span v-if="row.max_machines === -1">{{
+              t("license.plans.unlimited")
+            }}</span>
+            <span v-else>{{ row.max_machines }}</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="duration_days"
-          :label="t('license.plans.duration')"
+          prop="validity_days"
+          :label="t('license.plans.validityDays')"
           width="120"
         >
           <template #default="{ row }">
-            {{ formatDuration(row.duration_days) }}
+            {{ formatDuration(row.validity_days) }}
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="price"
           :label="t('license.plans.price')"
@@ -404,7 +432,7 @@ onMounted(() => {
             </span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="features"
           :label="t('license.plans.features')"
@@ -412,9 +440,9 @@ onMounted(() => {
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <el-tooltip 
-              v-if="row.features && row.features.length > 0"
-              :content="row.features.join('\n')"
+            <el-tooltip
+              v-if="row.features && Object.keys(row.features).length > 0"
+              :content="JSON.stringify(row.features, null, 2)"
               placement="top"
             >
               <span>{{ formatFeatures(row.features) }}</span>
@@ -422,19 +450,23 @@ onMounted(() => {
             <span v-else>-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
-          prop="is_active"
+          prop="status"
           :label="t('license.plans.status')"
           width="100"
         >
           <template #default="{ row }">
-            <el-tag :type="row.is_active ? 'success' : 'info'">
-              {{ row.is_active ? t('common.active') : t('common.inactive') }}
+            <el-tag :type="row.status === 'active' ? 'success' : 'info'">
+              {{
+                row.status === "active"
+                  ? t("license.plans.active")
+                  : t("license.plans.inactive")
+              }}
             </el-tag>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop="created_at"
           :label="t('license.plans.createdAt')"
@@ -444,12 +476,8 @@ onMounted(() => {
             {{ new Date(row.created_at).toLocaleString() }}
           </template>
         </el-table-column>
-        
-        <el-table-column
-          :label="t('common.actions')"
-          width="200"
-          fixed="right"
-        >
+
+        <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -459,7 +487,7 @@ onMounted(() => {
             >
               {{ t("common.view") }}
             </el-button>
-            
+
             <el-button
               type="warning"
               :icon="Edit"
@@ -468,7 +496,7 @@ onMounted(() => {
             >
               {{ t("common.edit") }}
             </el-button>
-            
+
             <el-button
               type="danger"
               :icon="Delete"
@@ -480,7 +508,7 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
-      
+
       <!-- 分页 -->
       <div class="pagination-container">
         <el-pagination

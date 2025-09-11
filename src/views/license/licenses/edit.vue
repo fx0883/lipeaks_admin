@@ -4,40 +4,93 @@
       <template #header>
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/license/dashboard' }">
-            {{ $t('license.dashboard') }}
+            {{ $t("license.dashboard") }}
           </el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/license/licenses' }">
-            {{ $t('license.licenses.title') }}
+            {{ $t("license.licenses.title") }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item>{{ $t('license.licenses.edit') }}</el-breadcrumb-item>
+          <el-breadcrumb-item>{{
+            $t("license.licenses.edit")
+          }}</el-breadcrumb-item>
         </el-breadcrumb>
       </template>
 
       <div class="edit-container">
         <el-form
           ref="formRef"
-          :model="form" 
+          :model="form"
           :rules="rules"
           label-width="140px"
           label-position="left"
         >
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.licenseKey')" prop="licenseKey">
+              <el-form-item :label="$t('license.licenses.licenseKey')">
                 <el-input
-                  v-model="form.licenseKey"
+                  v-model="form.license_key"
                   :placeholder="$t('license.licenses.licenseKeyPlaceholder')"
                   readonly
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.planId')" prop="planId">
-                <el-select v-model="form.planId" :placeholder="$t('license.licenses.selectPlan')" style="width: 100%">
+              <el-form-item
+                :label="$t('license.licenses.tenant')"
+                prop="tenantId"
+              >
+                <el-select
+                  v-model="form.tenantId"
+                  :placeholder="$t('license.licenses.selectTenant')"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="tenant in availableTenants"
+                    :key="tenant.id"
+                    :label="tenant.name"
+                    :value="tenant.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item
+                :label="$t('license.licenses.product')"
+                prop="productId"
+              >
+                <el-select
+                  v-model="form.productId"
+                  :placeholder="$t('license.licenses.selectProduct')"
+                  :disabled="productLocked"
+                  style="width: 100%"
+                  @change="handleProductChange"
+                >
+                  <el-option
+                    v-for="product in availableProducts"
+                    :key="product.id"
+                    :label="`${product.name} v${product.version}`"
+                    :value="product.id"
+                  />
+                </el-select>
+                <div class="form-tip" v-if="productLocked">
+                  {{ $t("license.licenses.productLockedByPlan") }}
+                </div>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label="$t('license.licenses.plan')" prop="planId">
+                <el-select
+                  v-model="form.planId"
+                  :placeholder="$t('license.licenses.selectPlan')"
+                  style="width: 100%"
+                  @change="handlePlanChange"
+                >
                   <el-option
                     v-for="plan in availablePlans"
                     :key="plan.id"
-                    :label="plan.name"
+                    :label="`${plan.name} ($${plan.price})`"
                     :value="plan.id"
                   />
                 </el-select>
@@ -47,18 +100,24 @@
 
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.customerName')" prop="customerName">
+              <el-form-item
+                :label="$t('license.licenses.customerName')"
+                prop="customerInfo.name"
+              >
                 <el-input
-                  v-model="form.customerName"
+                  v-model="form.customerInfo.name"
                   :placeholder="$t('license.licenses.customerNamePlaceholder')"
                   clearable
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.customerEmail')" prop="customerEmail">
+              <el-form-item
+                :label="$t('license.licenses.customerEmail')"
+                prop="customerInfo.email"
+              >
                 <el-input
-                  v-model="form.customerEmail"
+                  v-model="form.customerInfo.email"
                   :placeholder="$t('license.licenses.customerEmailPlaceholder')"
                   clearable
                 />
@@ -66,132 +125,96 @@
             </el-col>
           </el-row>
 
-          <el-form-item :label="$t('license.licenses.description')" prop="description">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item :label="$t('license.licenses.customerCompany')">
+                <el-input
+                  v-model="form.customerInfo.company"
+                  :placeholder="
+                    $t('license.licenses.customerCompanyPlaceholder')
+                  "
+                  clearable
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label="$t('license.licenses.customerPhone')">
+                <el-input
+                  v-model="form.customerInfo.phone"
+                  :placeholder="$t('license.licenses.customerPhonePlaceholder')"
+                  clearable
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item :label="$t('license.licenses.maxActivations')">
+                <el-input-number
+                  v-model="form.maxActivations"
+                  :min="1"
+                  :step="1"
+                  style="width: 100%"
+                  :placeholder="
+                    $t('license.licenses.maxActivationsPlaceholder')
+                  "
+                />
+                <div class="form-tip">
+                  {{ $t("license.licenses.maxActivationsTip") }}
+                </div>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                :label="$t('license.licenses.status')"
+                prop="status"
+              >
+                <el-select v-model="form.status" style="width: 100%">
+                  <el-option
+                    value="generated"
+                    :label="$t('license.licenses.statusGenerated')"
+                  />
+                  <el-option
+                    value="activated"
+                    :label="$t('license.licenses.statusActivated')"
+                  />
+                  <el-option
+                    value="suspended"
+                    :label="$t('license.licenses.statusSuspended')"
+                  />
+                  <el-option
+                    value="revoked"
+                    :label="$t('license.licenses.statusRevoked')"
+                  />
+                  <el-option
+                    value="expired"
+                    :label="$t('license.licenses.statusExpired')"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-form-item :label="$t('license.licenses.notes')" prop="notes">
             <el-input
-              v-model="form.description"
+              v-model="form.notes"
               type="textarea"
               :rows="3"
-              :placeholder="$t('license.licenses.descriptionPlaceholder')"
-            />
-          </el-form-item>
-
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item :label="$t('license.licenses.maxUsers')" prop="maxUsers">
-                <el-input-number
-                  v-model="form.maxUsers"
-                  :min="1"
-                  :step="1"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item :label="$t('license.licenses.maxDevices')" prop="maxDevices">
-                <el-input-number
-                  v-model="form.maxDevices"
-                  :min="1"
-                  :step="1"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item :label="$t('license.licenses.validityDays')" prop="validityDays">
-                <el-input-number
-                  v-model="form.validityDays"
-                  :min="1"
-                  :step="1"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.issueDate')" prop="issueDate">
-                <el-date-picker
-                  v-model="form.issueDate"
-                  type="datetime"
-                  :placeholder="$t('license.licenses.issueDatePlaceholder')"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.expiryDate')" prop="expiryDate">
-                <el-date-picker
-                  v-model="form.expiryDate"
-                  type="datetime"
-                  :placeholder="$t('license.licenses.expiryDatePlaceholder')"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-form-item :label="$t('license.licenses.allowedIPs')" prop="allowedIPs">
-            <el-input
-              v-model="form.allowedIPs"
-              :placeholder="$t('license.licenses.allowedIPsPlaceholder')"
-              clearable
-            />
-            <div class="form-tip">{{ $t('license.licenses.allowedIPsTip') }}</div>
-          </el-form-item>
-
-          <el-form-item :label="$t('license.licenses.allowedDomains')" prop="allowedDomains">
-            <el-input
-              v-model="form.allowedDomains"
-              :placeholder="$t('license.licenses.allowedDomainsPlaceholder')"
-              clearable
-            />
-            <div class="form-tip">{{ $t('license.licenses.allowedDomainsTip') }}</div>
-          </el-form-item>
-
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.status')" prop="status">
-                <el-radio-group v-model="form.status">
-                  <el-radio value="active">{{ $t('license.licenses.active') }}</el-radio>
-                  <el-radio value="inactive">{{ $t('license.licenses.inactive') }}</el-radio>
-                  <el-radio value="suspended">{{ $t('license.licenses.suspended') }}</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.autoRenew')" prop="autoRenew">
-                <el-switch v-model="form.autoRenew" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-form-item :label="$t('license.licenses.features')" prop="features">
-            <el-checkbox-group v-model="form.features">
-              <el-checkbox value="analytics">{{ $t('license.licenses.featureAnalytics') }}</el-checkbox>
-              <el-checkbox value="api_access">{{ $t('license.licenses.featureApiAccess') }}</el-checkbox>
-              <el-checkbox value="priority_support">{{ $t('license.licenses.featurePrioritySupport') }}</el-checkbox>
-              <el-checkbox value="cloud_storage">{{ $t('license.licenses.featureCloudStorage') }}</el-checkbox>
-              <el-checkbox value="multi_user">{{ $t('license.licenses.featureMultiUser') }}</el-checkbox>
-              <el-checkbox value="custom_integration">{{ $t('license.licenses.featureCustomIntegration') }}</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-
-          <el-form-item :label="$t('license.licenses.metadata')" prop="metadata">
-            <el-input
-              v-model="form.metadata"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('license.licenses.metadataPlaceholder')"
+              :placeholder="$t('license.licenses.notesPlaceholder')"
             />
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="handleSubmit" :loading="submitting">
-              {{ $t('common.save') }}
+            <el-button
+              type="primary"
+              @click="handleSubmit"
+              :loading="submitting"
+            >
+              {{ $t("common.save") }}
             </el-button>
             <el-button @click="handleCancel">
-              {{ $t('common.cancel') }}
+              {{ $t("common.cancel") }}
             </el-button>
           </el-form-item>
         </el-form>
@@ -201,201 +224,397 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { useI18n } from 'vue-i18n'
+import { ref, reactive, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import {
+  ElMessage,
+  ElMessageBox,
+  type FormInstance,
+  type FormRules
+} from "element-plus";
+import { useI18n } from "vue-i18n";
 
-const { t } = useI18n()
-const router = useRouter()
-const route = useRoute()
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
 
-const loading = ref(false)
-const submitting = ref(false)
-const formRef = ref<FormInstance>()
+const loading = ref(false);
+const submitting = ref(false);
+const formRef = ref<FormInstance>();
 
 interface LicenseForm {
-  id?: string
-  licenseKey: string
-  planId: string
-  customerName: string
-  customerEmail: string
-  description: string
-  maxUsers: number | null
-  maxDevices: number | null
-  validityDays: number | null
-  issueDate: Date | null
-  expiryDate: Date | null
-  allowedIPs: string
-  allowedDomains: string
-  status: string
-  autoRenew: boolean
-  features: string[]
-  metadata: string
+  id?: number;
+  license_key: string;
+  productId: number | null;
+  planId: number | null;
+  tenantId: number | null;
+  customerInfo: {
+    name: string;
+    email: string;
+    company: string;
+    phone: string;
+  };
+  maxActivations: number | null;
+  status: "generated" | "activated" | "suspended" | "revoked" | "expired";
+  notes: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  version: string;
 }
 
 interface Plan {
-  id: string
-  name: string
-  version: string
+  id: number;
+  name: string;
+  product: number;
+  price: string;
+  product_name: string;
+}
+
+interface Tenant {
+  id: number;
+  name: string;
 }
 
 const form = reactive<LicenseForm>({
-  licenseKey: '',
-  planId: '',
-  customerName: '',
-  customerEmail: '',
-  description: '',
-  maxUsers: null,
-  maxDevices: null,
-  validityDays: null,
-  issueDate: null,
-  expiryDate: null,
-  allowedIPs: '',
-  allowedDomains: '',
-  status: 'active',
-  autoRenew: false,
-  features: [],
-  metadata: ''
-})
+  license_key: "",
+  productId: null,
+  planId: null,
+  tenantId: null,
+  customerInfo: {
+    name: "",
+    email: "",
+    company: "",
+    phone: ""
+  },
+  maxActivations: null,
+  status: "generated",
+  notes: ""
+});
 
-const availablePlans = ref<Plan[]>([])
+const availableProducts = ref<Product[]>([]);
+const availablePlans = ref<Plan[]>([]);
+const availableTenants = ref<Tenant[]>([]);
+const allPlans = ref<Plan[]>([]); // 存储所有方案，用于过滤
+const productLocked = ref(false); // 产品是否被锁定（通过方案选择）
 
 const rules = reactive<FormRules<LicenseForm>>({
-  licenseKey: [
-    { required: true, message: t('license.licenses.licenseKeyRequired'), trigger: 'blur' }
-  ],
   planId: [
-    { required: true, message: t('license.licenses.planIdRequired'), trigger: 'change' }
+    {
+      required: true,
+      message: t("license.licenses.planIdRequired"),
+      trigger: "change"
+    }
   ],
-  customerName: [
-    { required: true, message: t('license.licenses.customerNameRequired'), trigger: 'blur' }
+  tenantId: [
+    {
+      required: true,
+      message: t("license.licenses.tenantRequired"),
+      trigger: "change"
+    }
   ],
-  customerEmail: [
-    { required: true, message: t('license.licenses.customerEmailRequired'), trigger: 'blur' },
-    { type: 'email', message: t('license.licenses.customerEmailInvalid'), trigger: 'blur' }
+  "customerInfo.name": [
+    {
+      required: true,
+      message: t("license.licenses.customerNameRequired"),
+      trigger: "blur"
+    }
   ],
-  issueDate: [
-    { required: true, message: t('license.licenses.issueDateRequired'), trigger: 'change' }
-  ],
-  expiryDate: [
-    { required: true, message: t('license.licenses.expiryDateRequired'), trigger: 'change' }
+  "customerInfo.email": [
+    {
+      required: true,
+      message: t("license.licenses.customerEmailRequired"),
+      trigger: "blur"
+    },
+    {
+      type: "email",
+      message: t("license.licenses.customerEmailInvalid"),
+      trigger: "blur"
+    }
   ],
   status: [
-    { required: true, message: t('license.licenses.statusRequired'), trigger: 'change' }
+    {
+      required: true,
+      message: t("license.licenses.statusRequired"),
+      trigger: "change"
+    }
   ]
-})
+});
 
-const loadAvailablePlans = async () => {
+// 加载产品列表
+const loadAvailableProducts = async () => {
   try {
-    // TODO: 实现获取可用计划的API调用
-    // const result = await getAvailablePlans()
-    
+    // TODO: 实现获取产品列表的API调用
+    // const result = await getAvailableProducts()
+
     // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 300))
-    
-    availablePlans.value = [
-      { id: '1', name: 'Basic Plan', version: '1.0.0' },
-      { id: '2', name: 'Professional Plan', version: '2.1.0' },
-      { id: '3', name: 'Enterprise Plan', version: '3.0.0' }
-    ]
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    availableProducts.value = [
+      { id: 1, name: "SuperApp Pro", version: "2.1.0" },
+      { id: 2, name: "SuperApp Basic", version: "1.0.0" },
+      { id: 3, name: "SuperApp Enterprise", version: "3.0.0" }
+    ];
   } catch (error) {
-    console.error('Load plans failed:', error)
-    ElMessage.error(t('license.licenses.loadPlansFailed'))
+    console.error("Load products failed:", error);
+    ElMessage.error(t("license.licenses.loadProductsFailed"));
   }
-}
+};
+
+// 加载所有方案
+const loadAllPlans = async () => {
+  try {
+    // TODO: 实现获取所有方案的API调用
+    // const result = await getAllPlans()
+
+    // 模拟API调用
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    allPlans.value = [
+      {
+        id: 1,
+        name: "Basic Plan",
+        product: 2,
+        price: "99.00",
+        product_name: "SuperApp Basic"
+      },
+      {
+        id: 2,
+        name: "Professional Plan",
+        product: 1,
+        price: "299.00",
+        product_name: "SuperApp Pro"
+      },
+      {
+        id: 3,
+        name: "Enterprise Plan",
+        product: 3,
+        price: "999.00",
+        product_name: "SuperApp Enterprise"
+      }
+    ];
+
+    // 初始显示所有方案
+    availablePlans.value = [...allPlans.value];
+  } catch (error) {
+    console.error("Load plans failed:", error);
+    ElMessage.error(t("license.licenses.loadPlansFailed"));
+  }
+};
+
+// 加载租户列表
+const loadAvailableTenants = async () => {
+  try {
+    // TODO: 实现获取租户列表的API调用
+    // const result = await getAvailableTenants()
+
+    // 模拟API调用
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    availableTenants.value = [
+      { id: 1, name: "Default Tenant" },
+      { id: 2, name: "Enterprise Client A" },
+      { id: 3, name: "Small Business B" }
+    ];
+  } catch (error) {
+    console.error("Load tenants failed:", error);
+    ElMessage.error(t("license.licenses.loadTenantsFailed"));
+  }
+};
+
+// 产品变更处理（级联选择）
+const handleProductChange = (productId: number | null) => {
+  if (productId) {
+    // 过滤出属于该产品的方案
+    availablePlans.value = allPlans.value.filter(
+      plan => plan.product === productId
+    );
+
+    // 如果当前选择的方案不属于新选择的产品，清空方案选择
+    if (form.planId) {
+      const selectedPlan = allPlans.value.find(p => p.id === form.planId);
+      if (!selectedPlan || selectedPlan.product !== productId) {
+        form.planId = null;
+        ElMessage.warning(t("license.licenses.planResetDueToProduct"));
+      }
+    }
+  } else {
+    // 显示所有方案
+    availablePlans.value = [...allPlans.value];
+  }
+
+  productLocked.value = false;
+  validateProductPlanConsistency();
+};
+
+// 方案变更处理（反向级联）
+const handlePlanChange = (planId: number | null) => {
+  if (planId && !productLocked.value) {
+    const selectedPlan = allPlans.value.find(p => p.id === planId);
+    if (selectedPlan && selectedPlan.product !== form.productId) {
+      // 自动设置产品并锁定
+      form.productId = selectedPlan.product;
+      productLocked.value = true;
+
+      // 过滤出属于该产品的方案
+      availablePlans.value = allPlans.value.filter(
+        plan => plan.product === selectedPlan.product
+      );
+
+      ElMessage.success(t("license.licenses.productAutoSelected"));
+    }
+  } else if (!planId) {
+    // 如果清空方案选择，解锁产品并显示所有方案
+    productLocked.value = false;
+    availablePlans.value = [...allPlans.value];
+  }
+
+  validateProductPlanConsistency();
+};
+
+// 产品-方案一致性验证
+const validateProductPlanConsistency = () => {
+  if (!form.productId || !form.planId) {
+    return true; // 如果没有选择，跳过验证
+  }
+
+  const selectedPlan = allPlans.value.find(p => p.id === form.planId);
+  if (!selectedPlan || selectedPlan.product !== form.productId) {
+    ElMessage.error(t("license.licenses.productPlanMismatch"));
+    return false;
+  }
+
+  return true;
+};
 
 const loadLicenseData = async () => {
-  const licenseId = route.params.id
+  const licenseId = route.params.id;
   if (!licenseId) {
-    ElMessage.error(t('license.licenses.invalidId'))
-    router.push('/license/licenses')
-    return
+    ElMessage.error(t("license.licenses.invalidId"));
+    router.push("/license/licenses");
+    return;
   }
 
-  loading.value = true
+  loading.value = true;
   try {
     // TODO: 实现获取许可证详情的API调用
     // const result = await getLicenseById(licenseId)
-    
+
     // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     // 模拟数据
     Object.assign(form, {
-      id: licenseId,
-      licenseKey: 'ABC12-DEF34-GHI56-JKL78-MNO90',
-      planId: '2',
-      customerName: 'John Doe Company',
-      customerEmail: 'john@example.com',
-      description: 'Enterprise license for development team',
-      maxUsers: 10,
-      maxDevices: 25,
-      validityDays: 365,
-      issueDate: new Date('2024-01-15'),
-      expiryDate: new Date('2025-01-15'),
-      allowedIPs: '192.168.1.0/24, 10.0.0.0/8',
-      allowedDomains: 'example.com, dev.example.com',
-      status: 'active',
-      autoRenew: true,
-      features: ['analytics', 'api_access', 'priority_support', 'multi_user'],
-      metadata: '{"department": "Engineering", "project": "MainApp", "priority": "high"}'
-    })
+      id: parseInt(licenseId as string),
+      license_key: "ABC12-DEF34-GHI56-JKL78-MNO90",
+      productId: 1,
+      planId: 2,
+      tenantId: 1,
+      customerInfo: {
+        name: "John Doe Company",
+        email: "john@example.com",
+        company: "Example Corp",
+        phone: "+1234567890"
+      },
+      maxActivations: 10,
+      status: "activated",
+      notes: "Enterprise license for development team"
+    });
+
+    // 设置级联选择状态
+    if (form.planId) {
+      const selectedPlan = allPlans.value.find(p => p.id === form.planId);
+      if (selectedPlan) {
+        // 过滤方案列表以匹配当前产品
+        availablePlans.value = allPlans.value.filter(
+          plan => plan.product === selectedPlan.product
+        );
+        if (form.productId !== selectedPlan.product) {
+          form.productId = selectedPlan.product;
+          productLocked.value = true;
+        }
+      }
+    }
   } catch (error) {
-    console.error('Load license data failed:', error)
-    ElMessage.error(t('license.licenses.loadFailed'))
-    router.push('/license/licenses')
+    console.error("Load license data failed:", error);
+    ElMessage.error(t("license.licenses.loadFailed"));
+    router.push("/license/licenses");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSubmit = async () => {
-  if (!formRef.value) return
+  if (!formRef.value) return;
 
   try {
-    await formRef.value.validate()
-    
-    submitting.value = true
-    
+    // 表单验证
+    await formRef.value.validate();
+
+    // 产品-方案一致性验证
+    if (!validateProductPlanConsistency()) {
+      return;
+    }
+
+    submitting.value = true;
+
+    // 准备提交数据
+    const submitData = {
+      product: form.productId,
+      plan: form.planId,
+      tenant: form.tenantId,
+      customer_name: form.customerInfo.name,
+      customer_email: form.customerInfo.email,
+      max_activations: form.maxActivations,
+      status: form.status,
+      notes: form.notes
+    };
+
     // TODO: 实现更新许可证的API调用
-    // const result = await updateLicense(form.id, form)
-    
+    // const result = await updateLicense(form.id, submitData)
+
     // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    ElMessage.success(t('license.licenses.updateSuccess'))
-    router.push('/license/licenses')
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    ElMessage.success(t("license.licenses.updateSuccess"));
+    router.push("/license/licenses");
   } catch (error) {
-    console.error('Update license failed:', error)
-    ElMessage.error(t('license.licenses.updateFailed'))
+    console.error("Update license failed:", error);
+    ElMessage.error(t("license.licenses.updateFailed"));
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 
 const handleCancel = () => {
   ElMessageBox.confirm(
-    t('common.unsavedChangesMessage'),
-    t('common.confirmTitle'),
+    t("common.unsavedChangesMessage"),
+    t("common.confirmTitle"),
     {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
+      confirmButtonText: t("common.confirm"),
+      cancelButtonText: t("common.cancel"),
+      type: "warning"
     }
-  ).then(() => {
-    router.back()
-  }).catch(() => {
-    // 用户取消操作
-  })
-}
+  )
+    .then(() => {
+      router.back();
+    })
+    .catch(() => {
+      // 用户取消操作
+    });
+};
 
 onMounted(() => {
   Promise.all([
-    loadAvailablePlans(),
-    loadLicenseData()
-  ])
-})
+    loadAvailableProducts(),
+    loadAllPlans(),
+    loadAvailableTenants()
+  ]).then(() => {
+    loadLicenseData();
+  });
+});
 </script>
 
 <style scoped>

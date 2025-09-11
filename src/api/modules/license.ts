@@ -13,6 +13,8 @@ import type {
   LicenseListParams,
   LicenseCreateParams,
   LicenseUpdateParams,
+  LicenseExtendParams,
+  LicenseRevokeParams,
   MachineBinding,
   MachineBindingListParams,
   LicenseActivation,
@@ -249,7 +251,7 @@ export function getLicenseList(params: LicenseListParams = {}) {
 /**
  * 获取许可证详情
  */
-export function getLicenseDetail(id: string) {
+export function getLicenseDetail(id: number) {
   logger.debug("API请求: 获取许可证详情", { id });
 
   return http.request<ApiResponse<License>>(
@@ -293,7 +295,7 @@ export function batchCreateLicenses(
 /**
  * 更新许可证
  */
-export function updateLicense(id: string, data: LicenseUpdateParams) {
+export function updateLicense(id: number, data: LicenseUpdateParams) {
   logger.debug("API请求: 更新许可证", { id, data });
 
   return http.request<ApiResponse<License>>(
@@ -308,7 +310,7 @@ export function updateLicense(id: string, data: LicenseUpdateParams) {
 /**
  * 部分更新许可证
  */
-export function patchLicense(id: string, data: Partial<LicenseUpdateParams>) {
+export function patchLicense(id: number, data: Partial<LicenseUpdateParams>) {
   logger.debug("API请求: 部分更新许可证", { id, data });
 
   return http.request<ApiResponse<License>>(
@@ -323,14 +325,14 @@ export function patchLicense(id: string, data: Partial<LicenseUpdateParams>) {
 /**
  * 撤销许可证
  */
-export function revokeLicense(id: string, reason?: string) {
-  logger.debug("API请求: 撤销许可证", { id, reason });
+export function revokeLicense(id: number, params: LicenseRevokeParams = {}) {
+  logger.debug("API请求: 撤销许可证", { id, params });
 
-  return http.request<ApiResponse<License>>(
+  return http.request<ApiResponse<{ success: boolean; message: string }>>(
     "post",
     `/licenses/admin/licenses/${id}/revoke/`,
     {
-      data: { reason }
+      data: params
     }
   );
 }
@@ -338,7 +340,7 @@ export function revokeLicense(id: string, reason?: string) {
 /**
  * 恢复许可证
  */
-export function restoreLicense(id: string) {
+export function restoreLicense(id: number) {
   logger.debug("API请求: 恢复许可证", { id });
 
   return http.request<ApiResponse<License>>(
@@ -351,12 +353,12 @@ export function restoreLicense(id: string) {
  * 延长许可证有效期
  */
 export function extendLicense(
-  id: string,
-  data: { extend_days: number; reason?: string }
+  id: number,
+  data: LicenseExtendParams
 ) {
   logger.debug("API请求: 延长许可证有效期", { id, data });
 
-  return http.request<ApiResponse<License>>(
+  return http.request<ApiResponse<{ success: boolean; message: string; new_expiry: string }>>(
     "post",
     `/licenses/admin/licenses/${id}/extend/`,
     {
@@ -368,7 +370,7 @@ export function extendLicense(
 /**
  * 获取许可证使用统计
  */
-export function getLicenseUsageStats(id: string) {
+export function getLicenseUsageStats(id: number) {
   logger.debug("API请求: 获取许可证使用统计", { id });
 
   return http.request<ApiResponse<any>>(
@@ -543,26 +545,26 @@ export function getRevenueReport(params: {
 /**
  * 批量删除许可证
  */
-export function batchDeleteLicenses(ids: string[]) {
-  logger.debug("API请求: 批量删除许可证", { ids });
+export function batchDeleteLicenses(license_ids: number[], reason?: string) {
+  logger.debug("API请求: 批量删除许可证", { license_ids });
 
   return http.request<ApiResponse<BatchOperationResult>>(
     "post",
     "/licenses/admin/licenses/batch_operation/",
-    { data: { operation: "delete", ids } }
+    { data: { license_ids, operation: "delete", reason } }
   );
 }
 
 /**
  * 批量撤销许可证
  */
-export function batchRevokeLicenses(ids: string[], reason?: string) {
-  logger.debug("API请求: 批量撤销许可证", { ids, reason });
+export function batchRevokeLicenses(license_ids: number[], reason?: string) {
+  logger.debug("API请求: 批量撤销许可证", { license_ids, reason });
 
   return http.request<ApiResponse<BatchOperationResult>>(
     "post",
     "/licenses/admin/licenses/batch_operation/",
-    { data: { operation: "revoke", ids, reason } }
+    { data: { license_ids, operation: "revoke", reason } }
   );
 }
 

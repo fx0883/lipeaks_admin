@@ -8,6 +8,7 @@ import type {
   LicensePlan,
   PlanListParams,
   PlanCreateParams,
+  PlanUpdateParams,
   License,
   LicenseListParams,
   LicenseCreateParams,
@@ -342,6 +343,69 @@ export const useLicenseStore = defineStore("license", {
       }
     },
 
+    /**
+     * 获取计划详情
+     */
+    async getPlanDetail(id: number) {
+      this.loading.planDetail = true;
+      try {
+        const response = await licenseApi.getPlanDetail(id);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "获取计划详情失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("获取计划详情失败", error);
+        throw error;
+      } finally {
+        this.loading.planDetail = false;
+      }
+    },
+
+    /**
+     * 更新计划
+     */
+    async updatePlan(id: number, data: PlanUpdateParams) {
+      this.loading.planUpdate = true;
+      try {
+        const response = await licenseApi.updatePlan(id, data);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "更新计划失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("更新计划失败", error);
+        throw error;
+      } finally {
+        this.loading.planUpdate = false;
+      }
+    },
+
+    /**
+     * 删除计划
+     */
+    async deletePlan(id: number) {
+      this.loading.planDelete = true;
+      try {
+        const response = await licenseApi.deletePlan(id);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "删除计划失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("删除计划失败", error);
+        throw error;
+      } finally {
+        this.loading.planDelete = false;
+      }
+    },
+
     // ============================
     // 许可证管理 Actions
     // ============================
@@ -421,14 +485,11 @@ export const useLicenseStore = defineStore("license", {
     /**
      * 撤销许可证
      */
-    async revokeLicense(id: string, reason?: string) {
+    async revokeLicense(id: number, params: { reason?: string } = {}) {
       this.loading.licenseRevoke = true;
       try {
-        const response = await licenseApi.revokeLicense(id, reason);
+        const response = await licenseApi.revokeLicense(id, params);
         if (response.success) {
-          if (this.currentLicense && this.currentLicense.id === id) {
-            this.currentLicense = response.data;
-          }
           return response;
         } else {
           logger.error(response.message || "撤销许可证失败");
@@ -439,6 +500,96 @@ export const useLicenseStore = defineStore("license", {
         throw error;
       } finally {
         this.loading.licenseRevoke = false;
+      }
+    },
+
+    /**
+     * 延长许可证有效期
+     */
+    async extendLicense(id: number, days: number) {
+      this.loading.licenseUpdate = true;
+      try {
+        const response = await licenseApi.extendLicense(id, { days });
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "延长许可证失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("延长许可证失败", error);
+        throw error;
+      } finally {
+        this.loading.licenseUpdate = false;
+      }
+    },
+
+    /**
+     * 批量操作许可证
+     */
+    async batchOperationLicenses(params: {
+      license_ids: number[];
+      operation: "revoke" | "suspend" | "activate" | "extend";
+      parameters?: Record<string, any>;
+      reason?: string;
+    }) {
+      this.loading.batchLicenseOperation = true;
+      try {
+        const response = await licenseApi.batchOperation(params);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "批量操作失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("批量操作失败", error);
+        throw error;
+      } finally {
+        this.loading.batchLicenseOperation = false;
+      }
+    },
+
+    /**
+     * 获取许可证详情
+     */
+    async fetchLicenseDetail(id: number) {
+      this.loading.licenseDetail = true;
+      try {
+        const response = await licenseApi.getLicenseDetail(id);
+        if (response.success) {
+          this.currentLicense = response.data;
+          return response;
+        } else {
+          logger.error(response.message || "获取许可证详情失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("获取许可证详情失败", error);
+        throw error;
+      } finally {
+        this.loading.licenseDetail = false;
+      }
+    },
+
+    /**
+     * 获取许可证使用统计
+     */
+    async fetchLicenseUsageStats(id: number) {
+      this.loading.statistics = true;
+      try {
+        const response = await licenseApi.getLicenseUsageStats(id);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "获取使用统计失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("获取使用统计失败", error);
+        throw error;
+      } finally {
+        this.loading.statistics = false;
       }
     },
 

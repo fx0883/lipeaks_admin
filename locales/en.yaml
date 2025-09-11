@@ -1540,6 +1540,8 @@ member:
   newPasswordPlaceholder: Please enter new password
 
 license:
+  dashboard: Dashboard
+  
   # Menu items
   menu:
     title: License Management
@@ -1583,8 +1585,8 @@ license:
     noData: No Data
     viewAll: View All
 
-  # Dashboard
-  dashboard:
+  # Dashboard Config
+  dashboardConfig:
     licenseTrend: License Trend
     statusDistribution: Status Distribution
     quickActions: Quick Actions
@@ -1698,6 +1700,7 @@ license:
     nameLength: Plan name should be 2-100 characters
     description: Description
     descriptionPlaceholder: Please enter plan description
+    descriptionRequired: Description is required
     product: Product
     productPlaceholder: Please select product
     productRequired: Product is required
@@ -1708,14 +1711,25 @@ license:
     typePro: Professional
     typeEnterprise: Enterprise
     typeCustom: Custom
+    version: Version
+    versionPlaceholder: Please enter version
+    versionRequired: Version is required
     price: Price
     pricePlaceholder: Please enter price
     priceRequired: Price is required
     priceInvalid: Invalid price format
     currency: Currency
+    currencyPlaceholder: Please select currency
+    currencyRequired: Currency is required
     currencyUSD: USD
     currencyEUR: EUR
     currencyCNY: CNY
+    billingCycle: Billing Cycle
+    billingCyclePlaceholder: Please select billing cycle
+    billingCycleRequired: Billing cycle is required
+    monthly: Monthly
+    yearly: Yearly
+    lifetime: Lifetime
     duration: Duration (Days)
     durationPlaceholder: Please enter duration in days
     durationRequired: Duration is required
@@ -1732,10 +1746,32 @@ license:
     featuresPlaceholder: Please enter features (one per line)
     restrictions: Restrictions
     restrictionsPlaceholder: Please enter restrictions (one per line)
+    limitations: Limitations
+    limitationsPlaceholder: Please enter limitations (one per line)
+    isPopular: Is Popular
+    metadata: Metadata
+    metadataPlaceholder: Please enter metadata
+    maxUsers: Max Users
+    maxDevices: Max Devices
+    validityDays: Validity Days
+    active: Active
+    code: Code
+    codePlaceholder: Please enter plan code
+    codeRequired: Plan code is required
+    codeFormat: Plan code can only contain letters, numbers, underscores and hyphens
+    validityDaysRequired: Validity days is required
+    featuresHelp: Enter feature configuration as JSON object
+    featuresFormatError: Invalid JSON format in features
+    basicInfo: Basic Information
+    limits: Limitations
+    timeline: Timeline
     status: Status
+    statusPlaceholder: Please select status
+    statusRequired: Status is required
     statusActive: Active
     statusInactive: Inactive
     statusArchived: Archived
+    inactive: Inactive
     statusAll: All Status
     isActive: Active
     createdAt: Created At
@@ -1785,12 +1821,17 @@ license:
     id: License ID
     key: License Key
     keyPlaceholder: License key will be generated automatically
+    licenseKeyRequired: License key is required
     plan: Plan
     planPlaceholder: Please select plan
     planRequired: Plan is required
+    planIdRequired: Plan ID is required
     customer: Customer
     customerPlaceholder: Please enter customer name
     customerRequired: Customer is required
+    customerName: Customer Name
+    customerNamePlaceholder: Please enter customer name
+    customerNameRequired: Customer name is required
     customerEmail: Customer Email
     customerEmailPlaceholder: Please enter customer email
     customerEmailRequired: Customer email is required
@@ -1798,22 +1839,56 @@ license:
     expiresAt: Expires At
     expiresAtPlaceholder: Please select expiration date
     expiresAtRequired: Expiration date is required
+    description: Description
+    descriptionPlaceholder: Please enter description
+    issueDate: Issue Date
+    issueDatePlaceholder: Please select issue date
+    issueDateRequired: Issue date is required
+    expiryDate: Expiry Date
+    expiryDatePlaceholder: Please select expiry date
+    expiryDateRequired: Expiry date is required
     activationsUsed: Activations Used
     activationsRemaining: Activations Remaining
     machinesUsed: Machines Used
     machinesRemaining: Machines Remaining
     status: Status
+    statusRequired: Status is required
     statusActive: Active
     statusExpired: Expired
     statusRevoked: Revoked
     statusSuspended: Suspended
+    suspended: Suspended
     statusAll: All Status
     isActive: Active
     updatedAt: Updated At
     actions: Actions
+    allowedIPs: Allowed IPs
+    allowedIPsPlaceholder: Please enter allowed IP addresses
+    allowedIPsTip: Multiple IPs can be separated by commas
+    allowedDomains: Allowed Domains
+    allowedDomainsPlaceholder: Please enter allowed domains
+    allowedDomainsTip: Multiple domains can be separated by commas
+    features: Features
     metadata: Metadata
+    metadataPlaceholder: Please enter metadata in JSON format
     notes: Notes
     notesPlaceholder: Please enter notes
+    autoRenew: Auto Renewal
+    licenseKeyPlaceholder: License key will be auto-generated
+    selectPlan: Select Plan
+    generateKey: Generate Key
+    planId: Plan ID
+    maxUsers: Max Users
+    maxDevices: Max Devices
+    validityDays: Validity Days
+    active: Active
+    inactive: Inactive
+    featureAnalytics: Analytics
+    featureApiAccess: API Access
+    featurePrioritySupport: Priority Support
+    featureCloudStorage: Cloud Storage
+    featureMultiUser: Multi-User Support
+    featureCustomIntegration: Custom Integration
     
     # Actions
     copySuccess: License key copied successfully

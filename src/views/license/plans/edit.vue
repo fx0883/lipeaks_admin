@@ -4,23 +4,61 @@
       <template #header>
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/license/dashboard' }">
-            {{ $t('license.dashboard') }}
+            {{ $t("license.dashboard") }}
           </el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/license/plans' }">
-            {{ $t('license.plans.title') }}
+            {{ $t("license.plans.title") }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item>{{ $t('license.plans.edit') }}</el-breadcrumb-item>
+          <el-breadcrumb-item>{{
+            $t("license.plans.edit")
+          }}</el-breadcrumb-item>
         </el-breadcrumb>
       </template>
 
       <div class="edit-container">
         <el-form
           ref="formRef"
-          :model="form" 
+          :model="form"
           :rules="rules"
           label-width="120px"
           label-position="left"
         >
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item :label="$t('license.plans.product')" prop="product">
+                <el-select
+                  v-model="form.product"
+                  :placeholder="$t('license.plans.productPlaceholder')"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="product in productOptions"
+                    :key="product.value"
+                    :label="product.label"
+                    :value="product.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label="$t('license.plans.type')" prop="plan_type">
+                <el-select
+                  v-model="form.plan_type"
+                  :placeholder="$t('license.plans.typePlaceholder')"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option label="Trial" value="trial" />
+                  <el-option label="Basic" value="basic" />
+                  <el-option label="Professional" value="professional" />
+                  <el-option label="Enterprise" value="enterprise" />
+                  <el-option label="Custom" value="custom" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="$t('license.plans.name')" prop="name">
@@ -32,39 +70,31 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label="$t('license.plans.version')" prop="version">
+              <el-form-item :label="$t('license.plans.code')" prop="code">
                 <el-input
-                  v-model="form.version"
-                  :placeholder="$t('license.plans.versionPlaceholder')"
+                  v-model="form.code"
+                  :placeholder="$t('license.plans.codePlaceholder')"
                   clearable
                 />
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-form-item :label="$t('license.plans.description')" prop="description">
-            <el-input
-              v-model="form.description"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('license.plans.descriptionPlaceholder')"
-            />
-          </el-form-item>
-
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item :label="$t('license.plans.price')" prop="price">
-                <el-input-number
+                <el-input
                   v-model="form.price"
-                  :min="0"
-                  :precision="2"
-                  :step="1"
-                  style="width: 100%"
+                  :placeholder="$t('license.plans.pricePlaceholder')"
+                  clearable
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item :label="$t('license.plans.currency')" prop="currency">
+              <el-form-item
+                :label="$t('license.plans.currency')"
+                prop="currency"
+              >
                 <el-select v-model="form.currency" style="width: 100%">
                   <el-option label="USD" value="USD" />
                   <el-option label="EUR" value="EUR" />
@@ -73,41 +103,42 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item :label="$t('license.plans.billingCycle')" prop="billingCycle">
-                <el-select v-model="form.billingCycle" style="width: 100%">
-                  <el-option :label="$t('license.plans.monthly')" value="monthly" />
-                  <el-option :label="$t('license.plans.yearly')" value="yearly" />
-                  <el-option :label="$t('license.plans.lifetime')" value="lifetime" />
+              <el-form-item :label="$t('license.plans.status')" prop="status">
+                <el-select v-model="form.status" style="width: 100%">
+                  <el-option
+                    :label="$t('license.plans.active')"
+                    value="active"
+                  />
+                  <el-option
+                    :label="$t('license.plans.inactive')"
+                    value="inactive"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item :label="$t('license.plans.maxUsers')" prop="maxUsers">
+            <el-col :span="12">
+              <el-form-item
+                :label="$t('license.plans.maxMachines')"
+                prop="max_machines"
+              >
                 <el-input-number
-                  v-model="form.maxUsers"
+                  v-model="form.max_machines"
                   :min="1"
                   :step="1"
                   style="width: 100%"
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item :label="$t('license.plans.maxDevices')" prop="maxDevices">
+            <el-col :span="12">
+              <el-form-item
+                :label="$t('license.plans.validityDays')"
+                prop="validity_days"
+              >
                 <el-input-number
-                  v-model="form.maxDevices"
-                  :min="1"
-                  :step="1"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item :label="$t('license.plans.validityDays')" prop="validityDays">
-                <el-input-number
-                  v-model="form.validityDays"
+                  v-model="form.validity_days"
                   :min="1"
                   :step="1"
                   style="width: 100%"
@@ -123,48 +154,21 @@
               :rows="4"
               :placeholder="$t('license.plans.featuresPlaceholder')"
             />
-          </el-form-item>
-
-          <el-form-item :label="$t('license.plans.limitations')" prop="limitations">
-            <el-input
-              v-model="form.limitations"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('license.plans.limitationsPlaceholder')"
-            />
-          </el-form-item>
-
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item :label="$t('license.plans.status')" prop="status">
-                <el-radio-group v-model="form.status">
-                  <el-radio value="active">{{ $t('license.plans.active') }}</el-radio>
-                  <el-radio value="inactive">{{ $t('license.plans.inactive') }}</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item :label="$t('license.plans.isPopular')" prop="isPopular">
-                <el-switch v-model="form.isPopular" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-form-item :label="$t('license.plans.metadata')" prop="metadata">
-            <el-input
-              v-model="form.metadata"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('license.plans.metadataPlaceholder')"
-            />
+            <div class="help-text">
+              {{ $t("license.plans.featuresHelp") }}
+            </div>
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="handleSubmit" :loading="submitting">
-              {{ $t('common.save') }}
+            <el-button
+              type="primary"
+              @click="handleSubmit"
+              :loading="submitting"
+            >
+              {{ $t("common.save") }}
             </el-button>
             <el-button @click="handleCancel">
-              {{ $t('common.cancel') }}
+              {{ $t("common.cancel") }}
             </el-button>
           </el-form-item>
         </el-form>
@@ -174,164 +178,246 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { useI18n } from 'vue-i18n'
+import { ref, reactive, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import {
+  ElMessage,
+  ElMessageBox,
+  type FormInstance,
+  type FormRules
+} from "element-plus";
+import { useI18n } from "vue-i18n";
+import { useLicenseStoreHook } from "@/store/modules/license";
+import type { PlanUpdateParams } from "@/types/license";
 
-const { t } = useI18n()
-const router = useRouter()
-const route = useRoute()
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
+const licenseStore = useLicenseStoreHook();
 
-const loading = ref(false)
-const submitting = ref(false)
-const formRef = ref<FormInstance>()
+const loading = ref(false);
+const submitting = ref(false);
+const formRef = ref<FormInstance>();
+
+// 产品选项
+const productOptions = ref<Array<{ value: number; label: string }>>([]);
 
 interface PlanForm {
-  id?: string
-  name: string
-  version: string
-  description: string
-  price: number
-  currency: string
-  billingCycle: string
-  maxUsers: number | null
-  maxDevices: number | null
-  validityDays: number | null
-  features: string
-  limitations: string
-  status: string
-  isPopular: boolean
-  metadata: string
+  id?: number;
+  product: number | null;
+  name: string;
+  code: string;
+  plan_type: string;
+  max_machines: number | null;
+  validity_days: number | null;
+  features: string;
+  price: string;
+  currency: string;
+  status: string;
 }
 
 const form = reactive<PlanForm>({
-  name: '',
-  version: '1.0.0',
-  description: '',
-  price: 0,
-  currency: 'USD',
-  billingCycle: 'monthly',
-  maxUsers: null,
-  maxDevices: null,
-  validityDays: null,
-  features: '',
-  limitations: '',
-  status: 'active',
-  isPopular: false,
-  metadata: ''
-})
+  product: null,
+  name: "",
+  code: "",
+  plan_type: "",
+  max_machines: null,
+  validity_days: null,
+  features: "{}",
+  price: "0.00",
+  currency: "CNY",
+  status: "active"
+});
 
 const rules = reactive<FormRules<PlanForm>>({
+  product: [
+    {
+      required: true,
+      message: t("license.plans.productRequired"),
+      trigger: "change"
+    }
+  ],
   name: [
-    { required: true, message: t('license.plans.nameRequired'), trigger: 'blur' }
+    {
+      required: true,
+      message: t("license.plans.nameRequired"),
+      trigger: "blur"
+    }
   ],
-  version: [
-    { required: true, message: t('license.plans.versionRequired'), trigger: 'blur' }
+  code: [
+    {
+      required: true,
+      message: t("license.plans.codeRequired"),
+      trigger: "blur"
+    },
+    {
+      pattern: /^[a-zA-Z0-9_-]+$/,
+      message: t("license.plans.codeFormat"),
+      trigger: "blur"
+    }
   ],
-  description: [
-    { required: true, message: t('license.plans.descriptionRequired'), trigger: 'blur' }
+  plan_type: [
+    {
+      required: true,
+      message: t("license.plans.typeRequired"),
+      trigger: "change"
+    }
+  ],
+  max_machines: [
+    {
+      required: true,
+      message: t("license.plans.maxMachinesRequired"),
+      trigger: "blur"
+    }
+  ],
+  validity_days: [
+    {
+      required: true,
+      message: t("license.plans.validityDaysRequired"),
+      trigger: "blur"
+    }
   ],
   price: [
-    { required: true, message: t('license.plans.priceRequired'), trigger: 'blur' }
+    {
+      required: true,
+      message: t("license.plans.priceRequired"),
+      trigger: "blur"
+    }
   ],
   currency: [
-    { required: true, message: t('license.plans.currencyRequired'), trigger: 'change' }
-  ],
-  billingCycle: [
-    { required: true, message: t('license.plans.billingCycleRequired'), trigger: 'change' }
+    {
+      required: true,
+      message: t("license.plans.currencyRequired"),
+      trigger: "change"
+    }
   ],
   status: [
-    { required: true, message: t('license.plans.statusRequired'), trigger: 'change' }
+    {
+      required: true,
+      message: t("license.plans.statusRequired"),
+      trigger: "change"
+    }
   ]
-})
+});
 
 const loadPlanData = async () => {
-  const planId = route.params.id
+  const planId = route.params.id;
   if (!planId) {
-    ElMessage.error(t('license.plans.invalidId'))
-    router.push('/license/plans')
-    return
+    ElMessage.error(t("license.plans.invalidId"));
+    router.push("/license/plans");
+    return;
   }
 
-  loading.value = true
+  loading.value = true;
   try {
-    // TODO: 实现获取计划详情的API调用
-    // const result = await getPlanById(planId)
-    
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // 模拟数据
-    Object.assign(form, {
-      id: planId,
-      name: 'Basic Plan',
-      version: '1.0.0',
-      description: 'A basic license plan for individual users',
-      price: 29.99,
-      currency: 'USD',
-      billingCycle: 'monthly',
-      maxUsers: 1,
-      maxDevices: 2,
-      validityDays: 30,
-      features: 'Basic features\nEmail support\nCloud storage: 10GB',
-      limitations: 'Limited API calls\nNo premium features',
-      status: 'active',
-      isPopular: false,
-      metadata: '{"category": "individual", "priority": 1}'
-    })
+    const response = await licenseStore.getPlanDetail(Number(planId));
+    if (response.success && response.data) {
+      const plan = response.data;
+      Object.assign(form, {
+        id: plan.id,
+        product: plan.product,
+        name: plan.name,
+        code: plan.code,
+        plan_type: plan.plan_type,
+        max_machines: plan.max_machines,
+        validity_days: plan.validity_days,
+        features: plan.features ? JSON.stringify(plan.features, null, 2) : "{}",
+        price: plan.price,
+        currency: plan.currency,
+        status: plan.status
+      });
+    }
   } catch (error) {
-    console.error('Load plan data failed:', error)
-    ElMessage.error(t('license.plans.loadFailed'))
-    router.push('/license/plans')
+    console.error("Load plan data failed:", error);
+    ElMessage.error(t("license.plans.loadFailed"));
+    router.push("/license/plans");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSubmit = async () => {
-  if (!formRef.value) return
+  if (!formRef.value || !form.id) return;
 
   try {
-    await formRef.value.validate()
-    
-    submitting.value = true
-    
-    // TODO: 实现更新计划的API调用
-    // const result = await updatePlan(form.id, form)
-    
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    ElMessage.success(t('license.plans.updateSuccess'))
-    router.push('/license/plans')
+    await formRef.value.validate();
+
+    submitting.value = true;
+
+    // 处理features字段，将JSON字符串转为对象
+    let featuresObj = {};
+    if (form.features) {
+      try {
+        featuresObj = JSON.parse(form.features);
+      } catch (e) {
+        ElMessage.error(t("license.plans.featuresFormatError"));
+        return;
+      }
+    }
+
+    const updateData: PlanUpdateParams = {
+      product: form.product!,
+      name: form.name,
+      code: form.code,
+      plan_type: form.plan_type as any,
+      max_machines: form.max_machines!,
+      validity_days: form.validity_days!,
+      features: featuresObj,
+      price: form.price,
+      currency: form.currency,
+      status: form.status as any
+    };
+
+    await licenseStore.updatePlan(form.id, updateData);
+    ElMessage.success(t("license.plans.updateSuccess"));
+    router.push("/license/plans");
   } catch (error) {
-    console.error('Update plan failed:', error)
-    ElMessage.error(t('license.plans.updateFailed'))
+    console.error("Update plan failed:", error);
+    ElMessage.error(t("license.plans.updateFailed"));
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 
 const handleCancel = () => {
   ElMessageBox.confirm(
-    t('common.unsavedChangesMessage'),
-    t('common.confirmTitle'),
+    t("common.unsavedChangesMessage"),
+    t("common.confirmTitle"),
     {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
+      confirmButtonText: t("common.confirm"),
+      cancelButtonText: t("common.cancel"),
+      type: "warning"
     }
-  ).then(() => {
-    router.back()
-  }).catch(() => {
-    // 用户取消操作
-  })
-}
+  )
+    .then(() => {
+      router.back();
+    })
+    .catch(() => {
+      // 用户取消操作
+    });
+};
 
-onMounted(() => {
-  loadPlanData()
-})
+// 获取产品选项
+const fetchProductOptions = async () => {
+  try {
+    await licenseStore.fetchProductList({
+      page: 1,
+      page_size: 100,
+      is_active: true
+    });
+    productOptions.value = licenseStore.products.data.map(product => ({
+      value: product.id,
+      label: `${product.name} v${product.version}`
+    }));
+  } catch (error) {
+    console.error("获取产品选项失败", error);
+  }
+};
+
+onMounted(async () => {
+  await fetchProductOptions();
+  await loadPlanData();
+});
 </script>
 
 <style scoped>
@@ -354,5 +440,11 @@ onMounted(() => {
 
 :deep(.el-input-number) {
   width: 100%;
+}
+
+.help-text {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 5px;
 }
 </style>

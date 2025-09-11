@@ -1028,6 +1028,8 @@ panel:
   pureMultiTagsCache: 多标签页持久化
 
 license:
+  dashboard: 仪表板
+  
   menu:
     title: 许可证管理
     dashboard: 仪表板
@@ -1069,8 +1071,8 @@ license:
     noData: 暂无数据
     viewAll: 查看全部
 
-  # 仪表板
-  dashboard:
+  # 仪表板配置
+  dashboardConfig:
     licenseTrend: 许可证趋势
     statusDistribution: 状态分布
     quickActions: 快速操作
@@ -1140,6 +1142,7 @@ license:
 
   plans:
     management: 计划管理
+    title: 计划管理
     totalPlans: 计划总数
     list: 计划列表
     create: 创建计划
@@ -1158,9 +1161,11 @@ license:
     typeEnterprise: 企业版
     status: 状态
     statusPlaceholder: 请选择状态
+    statusRequired: 状态为必填项
     statusAll: 全部状态
     statusActive: 已激活
     statusInactive: 未激活
+    inactive: 未激活
     total: 共 {count} 个计划
     fetchError: 获取计划列表失败
     deleteConfirm: 确认删除计划 "{name}" 吗？
@@ -1169,10 +1174,58 @@ license:
     
     id: ID
     name: 计划名称
+    namePlaceholder: 请输入计划名称
+    nameRequired: 计划名称为必填项
+    nameLength: 计划名称长度应为2-100个字符
+    description: 描述
+    descriptionPlaceholder: 请输入计划描述
+    descriptionRequired: 计划描述为必填项
+    version: 版本
+    versionPlaceholder: 请输入版本号
+    versionRequired: 版本号为必填项
     maxActivations: 最大激活数
     duration: 有效期
     price: 价格
+    pricePlaceholder: 请输入价格
+    priceRequired: 价格为必填项
+    priceInvalid: 价格格式无效
+    currency: 货币
+    currencyPlaceholder: 请选择货币
+    currencyRequired: 货币为必填项
+    currencyUSD: 美元
+    currencyEUR: 欧元
+    currencyCNY: 人民币
+    billingCycle: 计费周期
+    billingCyclePlaceholder: 请选择计费周期
+    billingCycleRequired: 计费周期为必填项
+    monthly: 月付
+    yearly: 年付
+    lifetime: 终身
     features: 功能特性
+    featuresPlaceholder: 请输入功能特性（每行一个）
+    limitations: 限制条件
+    limitationsPlaceholder: 请输入限制条件（每行一个）
+    isPopular: 是否热门
+    metadata: 元数据
+    metadataPlaceholder: 请输入元数据
+    maxUsers: 最大用户数
+    maxDevices: 最大设备数
+    validityDays: 有效天数
+    active: 激活状态
+    code: 方案代码
+    codePlaceholder: 请输入方案代码
+    codeRequired: 方案代码为必填项
+    codeFormat: 方案代码只能包含字母、数字、下划线和横线
+    productRequired: 产品为必填项
+    typeRequired: 方案类型为必填项
+    maxMachines: 最大机器数
+    maxMachinesRequired: 最大机器数为必填项
+    validityDaysRequired: 有效天数为必填项
+    featuresHelp: 输入功能配置的JSON对象
+    featuresFormatError: 功能配置JSON格式错误
+    basicInfo: 基本信息
+    limits: 限制条件
+    timeline: 时间轴
     unlimited: 无限制
     oneDay: 1天
     oneWeek: 1周
@@ -1187,6 +1240,7 @@ license:
     created: 已创建
     activated: 已激活
     createdAt: 创建时间
+    title: 许可证管理
     list: 许可证列表
     create: 创建许可证
     edit: 编辑许可证
@@ -1204,6 +1258,7 @@ license:
     statusExpired: 已过期
     statusRevoked: 已撤销
     statusSuspended: 已暂停
+    suspended: 已暂停
     total: 共 {count} 个许可证
     fetchError: 获取许可证列表失败
     download: 下载
@@ -1221,12 +1276,54 @@ license:
     
     id: ID
     licenseKey: 许可证密钥
+    licenseKeyRequired: 许可证密钥必填
+    planIdRequired: 计划ID必填
+    customerName: 客户姓名
+    customerNamePlaceholder: 请输入客户姓名
+    customerNameRequired: 客户姓名必填
+    customerEmailRequired: 客户邮箱必填
+    customerEmailInvalid: 邮箱格式无效
+    customerEmailPlaceholder: 请输入客户邮箱
+    description: 描述
+    descriptionPlaceholder: 请输入描述
+    issueDate: 发行日期
+    issueDatePlaceholder: 请选择发行日期
+    issueDateRequired: 发行日期必填
+    expiryDate: 到期日期
+    expiryDatePlaceholder: 请选择到期日期
+    expiryDateRequired: 到期日期必填
+    statusRequired: 状态必填
+    allowedIPs: 允许的IP地址
+    allowedIPsPlaceholder: 请输入允许的IP地址
+    allowedIPsTip: 多个IP地址可用逗号分隔
+    allowedDomains: 允许的域名
+    allowedDomainsPlaceholder: 请输入允许的域名
+    allowedDomainsTip: 多个域名可用逗号分隔
+    features: 功能特性
+    metadata: 元数据
+    metadataPlaceholder: 请输入JSON格式的元数据
     activations: 激活数
     expiresAt: 过期时间
     customer: 客户
     permanent: 永久有效
     expired: 已过期
     expiringSoon: "{days}天后过期"
+    autoRenew: 自动续费
+    licenseKeyPlaceholder: 许可证密钥将自动生成
+    selectPlan: 选择计划
+    generateKey: 生成密钥
+    planId: 计划ID
+    maxUsers: 最大用户数
+    maxDevices: 最大设备数
+    validityDays: 有效天数
+    active: 有效
+    inactive: 无效
+    featureAnalytics: 数据分析
+    featureApiAccess: API访问
+    featurePrioritySupport: 优先支持
+    featureCloudStorage: 云存储
+    featureMultiUser: 多用户支持
+    featureCustomIntegration: 自定义集成
 
   machines:
     title: 机器管理

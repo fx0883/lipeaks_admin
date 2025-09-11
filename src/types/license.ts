@@ -56,96 +56,123 @@ export interface ProductCreateData {
 }
 
 // 许可证计划相关类型
-export type PlanType = 'trial' | 'basic' | 'professional' | 'enterprise';
+export type PlanType = 'trial' | 'basic' | 'professional' | 'enterprise' | 'custom';
 export type PlanStatus = 'active' | 'inactive' | 'deprecated';
 
 export interface LicensePlan {
   id: number;
-  product_id: number;
+  product: number;
+  product_name?: string; // 只读字段
   name: string;
+  code: string;
   plan_type: PlanType;
-  description: string;
-  max_activations: number;
-  duration_days: number;
-  features: string[];
-  price: number;
+  max_machines: number;
+  validity_days: number;
+  features?: Record<string, any>; // JSON对象
+  price: string; // API返回字符串格式
   currency: string;
-  is_active: boolean;
+  status: 'active' | 'inactive';
+  licenses_count?: number; // 只读字段
   created_at: string;
   updated_at: string;
-  product?: SoftwareProduct;
 }
 
 export interface PlanListParams {
   search?: string;
-  product_id?: number;
+  product?: number; // API中的字段名是product，不是product_id
   plan_type?: PlanType;
-  is_active?: boolean;
+  status?: 'active' | 'inactive'; // API中用status，不是is_active
   page?: number;
   page_size?: number;
+  ordering?: string; // 支持排序
 }
 
 export interface PlanCreateParams {
-  product_id: number;
+  product: number;
   name: string;
+  code: string;
   plan_type: PlanType;
-  description: string;
-  max_activations: number;
-  duration_days: number;
-  features: string[];
-  price: number;
+  max_machines: number;
+  validity_days: number;
+  features?: Record<string, any>;
+  price: string; // decimal作为字符串传输
   currency?: string;
-  is_active?: boolean;
+  status?: 'active' | 'inactive';
 }
 
 export interface PlanUpdateParams extends Partial<PlanCreateParams> {}
 
-// 许可证相关类型
-export type LicenseStatus = 'active' | 'expired' | 'suspended' | 'revoked';
+// 客户信息接口
+export interface CustomerInfo {
+  name: string;
+  email: string;
+  company?: string;
+  phone?: string;
+}
+
+// 许可证相关类型  
+export type LicenseStatus = 'generated' | 'activated' | 'suspended' | 'revoked' | 'expired';
 
 export interface License {
-  id: string;
-  plan_id: number;
-  customer_email: string;
-  customer_name: string;
+  id: number;
+  product: number;
+  product_name?: string;
+  plan: number;
+  plan_name?: string;
+  tenant: number;
+  tenant_name?: string;
   license_key: string;
-  activation_count: number;
+  customer_name: string;
+  customer_email: string;
   max_activations: number;
-  status: LicenseStatus;
+  current_activations: number;
   issued_at: string;
   expires_at: string;
+  last_verified_at: string | null;
+  status: LicenseStatus;
+  machine_bindings_count: number;
+  days_until_expiry: number;
+  notes?: string;
+  metadata?: Record<string, any>;
   created_at: string;
   updated_at: string;
-  plan?: LicensePlan;
-  activations?: LicenseActivation[];
+  machine_bindings?: MachineBinding[];
+  recent_activations?: LicenseActivation[];
+  usage_stats?: {
+    total_usage_logs: number;
+    recent_usage_logs: number;
+  };
 }
 
 export interface LicenseListParams {
   search?: string;
   product?: number;
-  plan_id?: number;
-  customer_email?: string;
+  plan?: number;
   status?: LicenseStatus;
-  date_from?: string;
-  date_to?: string;
+  tenant?: number;
   page?: number;
   page_size?: number;
+  ordering?: string;
 }
 
 export interface LicenseCreateParams {
-  plan_id: number;
-  customer_email: string;
-  customer_name: string;
-  quantity?: number;
-  expires_at?: string;
+  product?: number;
+  plan: number;
+  tenant: number;
+  customer_info: CustomerInfo;
+  max_activations?: number;
+  validity_days?: number;
   notes?: string;
 }
 
 export interface LicenseUpdateParams {
-  customer_email?: string;
+  product?: number;
+  plan?: number;
+  tenant?: number;
   customer_name?: string;
+  customer_email?: string;
+  max_activations?: number;
   status?: LicenseStatus;
-  expires_at?: string;
   notes?: string;
 }
 
@@ -275,21 +302,35 @@ export interface RevenueReport {
   currency: string;
 }
 
+// 许可证延期参数
+export interface LicenseExtendParams {
+  days: number;
+}
+
+// 许可证撤销参数
+export interface LicenseRevokeParams {
+  reason?: string;
+}
+
 // 批量操作相关类型
 export interface BatchOperationParams {
-  ids: (string | number)[];
-  action: string;
-  data?: Record<string, any>;
+  license_ids: number[];
+  operation: 'revoke' | 'suspend' | 'activate' | 'extend';
+  parameters?: Record<string, any>;
+  reason?: string;
 }
 
 export interface BatchOperationResult {
-  success_count: number;
-  failed_count: number;
-  errors: Array<{
-    id: string | number;
-    error: string;
+  success: boolean;
+  message: string;
+  results: Array<{
+    license_id: number;
+    success: boolean;
+    message?: string;
+    error?: string;
   }>;
 }
+
 
 // 导出相关类型
 export interface ExportParams {
