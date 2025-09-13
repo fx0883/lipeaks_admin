@@ -80,6 +80,10 @@ common:
     upload: Upload
     download: Download
   more: More
+  copy: Copy
+  days: Days
+  createdAt: Created At
+  updatedAt: Updated At
   table:
     noData: No data
     loading: Loading...
@@ -1932,7 +1936,36 @@ license:
     statusActivated: Activated
     extend: Extend
     
+    # Detail page new keys
+    limitations: Limitations
+    maxActivations: Max Activations
+    currentActivations: Current Activations
+    usageStatistics: Usage Statistics
+    totalActivations: Total Activations
+    activeDevices: Active Devices
+    currentUsers: Current Users
+    dataUsage: Data Usage
+    recentActivity: Recent Activity
+    timeline: Timeline
+    licenseCreated: License Created
+    licenseActivated: License Activated
+    licenseValidated: License Validated
+    remainingDays: Remaining Days
+    machineBindings: Machine Bindings
+    basicInfo: Basic Information
+    validity: Validity Information
+    issuedAt: Issued At
+    invalidId: Invalid license ID
+    loadFailed: Failed to load license details
+    
+    # Action buttons
+    activate: Activate
+    suspend: Suspend
+    renew: Renew
+    exportLicense: Export License
+    
     # Actions
+    licenseKeyCopied: License key copied successfully
     copySuccess: License key copied successfully
     copyError: Failed to copy license key
     downloadSuccess: License downloaded successfully

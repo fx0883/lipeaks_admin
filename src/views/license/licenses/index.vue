@@ -59,7 +59,6 @@ const searchForm = reactive<LicenseListParams>({
   product: undefined,
   plan: undefined,
   status: undefined,
-  tenant: undefined,
   page: 1,
   page_size: 10,
   ordering: "-issued_at"
@@ -79,8 +78,6 @@ const statusOptions = [
 const productOptions = ref([]);
 // 计划选项
 const planOptions = ref([]);
-// 租户选项
-const tenantOptions = ref([]);
 
 // 多选相关
 const multipleSelection = ref<License[]>([]);
@@ -138,23 +135,6 @@ const fetchPlanOptions = async () => {
   }
 };
 
-// 获取租户选项
-const fetchTenantOptions = async () => {
-  try {
-    // TODO: 实现获取租户列表的API调用
-    // await tenantStore.fetchTenantList({ page: 1, page_size: 100, is_active: true });
-
-    // 模拟数据
-    tenantOptions.value = [
-      { value: 1, label: "科技有限公司" },
-      { value: 2, label: "创新科技" },
-      { value: 3, label: "未来软件" }
-    ];
-  } catch (error) {
-    logger.error("获取租户选项失败", error);
-  }
-};
-
 // 搜索
 const handleSearch = () => {
   pagination.currentPage = 1;
@@ -168,7 +148,6 @@ const handleResetSearch = () => {
     product: undefined,
     plan: undefined,
     status: undefined,
-    tenant: undefined,
     page: 1,
     page_size: 10,
     ordering: "-issued_at"
@@ -189,12 +168,12 @@ const handleCreate = () => {
 
 // 查看详情
 const handleView = (row: License) => {
-  router.push(`/license/licenses/detail/${row.id}`);
+  router.push(`/license/licenses/${row.id}`);
 };
 
 // 编辑许可证
 const handleEdit = (row: License) => {
-  router.push(`/license/licenses/edit/${row.id}`);
+  router.push(`/license/licenses/${row.id}/edit`);
 };
 
 // 复制许可证密钥
@@ -209,15 +188,12 @@ const handleCopyLicenseKey = (key: string) => {
     });
 };
 
-// 下载许可证文件
+// 下载许可证文件 (暂未实现)
 const handleDownloadLicense = async (row: License) => {
-  try {
-    await licenseStore.downloadLicense(row.id);
-    ElMessage.success(t("license.licenses.downloadSuccess"));
-  } catch (error) {
-    logger.error("下载许可证失败", error);
-    ElMessage.error(t("license.licenses.downloadError"));
-  }
+  // TODO: 实现许可证文件下载功能
+  // 需要后端提供 GET /api/v1/licenses/admin/licenses/{id}/download/ 接口
+  ElMessage.info(t("common.featureComingSoon"));
+  logger.warn("许可证下载功能暂未实现", { licenseId: row.id });
 };
 
 // 撤销许可证
@@ -318,15 +294,20 @@ const formatLicenseKey = (key: string) => {
 };
 
 // 获取状态标签类型
-const getStatusTagType = (status: LicenseStatus) => {
-  const statusMap = {
+const getStatusTagType = (
+  status: LicenseStatus
+): "success" | "info" | "warning" | "danger" => {
+  const statusMap: Record<
+    LicenseStatus,
+    "success" | "info" | "warning" | "danger"
+  > = {
     generated: "info",
     activated: "success",
     suspended: "warning",
     revoked: "danger",
-    expired: "error"
+    expired: "danger"
   };
-  return statusMap[status] || "";
+  return statusMap[status] || "info";
 };
 
 // 格式化过期时间
@@ -442,8 +423,8 @@ const handleBatchExtend = async () => {
       if (result.success) {
         ElMessage.success(
           t("license.licenses.batchExtendSuccess", {
-            success: result.results.filter(r => r.success).length,
-            total: result.results.length
+            success: result.data.results.filter(r => r.success).length,
+            total: result.data.results.length
           })
         );
       } else {
@@ -497,8 +478,8 @@ const handleBatchRevoke = async () => {
       if (result.success) {
         ElMessage.success(
           t("license.licenses.batchRevokeSuccess", {
-            success: result.results.filter(r => r.success).length,
-            total: result.results.length
+            success: result.data.results.filter(r => r.success).length,
+            total: result.data.results.length
           })
         );
       } else {
@@ -549,8 +530,8 @@ const handleBatchDelete = async () => {
       if (result.success) {
         ElMessage.success(
           t("license.licenses.batchDeleteSuccess", {
-            success: result.results.filter(r => r.success).length,
-            total: result.results.length
+            success: result.data.results.filter(r => r.success).length,
+            total: result.data.results.length
           })
         );
       } else {
@@ -576,7 +557,6 @@ const handleBatchDelete = async () => {
 onMounted(() => {
   fetchProductOptions();
   fetchPlanOptions();
-  fetchTenantOptions();
   fetchLicenses();
 });
 </script>
@@ -599,7 +579,9 @@ onMounted(() => {
           <el-select
             v-model="searchForm.product"
             :placeholder="t('license.licenses.productPlaceholder')"
+            class="filter-select"
             clearable
+            @change="handleSearch"
           >
             <el-option
               v-for="option in productOptions"
@@ -614,25 +596,12 @@ onMounted(() => {
           <el-select
             v-model="searchForm.plan"
             :placeholder="t('license.licenses.planPlaceholder')"
+            class="filter-select"
             clearable
+            @change="handleSearch"
           >
             <el-option
               v-for="option in planOptions"
-              :key="option.value"
-              :label="option.label"
-              :value="option.value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item :label="t('license.licenses.tenant')">
-          <el-select
-            v-model="searchForm.tenant"
-            :placeholder="t('license.licenses.tenantPlaceholder')"
-            clearable
-          >
-            <el-option
-              v-for="option in tenantOptions"
               :key="option.value"
               :label="option.label"
               :value="option.value"
@@ -644,7 +613,9 @@ onMounted(() => {
           <el-select
             v-model="searchForm.status"
             :placeholder="t('license.licenses.statusPlaceholder')"
+            class="filter-select"
             clearable
+            @change="handleSearch"
           >
             <el-option
               v-for="option in statusOptions"
@@ -718,9 +689,9 @@ onMounted(() => {
       <el-table
         :data="licenses"
         :loading="tableLoading"
-        @selection-change="handleSelectionChange"
         stripe
         border
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
 
@@ -770,18 +741,6 @@ onMounted(() => {
         >
           <template #default="{ row }">
             <span v-if="row.plan_name">{{ row.plan_name }}</span>
-            <span v-else>-</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="tenant_name"
-          :label="t('license.licenses.tenant')"
-          width="140"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">
-            <span v-if="row.tenant_name">{{ row.tenant_name }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
@@ -847,21 +806,11 @@ onMounted(() => {
           <template #default="{ row }">
             <div v-if="row.customer_name">
               <div>{{ row.customer_name }}</div>
-              <div class="customer-email" v-if="row.customer_email">
+              <div v-if="row.customer_email" class="customer-email">
                 {{ row.customer_email }}
               </div>
             </div>
             <span v-else>-</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="created_at"
-          :label="t('license.licenses.createdAt')"
-          width="160"
-        >
-          <template #default="{ row }">
-            {{ new Date(row.created_at).toLocaleString() }}
           </template>
         </el-table-column>
 
@@ -995,5 +944,10 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
+}
+
+/* 过滤控件样式 */
+.filter-select {
+  width: 200px;
 }
 </style>

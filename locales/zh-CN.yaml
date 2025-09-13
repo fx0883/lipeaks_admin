@@ -80,6 +80,10 @@ common:
     upload: 上传
     download: 下载
   more: 更多
+  copy: 复制
+  days: 天
+  createdAt: 创建时间
+  updatedAt: 更新时间
   table:
     noData: 暂无数据
     loading: 加载中...
@@ -1367,6 +1371,35 @@ license:
     statusGenerated: 已生成
     statusActivated: 已激活
     extend: 延期
+    
+    # 详情页面新增键值
+    limitations: 限制条件
+    maxActivations: 最大激活数
+    currentActivations: 当前激活数
+    usageStatistics: 使用统计
+    totalActivations: 总激活次数
+    activeDevices: 活跃设备
+    currentUsers: 当前用户数
+    dataUsage: 数据使用量
+    recentActivity: 最近活动
+    timeline: 时间线
+    licenseCreated: 许可证已创建
+    licenseActivated: 许可证已激活
+    licenseValidated: 许可证已验证
+    remainingDays: 剩余天数
+    machineBindings: 机器绑定
+    basicInfo: 基本信息
+    validity: 有效期信息
+    issuedAt: 签发时间
+    licenseKeyCopied: 许可证密钥已复制
+    invalidId: 无效的许可证ID
+    loadFailed: 加载许可证详情失败
+    
+    # 操作按钮
+    activate: 激活
+    suspend: 暂停
+    renew: 续费
+    exportLicense: 导出许可证
 
   machines:
     title: 机器管理

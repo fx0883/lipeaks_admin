@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <el-card v-loading="loading" :header="false" shadow="never">
+    <el-card v-loading="loading" shadow="never">
       <template #header>
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/license/dashboard' }">
@@ -25,9 +25,6 @@
                   `license.licenses.status${licenseData.status.charAt(0).toUpperCase() + licenseData.status.slice(1)}`
                 )
               }}
-            </el-tag>
-            <el-tag v-if="licenseData.is_trial" type="info">
-              {{ $t("license.licenses.trialLicense") }}
             </el-tag>
             <el-tag v-if="isExpiringSoon" type="warning">
               {{ $t("license.licenses.expiringSoon") }}
@@ -88,8 +85,8 @@
                     <el-button
                       type="text"
                       size="small"
-                      @click="copyLicenseKey"
                       style="margin-left: 10px"
+                      @click="copyLicenseKey"
                     >
                       {{ $t("common.copy") }}
                     </el-button>
@@ -100,9 +97,6 @@
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.licenses.plan')">
                   {{ licenseData.plan_name || "-" }}
-                </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.licenses.tenant')">
-                  {{ licenseData.tenant_name || "-" }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.licenses.customer')">
                   <div>
@@ -118,9 +112,9 @@
                   </div>
                 </el-descriptions-item>
                 <el-descriptions-item
+                  v-if="licenseData.notes"
                   :label="$t('license.licenses.notes')"
                   :span="2"
-                  v-if="licenseData.notes"
                 >
                   {{ licenseData.notes }}
                 </el-descriptions-item>
@@ -289,6 +283,8 @@ import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ArrowDown, Check } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
+import { getLicenseDetail } from "@/api/modules/license";
+import logger from "@/utils/logger";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -303,8 +299,8 @@ interface LicenseData {
   product_name?: string;
   plan: number;
   plan_name?: string;
-  tenant: number;
-  tenant_name?: string;
+  tenant: number; // API响应包含此字段，但前端不显示
+  tenant_name?: string; // API响应包含此字段，但前端不显示
   customer_name: string;
   customer_email: string;
   max_activations: number;
@@ -314,8 +310,15 @@ interface LicenseData {
   expires_at: string | null;
   days_until_expiry: number | null;
   machine_bindings_count: number;
-  is_trial: boolean;
+  last_verified_at: string | null;
   notes?: string;
+  metadata?: Record<string, any>;
+  machine_bindings?: any[];
+  recent_activations?: any[];
+  usage_stats?: {
+    total_usage_logs: number;
+    recent_usage_logs: number;
+  };
   created_at: string;
   updated_at: string;
 }
@@ -330,7 +333,7 @@ interface UsageData {
 
 interface Activity {
   id: string;
-  type: string;
+  type: "primary" | "success" | "warning" | "danger" | "info";
   description: string;
   timestamp: string;
 }
@@ -353,8 +356,15 @@ const licenseData = reactive<LicenseData>({
   expires_at: null,
   days_until_expiry: null,
   machine_bindings_count: 0,
-  is_trial: false,
+  last_verified_at: null,
   notes: "",
+  metadata: {},
+  machine_bindings: [],
+  recent_activations: [],
+  usage_stats: {
+    total_usage_logs: 0,
+    recent_usage_logs: 0
+  },
   created_at: "",
   updated_at: ""
 });
@@ -416,73 +426,61 @@ const loadLicenseData = async () => {
 
   loading.value = true;
   try {
-    // TODO: 实现获取许可证详情的API调用
-    // const [licenseResult, usageResult, activityResult] = await Promise.all([
-    //   getLicenseById(licenseId),
-    //   getLicenseUsage(licenseId),
-    //   getLicenseActivities(licenseId)
-    // ])
+    logger.debug("[LicenseDetail] 加载许可证详情", { licenseId });
 
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // 调用真实API获取许可证详情
+    const response = await getLicenseDetail(parseInt(licenseId as string));
 
-    // 模拟许可证数据
-    Object.assign(licenseData, {
-      id: parseInt(licenseId as string),
-      license_key: "ABC12-DEF34-GHI56-JKL78-MNO90",
-      product: 1,
-      product_name: "SuperApp Pro",
-      plan: 2,
-      plan_name: "Professional Plan",
-      tenant: 1,
-      tenant_name: "Acme Corporation",
-      customer_name: "Acme Corporation",
-      customer_email: "licenses@acme.com",
-      max_activations: 50,
-      current_activations: 12,
-      status: "activated",
-      issued_at: "2024-01-15T10:30:00Z",
-      expires_at: "2025-01-15T10:30:00Z",
-      days_until_expiry: 127,
-      machine_bindings_count: 8,
-      is_trial: false,
-      notes: "Enterprise license for development and production environments",
-      created_at: "2024-01-15T10:30:00Z",
-      updated_at: "2024-03-10T14:45:00Z"
-    });
+    if (response.success && response.data) {
+      // 更新许可证数据
+      Object.assign(licenseData, response.data);
+      logger.debug("[LicenseDetail] 许可证数据加载成功", response.data);
 
-    // 模拟使用统计数据
-    Object.assign(usageData, {
-      totalActivations: 1247,
-      activeDevices: 87,
-      currentUsers: 42,
-      currentDevices: 87,
-      dataUsage: 2.4 * 1024 * 1024 * 1024 // 2.4GB
-    });
-
-    // 模拟活动记录
-    recentActivities.value = [
-      {
-        id: "1",
-        type: "success",
-        description: t("license.licenses.deviceActivated"),
-        timestamp: "2024-03-08T09:15:00Z"
-      },
-      {
-        id: "2",
-        type: "info",
-        description: t("license.licenses.licenseValidated"),
-        timestamp: "2024-03-07T14:22:00Z"
-      },
-      {
-        id: "3",
-        type: "warning",
-        description: t("license.licenses.unusualActivity"),
-        timestamp: "2024-03-06T16:45:00Z"
+      // 更新使用统计数据
+      if (response.data.usage_stats) {
+        Object.assign(usageData, {
+          totalActivations: response.data.usage_stats.total_usage_logs || 0,
+          activeDevices: response.data.machine_bindings_count || 0,
+          currentUsers: response.data.current_activations || 0,
+          currentDevices: response.data.machine_bindings_count || 0,
+          dataUsage: 0 // API暂未提供数据使用量
+        });
       }
-    ];
+
+      // 生成活动记录
+      const activities = [];
+
+      if (response.data.last_verified_at) {
+        activities.push({
+          id: "1",
+          type: "info",
+          description: t("license.licenses.licenseValidated"),
+          timestamp: response.data.last_verified_at
+        });
+      }
+
+      if (response.data.status === "activated") {
+        activities.push({
+          id: "2",
+          type: "success",
+          description: t("license.licenses.licenseActivated"),
+          timestamp: response.data.issued_at
+        });
+      }
+
+      activities.push({
+        id: "3",
+        type: "info",
+        description: t("license.licenses.licenseCreated"),
+        timestamp: response.data.created_at
+      });
+
+      recentActivities.value = activities;
+    } else {
+      throw new Error(response.message || "获取许可证详情失败");
+    }
   } catch (error) {
-    console.error("Load license data failed:", error);
+    logger.error("[LicenseDetail] 加载许可证详情失败", error);
     ElMessage.error(t("license.licenses.loadFailed"));
     router.push("/license/licenses");
   } finally {

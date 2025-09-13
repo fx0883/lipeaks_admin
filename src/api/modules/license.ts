@@ -543,6 +543,18 @@ export function getRevenueReport(params: {
 // ============================
 
 /**
+ * 删除单个许可证
+ */
+export function deleteLicense(id: number) {
+  logger.debug("API请求: 删除许可证", { id });
+
+  return http.request<ApiResponse<void>>(
+    "delete",
+    `/licenses/admin/licenses/${id}/`
+  );
+}
+
+/**
  * 批量删除许可证
  */
 export function batchDeleteLicenses(license_ids: number[], reason?: string) {

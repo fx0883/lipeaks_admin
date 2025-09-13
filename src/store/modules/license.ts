@@ -593,6 +593,51 @@ export const useLicenseStore = defineStore("license", {
       }
     },
 
+    /**
+     * 删除许可证
+     */
+    async deleteLicense(id: number) {
+      this.loading.licenseUpdate = true;
+      try {
+        const response = await licenseApi.deleteLicense(id);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "删除许可证失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("删除许可证失败", error);
+        throw error;
+      } finally {
+        this.loading.licenseUpdate = false;
+      }
+    },
+
+    /**
+     * 批量删除许可证
+     */
+    async batchDeleteLicenses(licenseIds: number[], reason?: string) {
+      this.loading.batchLicenseOperation = true;
+      try {
+        const response = await licenseApi.batchDeleteLicenses(
+          licenseIds,
+          reason
+        );
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "批量删除许可证失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("批量删除许可证失败", error);
+        throw error;
+      } finally {
+        this.loading.batchLicenseOperation = false;
+      }
+    },
+
     // ============================
     // 统计报表 Actions
     // ============================

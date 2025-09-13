@@ -56,8 +56,13 @@ export interface ProductCreateData {
 }
 
 // 许可证计划相关类型
-export type PlanType = 'trial' | 'basic' | 'professional' | 'enterprise' | 'custom';
-export type PlanStatus = 'active' | 'inactive' | 'deprecated';
+export type PlanType =
+  | "trial"
+  | "basic"
+  | "professional"
+  | "enterprise"
+  | "custom";
+export type PlanStatus = "active" | "inactive" | "deprecated";
 
 export interface LicensePlan {
   id: number;
@@ -71,7 +76,7 @@ export interface LicensePlan {
   features?: Record<string, any>; // JSON对象
   price: string; // API返回字符串格式
   currency: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   licenses_count?: number; // 只读字段
   created_at: string;
   updated_at: string;
@@ -81,7 +86,7 @@ export interface PlanListParams {
   search?: string;
   product?: number; // API中的字段名是product，不是product_id
   plan_type?: PlanType;
-  status?: 'active' | 'inactive'; // API中用status，不是is_active
+  status?: "active" | "inactive"; // API中用status，不是is_active
   page?: number;
   page_size?: number;
   ordering?: string; // 支持排序
@@ -97,7 +102,7 @@ export interface PlanCreateParams {
   features?: Record<string, any>;
   price: string; // decimal作为字符串传输
   currency?: string;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
 }
 
 export interface PlanUpdateParams extends Partial<PlanCreateParams> {}
@@ -110,8 +115,13 @@ export interface CustomerInfo {
   phone?: string;
 }
 
-// 许可证相关类型  
-export type LicenseStatus = 'generated' | 'activated' | 'suspended' | 'revoked' | 'expired';
+// 许可证相关类型
+export type LicenseStatus =
+  | "generated"
+  | "activated"
+  | "suspended"
+  | "revoked"
+  | "expired";
 
 export interface License {
   id: number;
@@ -119,8 +129,6 @@ export interface License {
   product_name?: string;
   plan: number;
   plan_name?: string;
-  tenant: number;
-  tenant_name?: string;
   license_key: string;
   customer_name: string;
   customer_email: string;
@@ -149,7 +157,6 @@ export interface LicenseListParams {
   product?: number;
   plan?: number;
   status?: LicenseStatus;
-  tenant?: number;
   page?: number;
   page_size?: number;
   ordering?: string;
@@ -158,7 +165,6 @@ export interface LicenseListParams {
 export interface LicenseCreateParams {
   product?: number;
   plan: number;
-  tenant: number;
   customer_info: CustomerInfo;
   max_activations?: number;
   validity_days?: number;
@@ -168,7 +174,6 @@ export interface LicenseCreateParams {
 export interface LicenseUpdateParams {
   product?: number;
   plan?: number;
-  tenant?: number;
   customer_name?: string;
   customer_email?: string;
   max_activations?: number;
@@ -177,7 +182,7 @@ export interface LicenseUpdateParams {
 }
 
 // 机器绑定相关类型
-export type BindingStatus = 'active' | 'inactive' | 'suspended';
+export type BindingStatus = "active" | "inactive" | "suspended";
 
 export interface MachineBinding {
   id: number;
@@ -208,7 +213,7 @@ export interface MachineBindingListParams {
 }
 
 // 许可证激活相关类型
-export type ActivationStatus = 'success' | 'failed' | 'pending';
+export type ActivationStatus = "success" | "failed" | "pending";
 
 export interface LicenseActivation {
   id: number;
@@ -237,8 +242,15 @@ export interface ActivationListParams {
 }
 
 // 审计日志相关类型
-export type AuditAction = 'create' | 'update' | 'delete' | 'activate' | 'deactivate' | 'bind' | 'unbind';
-export type AuditLevel = 'info' | 'warning' | 'error' | 'critical';
+export type AuditAction =
+  | "create"
+  | "update"
+  | "delete"
+  | "activate"
+  | "deactivate"
+  | "bind"
+  | "unbind";
+export type AuditLevel = "info" | "warning" | "error" | "critical";
 
 export interface AuditLog {
   id: number;
@@ -315,7 +327,7 @@ export interface LicenseRevokeParams {
 // 批量操作相关类型
 export interface BatchOperationParams {
   license_ids: number[];
-  operation: 'revoke' | 'suspend' | 'activate' | 'extend';
+  operation: "revoke" | "suspend" | "activate" | "extend";
   parameters?: Record<string, any>;
   reason?: string;
 }
@@ -331,10 +343,9 @@ export interface BatchOperationResult {
   }>;
 }
 
-
 // 导出相关类型
 export interface ExportParams {
-  format: 'csv' | 'excel' | 'json';
+  format: "csv" | "excel" | "json";
   filters?: Record<string, any>;
   fields?: string[];
 }
