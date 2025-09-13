@@ -13,7 +13,7 @@ import {
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
 import { useUserStoreHook } from "@/store/modules/user";
-import type { Machine, MachineListParams } from "@/types/license";
+import type { MachineBinding, MachineBindingListParams } from "@/types/license";
 import { hasPerms } from "@/utils/auth";
 import logger from "@/utils/logger";
 
@@ -33,55 +33,59 @@ if (!checkPermission()) {
 }
 
 // 表格加载状态
-const tableLoading = computed(() => licenseStore.loading.machineList);
+const tableLoading = computed(() => licenseStore.loading.machineBindingList);
 
 // 表格数据
-const machines = computed(() => licenseStore.machines?.data || []);
+const machineBindings = computed(
+  () => licenseStore.machineBindings?.data || []
+);
 
 // 分页信息
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 10,
-  total: computed(() => licenseStore.machines?.total || 0)
+  pageSize: 20,
+  total: computed(() => licenseStore.machineBindings?.total || 0)
 });
 
 // 搜索表单
-const searchForm = reactive<MachineListParams>({
+const searchForm = reactive<MachineBindingListParams>({
   search: "",
-  license_id: undefined,
-  is_active: undefined,
+  license: undefined,
+  status: undefined,
+  ordering: "-last_seen_at",
   page: 1,
-  page_size: 10
+  page_size: 20
 });
 
 // 状态选项
 const statusOptions = [
   { value: undefined, label: t("license.machines.statusAll") },
-  { value: true, label: t("license.machines.statusActive") },
-  { value: false, label: t("license.machines.statusInactive") }
+  { value: "active", label: t("license.machines.statusActive") },
+  { value: "inactive", label: t("license.machines.statusInactive") },
+  { value: "blocked", label: t("license.machines.statusBlocked") }
 ];
 
 // 许可证选项
 const licenseOptions = ref([]);
 
 // 多选相关
-const multipleSelection = ref<Machine[]>([]);
-const handleSelectionChange = (val: Machine[]) => {
+const multipleSelection = ref<MachineBinding[]>([]);
+const handleSelectionChange = (val: MachineBinding[]) => {
   multipleSelection.value = val;
 };
 
-// 获取机器列表
-const fetchMachines = async () => {
+// 获取机器绑定列表
+const fetchMachineBindings = async () => {
   try {
     searchForm.page = pagination.currentPage;
     searchForm.page_size = pagination.pageSize;
 
     const params = { ...searchForm };
-    logger.debug("[MachineIndex] 机器列表请求参数:", params);
+    logger.debug("[MachineBindingIndex] 机器绑定列表请求参数:", params);
 
-    await licenseStore.fetchMachineList(params);
+    await licenseStore.fetchMachineBindingList(params);
   } catch (error) {
-    logger.error("获取机器列表失败", error);
+    logger.error("获取机器绑定列表失败", error);
     ElMessage.error(t("license.machines.fetchError"));
   }
 };
@@ -91,188 +95,158 @@ const fetchLicenseOptions = async () => {
   try {
     await licenseStore.fetchLicenseList({
       page: 1,
-      page_size: 100,
-      status: "active"
+      page_size: 100
+      // 移除状态过滤，获取所有许可证供用户选择
     });
-    licenseOptions.value = licenseStore.licenses.data.map(license => ({
+
+    // 确保数据存在并映射为选项
+    const licenseData = licenseStore.licenses?.data || [];
+    licenseOptions.value = licenseData.map(license => ({
       value: license.id,
-      label: `${license.license_key.substring(0, 8)}...${license.license_key.slice(-4)} (${license.product?.name || "N/A"})`
+      label: `${license.license_key.substring(0, 8)}...${license.license_key.slice(-4)} (${license.plan_name})`
     }));
+
+    logger.debug(
+      `[MachineBindingIndex] 加载了 ${licenseOptions.value.length} 个许可证选项`
+    );
   } catch (error) {
     logger.error("获取许可证选项失败", error);
+    ElMessage.error("加载许可证选项失败");
   }
 };
 
 // 搜索
 const handleSearch = () => {
   pagination.currentPage = 1;
-  fetchMachines();
+  fetchMachineBindings();
 };
 
 // 重置搜索
 const handleResetSearch = () => {
   Object.assign(searchForm, {
     search: "",
-    license_id: undefined,
-    is_active: undefined,
+    license: undefined,
+    status: undefined,
+    ordering: "-last_seen_at",
     page: 1,
-    page_size: 10
+    page_size: 20
   });
   pagination.currentPage = 1;
-  fetchMachines();
+  fetchMachineBindings();
 };
 
 // 刷新
 const handleRefresh = () => {
-  fetchMachines();
+  fetchMachineBindings();
 };
 
 // 查看详情
-const handleView = (row: Machine) => {
+const handleView = (row: MachineBinding) => {
   router.push(`/license/machines/detail/${row.id}`);
 };
 
-// 解绑机器
-const handleUnbind = async (row: Machine) => {
+// 阻止机器绑定
+const handleBlock = async (row: MachineBinding) => {
   try {
-    await ElMessageBox.confirm(
-      t("license.machines.unbindConfirm", {
-        fingerprint: row.fingerprint.substring(0, 12) + "..."
+    const { value: reason } = await ElMessageBox.prompt(
+      t("license.machines.blockConfirm", {
+        machineId: row.machine_id.substring(0, 12) + "..."
       }),
-      t("common.warning"),
+      t("license.machines.blockReason"),
       {
         confirmButtonText: t("common.confirm"),
         cancelButtonText: t("common.cancel"),
-        type: "warning"
+        inputPlaceholder: t("license.machines.blockReasonPlaceholder"),
+        inputType: "textarea"
       }
     );
 
-    await licenseStore.unbindMachine(row.id);
-    ElMessage.success(t("license.machines.unbindSuccess"));
-    await fetchMachines();
+    await licenseStore.blockMachineBinding(row.id, { reason: reason || "" });
+    ElMessage.success(t("license.machines.blockSuccess"));
+    await fetchMachineBindings();
   } catch (error) {
     if (error !== "cancel") {
-      logger.error("解绑机器失败", error);
-      ElMessage.error(t("license.machines.unbindError"));
+      logger.error("阻止机器绑定失败", error);
+      ElMessage.error(t("license.machines.blockError"));
     }
   }
 };
 
-// 删除机器记录
-const handleDelete = async (row: Machine) => {
-  try {
-    await ElMessageBox.confirm(
-      t("license.machines.deleteConfirm", {
-        fingerprint: row.fingerprint.substring(0, 12) + "..."
-      }),
-      t("common.warning"),
-      {
-        confirmButtonText: t("common.confirm"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning"
-      }
-    );
-
-    await licenseStore.deleteMachine(row.id);
-    ElMessage.success(t("license.machines.deleteSuccess"));
-    await fetchMachines();
-  } catch (error) {
-    if (error !== "cancel") {
-      logger.error("删除机器记录失败", error);
-      ElMessage.error(t("license.machines.deleteError"));
-    }
-  }
-};
-
-// 批量解绑
-const handleBatchUnbind = async () => {
+// 批量阻止（如果有需要，可以后续实现）
+const handleBatchBlock = async () => {
   if (multipleSelection.value.length === 0) {
     ElMessage.warning(t("license.machines.selectMachines"));
     return;
   }
 
-  try {
-    await ElMessageBox.confirm(
-      t("license.machines.batchUnbindConfirm", {
-        count: multipleSelection.value.length
-      }),
-      t("common.warning"),
-      {
-        confirmButtonText: t("common.confirm"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning"
-      }
-    );
-
-    const machineIds = multipleSelection.value.map(machine => machine.id);
-    await licenseStore.batchUnbindMachines(machineIds);
-
-    ElMessage.success(t("license.machines.batchUnbindSuccess"));
-    await fetchMachines();
-    multipleSelection.value = [];
-  } catch (error) {
-    if (error !== "cancel") {
-      logger.error("批量解绑机器失败", error);
-      ElMessage.error(t("license.machines.batchUnbindError"));
-    }
-  }
+  // TODO: 如果API支持批量阻止，可以在这里实现
+  ElMessage.info(t("common.featureComingSoon"));
 };
 
-// 格式化机器指纹
-const formatFingerprint = (fingerprint: string) => {
-  return fingerprint.length > 24
-    ? `${fingerprint.substring(0, 12)}...${fingerprint.substring(fingerprint.length - 12)}`
-    : fingerprint;
+// 格式化机器ID
+const formatMachineId = (machineId: string) => {
+  return machineId.length > 24
+    ? `${machineId.substring(0, 12)}...${machineId.substring(machineId.length - 12)}`
+    : machineId;
 };
 
 // 格式化最后活跃时间
-const formatLastSeen = (lastSeen: string | null) => {
+const formatLastSeen = (lastSeen: string | null, daysSince?: number) => {
   if (!lastSeen) return t("license.machines.never");
 
+  if (daysSince !== undefined) {
+    if (daysSince === 0) return t("license.machines.today");
+    if (daysSince === 1) return t("license.machines.yesterday");
+    if (daysSince < 7)
+      return t("license.machines.daysAgo", { days: daysSince });
+  }
+
   const date = new Date(lastSeen);
-  const now = new Date();
-  const diffMinutes = Math.floor(
-    (now.getTime() - date.getTime()) / (1000 * 60)
-  );
-
-  if (diffMinutes < 5) return t("license.machines.justNow");
-  if (diffMinutes < 60)
-    return t("license.machines.minutesAgo", { minutes: diffMinutes });
-
-  const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24)
-    return t("license.machines.hoursAgo", { hours: diffHours });
-
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return t("license.machines.daysAgo", { days: diffDays });
-
-  return date.toLocaleDateString();
+  return date.toLocaleString();
 };
 
 // 获取操作系统图标
-const getOSIcon = (os: string) => {
-  if (os.toLowerCase().includes("windows")) return "ri:windows-fill";
-  if (os.toLowerCase().includes("mac")) return "ri:apple-fill";
-  if (os.toLowerCase().includes("linux")) return "ri:ubuntu-fill";
+const getOSIcon = (osInfo: any) => {
+  if (!osInfo || !osInfo.name) return "ri:computer-line";
+  const osName = osInfo.name.toLowerCase();
+  if (osName.includes("windows")) return "ri:windows-fill";
+  if (osName.includes("mac") || osName.includes("darwin"))
+    return "ri:apple-fill";
+  if (osName.includes("linux") || osName.includes("ubuntu"))
+    return "ri:ubuntu-fill";
   return "ri:computer-line";
+};
+
+// 获取状态标签类型
+const getStatusTagType = (status: string) => {
+  switch (status) {
+    case "active":
+      return "success";
+    case "inactive":
+      return "info";
+    case "blocked":
+      return "danger";
+    default:
+      return "info";
+  }
 };
 
 // 分页变化
 const handleSizeChange = (size: number) => {
   pagination.pageSize = size;
   pagination.currentPage = 1;
-  fetchMachines();
+  fetchMachineBindings();
 };
 
 const handleCurrentChange = (page: number) => {
   pagination.currentPage = page;
-  fetchMachines();
+  fetchMachineBindings();
 };
 
 // 页面加载时获取数据
-onMounted(() => {
-  fetchLicenseOptions();
-  fetchMachines();
+onMounted(async () => {
+  await fetchLicenseOptions(); // 先加载许可证选项
+  fetchMachineBindings(); // 然后加载机器绑定列表
 });
 </script>
 
@@ -292,7 +266,7 @@ onMounted(() => {
 
         <el-form-item :label="t('license.machines.license')">
           <el-select
-            v-model="searchForm.license_id"
+            v-model="searchForm.license"
             :placeholder="t('license.machines.licensePlaceholder')"
             clearable
             filterable
@@ -308,7 +282,7 @@ onMounted(() => {
 
         <el-form-item :label="t('license.machines.status')">
           <el-select
-            v-model="searchForm.is_active"
+            v-model="searchForm.status"
             :placeholder="t('license.machines.statusPlaceholder')"
             clearable
           >
@@ -343,9 +317,9 @@ onMounted(() => {
             type="warning"
             :icon="Warning"
             :disabled="multipleSelection.length === 0"
-            @click="handleBatchUnbind"
+            @click="handleBatchBlock"
           >
-            {{ t("license.machines.batchUnbind") }}
+            {{ t("license.machines.batchBlock") }}
             <span v-if="multipleSelection.length > 0"
               >({{ multipleSelection.length }})</span
             >
@@ -363,7 +337,7 @@ onMounted(() => {
     <!-- 数据表格 -->
     <el-card class="table-card">
       <el-table
-        :data="machines"
+        :data="machineBindings"
         :loading="tableLoading"
         @selection-change="handleSelectionChange"
         stripe
@@ -378,23 +352,27 @@ onMounted(() => {
         />
 
         <el-table-column
-          prop="fingerprint"
-          :label="t('license.machines.fingerprint')"
+          prop="machine_id"
+          :label="t('license.machines.machineId')"
           min-width="200"
         >
           <template #default="{ row }">
-            <code class="machine-fingerprint">{{
-              formatFingerprint(row.fingerprint)
+            <code class="machine-id">{{
+              formatMachineId(row.machine_id)
             }}</code>
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="hostname"
-          :label="t('license.machines.hostname')"
+          prop="license_key_preview"
+          :label="t('license.machines.licenseKey')"
           min-width="150"
           show-overflow-tooltip
-        />
+        >
+          <template #default="{ row }">
+            <code class="license-key">{{ row.license_key_preview }}</code>
+          </template>
+        </el-table-column>
 
         <el-table-column
           prop="os_info"
@@ -407,27 +385,30 @@ onMounted(() => {
               <el-icon class="os-icon">
                 <component :is="getOSIcon(row.os_info)" />
               </el-icon>
-              <span>{{ row.os_info }}</span>
+              <div>
+                <div>{{ row.os_info?.name || "-" }}</div>
+                <div class="os-version">{{ row.os_info?.version || "" }}</div>
+              </div>
             </div>
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="hardware_info"
+          prop="hardware_summary"
           :label="t('license.machines.hardwareInfo')"
           min-width="200"
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <div v-if="row.hardware_info" class="hardware-info">
-              <div v-if="row.hardware_info.cpu" class="info-line">
-                <strong>CPU:</strong> {{ row.hardware_info.cpu }}
+            <div v-if="row.hardware_summary" class="hardware-info">
+              <div v-if="row.hardware_summary.cpu" class="info-line">
+                <strong>CPU:</strong> {{ row.hardware_summary.cpu }}
               </div>
-              <div v-if="row.hardware_info.memory" class="info-line">
-                <strong>Memory:</strong> {{ row.hardware_info.memory }}
+              <div v-if="row.hardware_summary.memory" class="info-line">
+                <strong>Memory:</strong> {{ row.hardware_summary.memory }}
               </div>
-              <div v-if="row.hardware_info.disk" class="info-line">
-                <strong>Disk:</strong> {{ row.hardware_info.disk }}
+              <div v-if="row.hardware_summary.disk" class="info-line">
+                <strong>Disk:</strong> {{ row.hardware_summary.disk }}
               </div>
             </div>
             <span v-else>-</span>
@@ -435,29 +416,28 @@ onMounted(() => {
         </el-table-column>
 
         <el-table-column
-          prop="license"
-          :label="t('license.machines.license')"
-          width="150"
+          prop="last_ip_address"
+          :label="t('license.machines.ipAddress')"
+          width="140"
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <span v-if="row.license">
-              {{ row.license.license_key.substring(0, 8) }}...{{
-                row.license.license_key.slice(-4)
-              }}
-            </span>
-            <span v-else>-</span>
+            {{ row.last_ip_address || "-" }}
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="is_active"
+          prop="status"
           :label="t('license.machines.status')"
           width="100"
         >
           <template #default="{ row }">
-            <el-tag :type="row.is_active ? 'success' : 'info'">
-              {{ row.is_active ? t("common.active") : t("common.inactive") }}
+            <el-tag :type="getStatusTagType(row.status)">
+              {{
+                t(
+                  `license.machines.status${row.status.charAt(0).toUpperCase() + row.status.slice(1)}`
+                )
+              }}
             </el-tag>
           </template>
         </el-table-column>
@@ -470,24 +450,21 @@ onMounted(() => {
           <template #default="{ row }">
             <span
               :class="{
-                'recent-activity':
-                  row.last_seen_at &&
-                  new Date(row.last_seen_at) >
-                    new Date(Date.now() - 5 * 60 * 1000)
+                'recent-activity': row.days_since_last_seen === 0
               }"
             >
-              {{ formatLastSeen(row.last_seen_at) }}
+              {{ formatLastSeen(row.last_seen_at, row.days_since_last_seen) }}
             </span>
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="created_at"
+          prop="first_seen_at"
           :label="t('license.machines.firstSeen')"
           width="160"
         >
           <template #default="{ row }">
-            {{ new Date(row.created_at).toLocaleString() }}
+            {{ new Date(row.first_seen_at).toLocaleString() }}
           </template>
         </el-table-column>
 
@@ -503,22 +480,22 @@ onMounted(() => {
             </el-button>
 
             <el-button
-              v-if="row.is_active"
+              v-if="row.status === 'active'"
               type="warning"
+              :icon="Warning"
               size="small"
-              @click="handleUnbind(row)"
+              @click="handleBlock(row)"
             >
-              {{ t("license.machines.unbind") }}
+              {{ t("license.machines.block") }}
             </el-button>
 
-            <el-button
+            <el-tag
+              v-else-if="row.status === 'blocked'"
               type="danger"
-              :icon="Delete"
               size="small"
-              @click="handleDelete(row)"
             >
-              {{ t("common.delete") }}
-            </el-button>
+              {{ t("license.machines.blocked") }}
+            </el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -564,13 +541,22 @@ onMounted(() => {
   font-size: 14px;
 }
 
-.machine-fingerprint {
+.machine-id {
   background: #f5f7fa;
   padding: 2px 6px;
   border-radius: 4px;
   font-family: "Courier New", monospace;
   font-size: 12px;
   color: #909399;
+}
+
+.license-key {
+  background: #e8f4fd;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: #409eff;
 }
 
 .os-info-cell {
@@ -582,6 +568,12 @@ onMounted(() => {
 .os-icon {
   font-size: 16px;
   color: #409eff;
+}
+
+.os-version {
+  font-size: 11px;
+  color: #909399;
+  margin-top: 2px;
 }
 
 .hardware-info {

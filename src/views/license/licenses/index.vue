@@ -188,12 +188,21 @@ const handleCopyLicenseKey = (key: string) => {
     });
 };
 
-// 下载许可证文件 (暂未实现)
+// 下载许可证文件
 const handleDownloadLicense = async (row: License) => {
-  // TODO: 实现许可证文件下载功能
-  // 需要后端提供 GET /api/v1/licenses/admin/licenses/{id}/download/ 接口
-  ElMessage.info(t("common.featureComingSoon"));
-  logger.warn("许可证下载功能暂未实现", { licenseId: row.id });
+  console.log("下载按钮被点击", { licenseId: row.id });
+  logger.info("开始下载许可证", { licenseId: row.id });
+
+  try {
+    console.log("调用 licenseStore.downloadLicense", { id: row.id });
+    await licenseStore.downloadLicense(row.id);
+    console.log("下载完成");
+    ElMessage.success(t("license.licenses.downloadSuccess"));
+  } catch (error) {
+    console.error("下载失败", error);
+    logger.error("下载许可证失败", error);
+    ElMessage.error(t("license.licenses.downloadError"));
+  }
 };
 
 // 撤销许可证

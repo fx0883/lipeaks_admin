@@ -17,6 +17,7 @@ import type {
   LicenseRevokeParams,
   MachineBinding,
   MachineBindingListParams,
+  MachineBindingBlockParams,
   LicenseActivation,
   ActivationListParams,
   AuditLog,
@@ -411,13 +412,13 @@ export function getMachineBindingDetail(id: number) {
 /**
  * 阻止机器绑定
  */
-export function blockMachine(id: number, reason?: string) {
-  logger.debug("API请求: 阻止机器绑定", { id, reason });
+export function blockMachineBinding(id: number, params: MachineBindingBlockParams = {}) {
+  logger.debug("API请求: 阻止机器绑定", { id, params });
 
-  return http.request<ApiResponse<void>>(
+  return http.request<ApiResponse<{ success: boolean; message: string }>>(
     "post",
     `/licenses/admin/machine-bindings/${id}/block/`,
-    { data: { reason } }
+    { data: params }
   );
 }
 
@@ -541,6 +542,26 @@ export function getRevenueReport(params: {
 // ============================
 // 批量操作 API
 // ============================
+
+/**
+ * 下载许可证文件
+ */
+export function downloadLicense(id: number, format: "json" | "txt" | "xml" = "json") {
+  console.log("API downloadLicense 被调用", { id, format });
+  logger.debug("API请求: 下载许可证文件", { id, format });
+
+  const url = `/licenses/admin/licenses/${id}/download/`;
+  console.log("请求URL:", url, "参数:", { format });
+
+  return http.request<Blob>(
+    "get",
+    url,
+    { 
+      params: { format },
+      responseType: "blob"
+    }
+  );
+}
 
 /**
  * 删除单个许可证

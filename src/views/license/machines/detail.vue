@@ -4,50 +4,70 @@
       <template #header>
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/license/dashboard' }">
-            {{ $t('license.dashboard') }}
+            {{ $t("license.dashboard") }}
           </el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/license/machines' }">
-            {{ $t('license.machines.title') }}
+            {{ $t("license.machines.title") }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item>{{ $t('license.machines.detail') }}</el-breadcrumb-item>
+          <el-breadcrumb-item>{{
+            $t("license.machines.detail")
+          }}</el-breadcrumb-item>
         </el-breadcrumb>
       </template>
 
       <div class="detail-container">
         <div class="detail-header">
           <div class="title-section">
-            <h2>{{ machineData.name || machineData.machineId }}</h2>
+            <h2>{{ machineData.machine_id }}</h2>
             <el-tag :type="getStatusType(machineData.status)">
-              {{ $t(`license.machines.${machineData.status}`) }}
+              {{
+                $t(
+                  `license.machines.status${machineData.status.charAt(0).toUpperCase() + machineData.status.slice(1)}`
+                )
+              }}
             </el-tag>
-            <el-tag v-if="machineData.isOnline" type="success">
-              {{ $t('license.machines.online') }}
+            <el-tag
+              v-if="machineData.days_since_last_seen === 0"
+              type="success"
+            >
+              {{ $t("license.machines.online") }}
             </el-tag>
-            <el-tag v-else type="danger">
-              {{ $t('license.machines.offline') }}
+            <el-tag v-else type="info">
+              {{
+                $t("license.machines.lastSeenDaysAgo", {
+                  days: machineData.days_since_last_seen
+                })
+              }}
             </el-tag>
           </div>
           <div class="action-section">
             <el-dropdown @command="handleAction">
               <el-button type="primary">
-                {{ $t('common.actions') }}
+                {{ $t("common.actions") }}
                 <el-icon class="el-icon--right"><arrow-down /></el-icon>
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="activate" :disabled="machineData.status === 'active'">
-                    {{ $t('license.machines.activate') }}
+                  <el-dropdown-item
+                    command="activate"
+                    :disabled="machineData.status === 'active'"
+                  >
+                    {{ $t("license.machines.activate") }}
                   </el-dropdown-item>
-                  <el-dropdown-item command="deactivate" :disabled="machineData.status !== 'active'">
-                    {{ $t('license.machines.deactivate') }}
+                  <el-dropdown-item
+                    command="block"
+                    :disabled="machineData.status === 'blocked'"
+                  >
+                    {{ $t("license.machines.block") }}
                   </el-dropdown-item>
-                  <el-dropdown-item command="reset" divided>{{ $t('license.machines.reset') }}</el-dropdown-item>
-                  <el-dropdown-item command="blacklist" type="danger">{{ $t('license.machines.blacklist') }}</el-dropdown-item>
+                  <el-dropdown-item command="reset" divided>{{
+                    $t("license.machines.reset")
+                  }}</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
             <el-button @click="handleBack">
-              {{ $t('common.back') }}
+              {{ $t("common.back") }}
             </el-button>
           </div>
         </div>
@@ -56,133 +76,175 @@
           <el-col :span="16">
             <el-card class="detail-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.basicInfo') }}</span>
+                <span>{{ $t("license.machines.basicInfo") }}</span>
               </template>
-              
+
               <el-descriptions :column="2" border>
-                <el-descriptions-item :label="$t('license.machines.machineId')" :span="2">
+                <el-descriptions-item
+                  :label="$t('license.machines.machineId')"
+                  :span="2"
+                >
                   <div class="machine-id">
-                    <code>{{ machineData.machineId }}</code>
-                    <el-button 
-                      type="text" 
-                      size="small" 
+                    <code>{{ machineData.machine_id }}</code>
+                    <el-button
+                      type="text"
+                      size="small"
                       @click="copyMachineId"
-                      style="margin-left: 10px;"
+                      style="margin-left: 10px"
                     >
-                      {{ $t('common.copy') }}
+                      {{ $t("common.copy") }}
                     </el-button>
                   </div>
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.name')">
-                  {{ machineData.name }}
+                <el-descriptions-item
+                  :label="$t('license.machines.licenseKey')"
+                >
+                  <code>{{ machineData.license_key_preview }}</code>
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.fingerprint')">
-                  {{ machineData.fingerprint }}
+                <el-descriptions-item :label="$t('license.machines.status')">
+                  <el-tag :type="getStatusType(machineData.status)">
+                    {{
+                      $t(
+                        `license.machines.status${machineData.status.charAt(0).toUpperCase() + machineData.status.slice(1)}`
+                      )
+                    }}
+                  </el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.machines.ipAddress')">
-                  {{ machineData.ipAddress }}
+                  {{ machineData.last_ip_address || "-" }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.macAddress')">
-                  {{ machineData.macAddress }}
-                </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.description')" :span="2">
-                  {{ machineData.description || '-' }}
+                <el-descriptions-item
+                  :label="$t('license.machines.daysSinceLastSeen')"
+                >
+                  {{ machineData.days_since_last_seen }}
                 </el-descriptions-item>
               </el-descriptions>
             </el-card>
 
             <el-card class="detail-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.systemInfo') }}</span>
+                <span>{{ $t("license.machines.systemInfo") }}</span>
               </template>
-              
+
               <el-descriptions :column="2" border>
-                <el-descriptions-item :label="$t('license.machines.operatingSystem')">
-                  {{ machineData.operatingSystem }}
+                <el-descriptions-item
+                  :label="$t('license.machines.operatingSystem')"
+                >
+                  {{ machineData.os_info?.name || "-" }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.architecture')">
-                  {{ machineData.architecture }}
+                <el-descriptions-item
+                  :label="$t('license.machines.architecture')"
+                >
+                  {{ machineData.os_info?.architecture || "-" }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.hostname')">
-                  {{ machineData.hostname }}
+                <el-descriptions-item :label="$t('license.machines.version')">
+                  {{ machineData.os_info?.version || "-" }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.machines.domain')">
-                  {{ machineData.domain || '-' }}
+                  {{ machineData.os_info?.domain || "-" }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.machines.cpuInfo')">
-                  {{ machineData.cpuInfo }}
+                  {{ machineData.hardware_summary?.cpu || "-" }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.memoryInfo')">
-                  {{ formatBytes(machineData.totalMemory) }}
+                <el-descriptions-item
+                  :label="$t('license.machines.memoryInfo')"
+                >
+                  {{ machineData.hardware_summary?.memory || "-" }}
                 </el-descriptions-item>
               </el-descriptions>
             </el-card>
 
             <el-card class="detail-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.licenseInfo') }}</span>
+                <span>{{ $t("license.machines.licenseInfo") }}</span>
               </template>
-              
+
               <el-descriptions :column="2" border>
-                <el-descriptions-item :label="$t('license.machines.activeLicenses')">
-                  {{ machineData.activeLicensesCount }}
+                <el-descriptions-item :label="$t('license.machines.license')">
+                  {{ machineData.license || "-" }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.totalActivations')">
-                  {{ machineData.totalActivations }}
+                <el-descriptions-item
+                  :label="$t('license.machines.licenseKey')"
+                >
+                  <code>{{ machineData.license_key_preview }}</code>
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.firstActivation')">
-                  {{ formatDate(machineData.firstActivationDate) }}
+                <el-descriptions-item :label="$t('license.machines.firstSeen')">
+                  {{ formatDate(machineData.first_seen_at) }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.lastActivation')">
-                  {{ formatDate(machineData.lastActivationDate) }}
+                <el-descriptions-item :label="$t('license.machines.lastSeen')">
+                  {{ formatDate(machineData.last_seen_at) }}
                 </el-descriptions-item>
               </el-descriptions>
             </el-card>
 
             <el-card class="detail-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.activeLicensesList') }}</span>
+                <span>{{ $t("license.machines.activeLicensesList") }}</span>
               </template>
-              
+
               <el-table :data="activeLicenses" style="width: 100%">
-                <el-table-column prop="licenseKey" :label="$t('license.machines.licenseKey')" width="200">
+                <el-table-column
+                  prop="licenseKey"
+                  :label="$t('license.machines.licenseKey')"
+                  width="200"
+                >
                   <template #default="{ row }">
                     <code class="license-key-cell">{{ row.licenseKey }}</code>
                   </template>
                 </el-table-column>
-                <el-table-column prop="planName" :label="$t('license.machines.plan')" />
-                <el-table-column prop="customerName" :label="$t('license.machines.customer')" />
-                <el-table-column prop="activationDate" :label="$t('license.machines.activationDate')">
+                <el-table-column
+                  prop="planName"
+                  :label="$t('license.machines.plan')"
+                />
+                <el-table-column
+                  prop="customerName"
+                  :label="$t('license.machines.customer')"
+                />
+                <el-table-column
+                  prop="activationDate"
+                  :label="$t('license.machines.activationDate')"
+                >
                   <template #default="{ row }">
                     {{ formatDate(row.activationDate) }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="expiryDate" :label="$t('license.machines.expiryDate')">
+                <el-table-column
+                  prop="expiryDate"
+                  :label="$t('license.machines.expiryDate')"
+                >
                   <template #default="{ row }">
-                    <span :class="{ 'expiring-soon': isExpiringSoon(row.expiryDate) }">
+                    <span
+                      :class="{
+                        'expiring-soon': isExpiringSoon(row.expiryDate)
+                      }"
+                    >
                       {{ formatDate(row.expiryDate) }}
                     </span>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('common.actions')" width="100">
                   <template #default="{ row }">
-                    <el-button 
-                      type="text" 
-                      size="small" 
+                    <el-button
+                      type="text"
+                      size="small"
                       @click="viewLicense(row.licenseId)"
                     >
-                      {{ $t('common.view') }}
+                      {{ $t("common.view") }}
                     </el-button>
                   </template>
                 </el-table-column>
               </el-table>
             </el-card>
 
-            <el-card v-if="machineData.metadata" class="detail-card" shadow="never">
+            <el-card
+              v-if="machineData.metadata"
+              class="detail-card"
+              shadow="never"
+            >
               <template #header>
-                <span>{{ $t('license.machines.metadata') }}</span>
+                <span>{{ $t("license.machines.metadata") }}</span>
               </template>
-              
+
               <div class="metadata-content">
                 <pre>{{ formatMetadata(machineData.metadata) }}</pre>
               </div>
@@ -192,57 +254,88 @@
           <el-col :span="8">
             <el-card class="stats-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.statistics') }}</span>
+                <span>{{ $t("license.machines.statistics") }}</span>
               </template>
-              
+
               <div class="stats-content">
                 <div class="stat-item">
-                  <div class="stat-number">{{ machineData.activeLicensesCount }}</div>
-                  <div class="stat-label">{{ $t('license.machines.activeLicenses') }}</div>
+                  <div class="stat-number">{{ machineData.license || 0 }}</div>
+                  <div class="stat-label">
+                    {{ $t("license.machines.licenseId") }}
+                  </div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-number">{{ machineData.totalActivations }}</div>
-                  <div class="stat-label">{{ $t('license.machines.totalActivations') }}</div>
+                  <div class="stat-number">
+                    {{ machineData.days_since_last_seen }}
+                  </div>
+                  <div class="stat-label">
+                    {{ $t("license.machines.daysSinceLastSeen") }}
+                  </div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-number">{{ formatUptime(machineData.uptime) }}</div>
-                  <div class="stat-label">{{ $t('license.machines.uptime') }}</div>
+                  <div
+                    class="stat-number"
+                    :class="getStatusTagType(machineData.status)"
+                  >
+                    {{ machineData.status }}
+                  </div>
+                  <div class="stat-label">
+                    {{ $t("license.machines.status") }}
+                  </div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-number">{{ machineData.securityScore }}/100</div>
-                  <div class="stat-label">{{ $t('license.machines.securityScore') }}</div>
+                  <div class="stat-number">
+                    {{ formatUptime(machineData.uptime || 0) }}
+                  </div>
+                  <div class="stat-label">
+                    {{ $t("license.machines.uptime") }}
+                  </div>
                 </div>
               </div>
             </el-card>
 
             <el-card class="detail-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.connectionInfo') }}</span>
+                <span>{{ $t("license.machines.connectionInfo") }}</span>
               </template>
-              
+
               <el-descriptions :column="1" border>
                 <el-descriptions-item :label="$t('license.machines.isOnline')">
-                  <el-tag :type="machineData.isOnline ? 'success' : 'danger'">
-                    {{ machineData.isOnline ? $t('license.machines.online') : $t('license.machines.offline') }}
+                  <el-tag
+                    :type="
+                      machineData.days_since_last_seen === 0
+                        ? 'success'
+                        : 'danger'
+                    "
+                  >
+                    {{
+                      machineData.days_since_last_seen === 0
+                        ? $t("license.machines.online")
+                        : $t("license.machines.offline")
+                    }}
                   </el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.machines.lastSeen')">
-                  {{ formatDate(machineData.lastSeenDate) }}
+                  {{ formatDate(machineData.last_seen_at) }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.connectionCount')">
-                  {{ machineData.connectionCount }}
+                <el-descriptions-item
+                  :label="$t('license.machines.lastIpAddress')"
+                >
+                  {{ machineData.last_ip_address || "-" }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.machines.userAgent')">
-                  <div class="user-agent">{{ machineData.userAgent }}</div>
+                  <div class="user-agent">
+                    {{ machineData.userAgent || "-" }}
+                  </div>
                 </el-descriptions-item>
               </el-descriptions>
             </el-card>
 
             <el-card class="detail-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.recentActivity') }}</span>
+                <span>{{ $t("license.machines.recentActivity") }}</span>
               </template>
-              
+
               <el-timeline>
                 <el-timeline-item
                   v-for="activity in recentActivities"
@@ -257,18 +350,20 @@
 
             <el-card class="detail-card" shadow="never">
               <template #header>
-                <span>{{ $t('license.machines.timeline') }}</span>
+                <span>{{ $t("license.machines.timeline") }}</span>
               </template>
-              
+
               <el-descriptions :column="1" border>
-                <el-descriptions-item :label="$t('common.createdAt')">
-                  {{ formatDate(machineData.createdAt) }}
+                <el-descriptions-item :label="$t('license.machines.firstSeen')">
+                  {{ formatDate(machineData.first_seen_at) }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('common.updatedAt')">
-                  {{ formatDate(machineData.updatedAt) }}
+                <el-descriptions-item :label="$t('license.machines.lastSeen')">
+                  {{ formatDate(machineData.last_seen_at) }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.machines.registeredBy')">
-                  {{ machineData.registeredBy }}
+                <el-descriptions-item
+                  :label="$t('license.machines.daysSinceLastSeen')"
+                >
+                  {{ machineData.days_since_last_seen }} {{ $t("common.days") }}
                 </el-descriptions-item>
               </el-descriptions>
             </el-card>
@@ -280,291 +375,253 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowDown } from '@element-plus/icons-vue'
-import { useI18n } from 'vue-i18n'
+import { ref, reactive, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { ArrowDown } from "@element-plus/icons-vue";
+import { useI18n } from "vue-i18n";
+import { useLicenseStoreHook } from "@/store/modules/license";
+import type { MachineBinding } from "@/types/license";
+import logger from "@/utils/logger";
 
-const { t } = useI18n()
-const router = useRouter()
-const route = useRoute()
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
+const licenseStore = useLicenseStoreHook();
 
-const loading = ref(false)
+const loading = ref(false);
 
-interface MachineData {
-  id: string
-  machineId: string
-  name: string
-  fingerprint: string
-  ipAddress: string
-  macAddress: string
-  description: string
-  operatingSystem: string
-  architecture: string
-  hostname: string
-  domain: string
-  cpuInfo: string
-  totalMemory: number
-  activeLicensesCount: number
-  totalActivations: number
-  firstActivationDate: string
-  lastActivationDate: string
-  isOnline: boolean
-  lastSeenDate: string
-  connectionCount: number
-  userAgent: string
-  uptime: number
-  securityScore: number
-  status: string
-  metadata: string
-  createdAt: string
-  updatedAt: string
-  registeredBy: string
+// 使用API返回的机器绑定数据结构，加上一些扩展字段用于详情页显示
+interface MachineDetailData extends MachineBinding {
+  // 扩展字段
+  uptime?: number;
+  connectionCount?: number;
+  userAgent?: string;
+  metadata?: string;
 }
 
 interface License {
-  licenseId: string
-  licenseKey: string
-  planName: string
-  customerName: string
-  activationDate: string
-  expiryDate: string
+  licenseId: string;
+  licenseKey: string;
+  planName: string;
+  customerName: string;
+  activationDate: string;
+  expiryDate: string;
 }
 
 interface Activity {
-  id: string
-  type: string
-  description: string
-  timestamp: string
+  id: string;
+  type: string;
+  description: string;
+  timestamp: string;
 }
 
-const machineData = reactive<MachineData>({
-  id: '',
-  machineId: '',
-  name: '',
-  fingerprint: '',
-  ipAddress: '',
-  macAddress: '',
-  description: '',
-  operatingSystem: '',
-  architecture: '',
-  hostname: '',
-  domain: '',
-  cpuInfo: '',
-  totalMemory: 0,
-  activeLicensesCount: 0,
-  totalActivations: 0,
-  firstActivationDate: '',
-  lastActivationDate: '',
-  isOnline: false,
-  lastSeenDate: '',
-  connectionCount: 0,
-  userAgent: '',
+const machineData = reactive<MachineDetailData>({
+  id: 0,
+  license: 0,
+  license_key_preview: "",
+  machine_id: "",
+  hardware_summary: {},
+  os_info: {},
+  last_ip_address: "",
+  status: "active",
+  first_seen_at: "",
+  last_seen_at: "",
+  days_since_last_seen: 0,
+  // 扩展字段
   uptime: 0,
-  securityScore: 0,
-  status: 'active',
-  metadata: '',
-  createdAt: '',
-  updatedAt: '',
-  registeredBy: ''
-})
+  connectionCount: 0,
+  userAgent: "",
+  metadata: ""
+});
 
-const activeLicenses = ref<License[]>([])
-const recentActivities = ref<Activity[]>([])
+const activeLicenses = ref<License[]>([]);
+const recentActivities = ref<Activity[]>([]);
 
 const getStatusType = (status: string) => {
   switch (status) {
-    case 'active': return 'success'
-    case 'inactive': return 'info'
-    case 'blacklisted': return 'danger'
-    default: return 'info'
+    case "active":
+      return "success";
+    case "inactive":
+      return "info";
+    case "blocked":
+      return "danger";
+    default:
+      return "info";
   }
-}
+};
 
 const loadMachineData = async () => {
-  const machineId = route.params.id
-  if (!machineId) {
-    ElMessage.error(t('license.machines.invalidId'))
-    router.push('/license/machines')
-    return
+  const machineBindingId = route.params.id;
+  if (!machineBindingId) {
+    ElMessage.error(t("license.machines.invalidId"));
+    router.push("/license/machines");
+    return;
   }
 
-  loading.value = true
+  loading.value = true;
   try {
-    // TODO: 实现获取机器详情的API调用
-    // const [machineResult, licensesResult, activityResult] = await Promise.all([
-    //   getMachineById(machineId),
-    //   getMachineLicenses(machineId),
-    //   getMachineActivities(machineId)
-    // ])
-    
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // 模拟机器数据
-    Object.assign(machineData, {
-      id: machineId,
-      machineId: 'MACH-7F8E9D-A1B2C3-456789',
-      name: 'Production Server 01',
-      fingerprint: 'sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6',
-      ipAddress: '192.168.1.100',
-      macAddress: '00:14:22:AB:CD:EF',
-      description: 'Main production server for web application',
-      operatingSystem: 'Ubuntu 22.04.3 LTS',
-      architecture: 'x86_64',
-      hostname: 'prod-server-01',
-      domain: 'company.local',
-      cpuInfo: 'Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz (8 cores)',
-      totalMemory: 32 * 1024 * 1024 * 1024, // 32GB
-      activeLicensesCount: 3,
-      totalActivations: 8,
-      firstActivationDate: '2024-01-15T10:30:00Z',
-      lastActivationDate: '2024-03-08T14:22:00Z',
-      isOnline: true,
-      lastSeenDate: '2024-03-10T16:45:00Z',
-      connectionCount: 247,
-      userAgent: 'LicenseClient/2.1.0 (Ubuntu 22.04; x86_64)',
-      uptime: 2592000, // 30 days in seconds
-      securityScore: 85,
-      status: 'active',
-      metadata: '{"location": "datacenter-1", "environment": "production", "team": "backend", "criticality": "high"}',
-      createdAt: '2024-01-15T10:30:00Z',
-      updatedAt: '2024-03-10T16:45:00Z',
-      registeredBy: 'admin@example.com'
-    })
+    logger.debug("[MachineDetail] 加载机器绑定详情", { machineBindingId });
 
-    // 模拟活跃许可证数据
-    activeLicenses.value = [
-      {
-        licenseId: '1',
-        licenseKey: 'ABC12-DEF34-GHI56-JKL78-MNO90',
-        planName: 'Professional Plan',
-        customerName: 'Acme Corp',
-        activationDate: '2024-01-15T10:30:00Z',
-        expiryDate: '2025-01-15T10:30:00Z'
-      },
-      {
-        licenseId: '2',
-        licenseKey: 'XYZ98-UVW76-RST54-PQR32-NML10',
-        planName: 'Enterprise Plan',
-        customerName: 'Tech Solutions',
-        activationDate: '2024-02-01T09:15:00Z',
-        expiryDate: '2024-12-31T23:59:59Z'
-      },
-      {
-        licenseId: '3',
-        licenseKey: 'QWE12-RTY34-UIO56-PAS78-DFG90',
-        planName: 'Basic Plan',
-        customerName: 'StartupCo',
-        activationDate: '2024-03-08T14:22:00Z',
-        expiryDate: '2024-09-08T14:22:00Z'
-      }
-    ]
+    // 调用真实API获取机器绑定详情
+    const response = await licenseStore.fetchMachineBindingDetail(
+      parseInt(machineBindingId as string)
+    );
 
-    // 模拟活动记录
-    recentActivities.value = [
-      {
-        id: '1',
-        type: 'success',
-        description: t('license.machines.licenseActivated'),
-        timestamp: '2024-03-08T14:22:00Z'
-      },
-      {
-        id: '2',
-        type: 'info',
-        description: t('license.machines.connectionEstablished'),
-        timestamp: '2024-03-08T09:15:00Z'
-      },
-      {
-        id: '3',
-        type: 'warning',
-        description: t('license.machines.suspiciousActivity'),
-        timestamp: '2024-03-07T16:45:00Z'
-      },
-      {
-        id: '4',
-        type: 'info',
-        description: t('license.machines.systemInfoUpdated'),
-        timestamp: '2024-03-06T11:30:00Z'
-      }
-    ]
+    if (response.success && response.data) {
+      // 更新机器绑定数据
+      Object.assign(machineData, {
+        ...response.data,
+        // 添加一些扩展字段的默认值
+        uptime: 0,
+        connectionCount: 0,
+        userAgent: "",
+        metadata: ""
+      });
+      logger.debug("[MachineDetail] 机器绑定数据加载成功", response.data);
+    } else {
+      throw new Error(response.message || "获取机器绑定详情失败");
+    }
+
+    // 生成活动记录（基于机器绑定的状态变化）
+    const activities = [];
+
+    if (machineData.status === "blocked") {
+      activities.push({
+        id: "1",
+        type: "danger",
+        description: t("license.machines.machineBlocked"),
+        timestamp: machineData.last_seen_at
+      });
+    }
+
+    if (machineData.status === "active") {
+      activities.push({
+        id: "2",
+        type: "success",
+        description: t("license.machines.machineActive"),
+        timestamp: machineData.last_seen_at
+      });
+    }
+
+    activities.push({
+      id: "3",
+      type: "info",
+      description: t("license.machines.machineFirstSeen"),
+      timestamp: machineData.first_seen_at
+    });
+
+    recentActivities.value = activities;
+
+    // 暂时清空许可证数据，实际应该根据机器绑定关联的许可证来显示
+    activeLicenses.value = [];
   } catch (error) {
-    console.error('Load machine data failed:', error)
-    ElMessage.error(t('license.machines.loadFailed'))
-    router.push('/license/machines')
+    logger.error("加载机器绑定详情失败", error);
+    ElMessage.error(t("license.machines.loadFailed"));
+    router.push("/license/machines");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const formatDate = (dateString: string) => {
-  if (!dateString) return '-'
-  return new Date(dateString).toLocaleString()
-}
+  if (!dateString) return "-";
+  return new Date(dateString).toLocaleString();
+};
 
 const formatBytes = (bytes: number) => {
-  if (bytes === 0) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
-}
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+};
 
 const formatUptime = (seconds: number) => {
-  const days = Math.floor(seconds / 86400)
-  const hours = Math.floor((seconds % 86400) / 3600)
-  return `${days}d ${hours}h`
-}
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  return `${days}d ${hours}h`;
+};
 
 const formatMetadata = (metadata: string) => {
   try {
-    return JSON.stringify(JSON.parse(metadata), null, 2)
+    return JSON.stringify(JSON.parse(metadata), null, 2);
   } catch {
-    return metadata
+    return metadata;
   }
-}
+};
 
 const isExpiringSoon = (expiryDate: string) => {
-  const now = new Date()
-  const expiry = new Date(expiryDate)
-  const diff = expiry.getTime() - now.getTime()
-  const days = Math.ceil(diff / (1000 * 3600 * 24))
-  return days <= 30 && days > 0
-}
+  const now = new Date();
+  const expiry = new Date(expiryDate);
+  const diff = expiry.getTime() - now.getTime();
+  const days = Math.ceil(diff / (1000 * 3600 * 24));
+  return days <= 30 && days > 0;
+};
 
 const copyMachineId = async () => {
   try {
-    await navigator.clipboard.writeText(machineData.machineId)
-    ElMessage.success(t('license.machines.machineIdCopied'))
+    await navigator.clipboard.writeText(machineData.machine_id);
+    ElMessage.success(t("license.machines.machineIdCopied"));
   } catch (error) {
-    ElMessage.error(t('common.copyFailed'))
+    ElMessage.error(t("common.copyFailed"));
   }
-}
+};
 
 const viewLicense = (licenseId: string) => {
-  router.push(`/license/licenses/detail/${licenseId}`)
-}
+  router.push(`/license/licenses/detail/${licenseId}`);
+};
 
-const handleAction = (command: string) => {
+const handleAction = async (command: string) => {
   switch (command) {
-    case 'activate':
-    case 'deactivate':
-    case 'reset':
-    case 'blacklist':
+    case "block":
+      await handleBlockMachine();
+      break;
+    case "activate":
+    case "reset":
       // TODO: 实现相应的机器操作
-      ElMessage.info(t('common.featureComingSoon'))
-      break
+      ElMessage.info(t("common.featureComingSoon"));
+      break;
   }
-}
+};
+
+const handleBlockMachine = async () => {
+  try {
+    const { value: reason } = await ElMessageBox.prompt(
+      t("license.machines.blockConfirm", {
+        machineId: machineData.machine_id.substring(0, 12) + "..."
+      }),
+      t("license.machines.blockReason"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        inputPlaceholder: t("license.machines.blockReasonPlaceholder"),
+        inputType: "textarea"
+      }
+    );
+
+    await licenseStore.blockMachineBinding(machineData.id, {
+      reason: reason || ""
+    });
+    ElMessage.success(t("license.machines.blockSuccess"));
+
+    // 重新加载数据以更新状态
+    await loadMachineData();
+  } catch (error) {
+    if (error !== "cancel") {
+      logger.error("阻止机器绑定失败", error);
+      ElMessage.error(t("license.machines.blockError"));
+    }
+  }
+};
 
 const handleBack = () => {
-  router.back()
-}
+  router.back();
+};
 
 onMounted(() => {
-  loadMachineData()
-})
+  loadMachineData();
+});
 </script>
 
 <style scoped>
@@ -626,7 +683,7 @@ onMounted(() => {
   background-color: var(--el-bg-color-page);
   padding: 4px 8px;
   border-radius: 4px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 14px;
 }
 
@@ -656,7 +713,7 @@ onMounted(() => {
 }
 
 .license-key-cell {
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 12px;
   background-color: var(--el-bg-color-page);
   padding: 2px 4px;
@@ -669,7 +726,7 @@ onMounted(() => {
 }
 
 .user-agent {
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 12px;
   word-break: break-all;
 }
@@ -683,7 +740,7 @@ onMounted(() => {
 
 .metadata-content pre {
   margin: 0;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 12px;
   white-space: pre-wrap;
   word-wrap: break-word;

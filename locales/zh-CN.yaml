@@ -1402,45 +1402,85 @@ license:
     exportLicense: 导出许可证
 
   machines:
-    title: 机器管理
-    management: 机器管理
-    list: 机器列表
-    search: 搜索机器
-    searchPlaceholder: 搜索主机名或指纹
+    title: 机器绑定管理
+    management: 机器绑定管理
+    list: 机器绑定列表
+    detail: 机器绑定详情
+    search: 搜索机器绑定
+    searchPlaceholder: 搜索机器ID或许可证
     license: 许可证
     licensePlaceholder: 请选择许可证
     status: 状态
     statusPlaceholder: 请选择状态
     statusAll: 全部状态
-    statusActive: 已激活
-    statusInactive: 未激活
-    total: 共 {count} 台机器
-    fetchError: 获取机器列表失败
-    unbind: 解绑
-    unbindConfirm: 确认解绑机器 {fingerprint} 吗？
-    unbindSuccess: 机器解绑成功
-    unbindError: 机器解绑失败
-    batchUnbind: 批量解绑
-    batchUnbindConfirm: 确认批量解绑 {count} 台机器吗？
-    batchUnbindSuccess: 批量解绑成功
-    batchUnbindError: 批量解绑失败
-    selectMachines: 请先选择要解绑的机器
-    deleteConfirm: 确认删除机器记录 {fingerprint} 吗？
-    deleteSuccess: 机器记录删除成功
-    deleteError: 机器记录删除失败
+    statusActive: 激活
+    statusInactive: 非激活
+    statusBlocked: 已阻止
+    total: 共 {count} 个机器绑定
+    fetchError: 获取机器绑定列表失败
+    block: 阻止
+    blocked: 已阻止
+    blockConfirm: 确认阻止机器 {machineId} 吗？
+    blockReason: 阻止原因
+    blockReasonPlaceholder: 请输入阻止原因
+    blockSuccess: 机器阻止成功
+    blockError: 机器阻止失败
+    batchBlock: 批量阻止
+    batchBlockConfirm: 确认批量阻止 {count} 个机器绑定吗？
+    batchBlockSuccess: 批量阻止成功
+    batchBlockError: 批量阻止失败
+    selectMachines: 请先选择要操作的机器绑定
+    deleteConfirm: 确认删除机器绑定记录 {machineId} 吗？
+    deleteSuccess: 机器绑定记录删除成功
+    deleteError: 机器绑定记录删除失败
+    activate: 激活
+    reset: 重置
     
+    # 基本字段
     id: ID
+    machineId: 机器ID
+    licenseKey: 许可证密钥
     fingerprint: 机器指纹
     hostname: 主机名
-    osInfo: 操作系统
+    osInfo: 操作系统信息
     hardwareInfo: 硬件信息
+    ipAddress: IP地址
     lastSeen: 最后活跃
     firstSeen: 首次绑定
+    daysSinceLastSeen: 距上次活跃天数
     never: 从未
+    today: 今天
+    yesterday: 昨天
     justNow: 刚刚
     minutesAgo: "{minutes}分钟前"
     hoursAgo: "{hours}小时前"
     daysAgo: "{days}天前"
+    lastSeenDaysAgo: "{days}天前活跃"
+    
+    # 详情页面
+    basicInfo: 基本信息
+    systemInfo: 系统信息
+    licenseInfo: 许可证信息
+    connectionInfo: 连接信息
+    statistics: 统计信息
+    metadata: 元数据
+    recentActivity: 最近活动
+    timeline: 时间线
+    activeLicensesList: 激活许可证列表
+    
+    # 状态相关
+    online: 在线
+    offline: 离线
+    uptime: 运行时间
+    licenseId: 许可证ID
+    
+    # 操作结果
+    invalidId: 无效的机器绑定ID
+    loadFailed: 加载机器绑定详情失败
+    machineIdCopied: 机器ID已复制
+    machineBlocked: 机器已被阻止
+    machineActive: 机器处于激活状态
+    machineFirstSeen: 机器首次绑定
 
   activations:
     title: 激活管理

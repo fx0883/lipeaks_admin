@@ -13,6 +13,8 @@ import type {
   LicenseListParams,
   LicenseCreateParams,
   MachineBinding,
+  MachineBindingListParams,
+  MachineBindingBlockParams,
   LicenseActivation,
   AuditLog,
   LicenseStatistics,
@@ -418,12 +420,12 @@ export const useLicenseStore = defineStore("license", {
       try {
         const response = (await licenseApi.getLicenseList(params)) as any;
         if (response.success) {
-          // 正确解构Django REST Framework返回的数据结构
+          // 正确解构API返回的数据结构
           this.licenses = {
             data: response.data.results || [],
-            total: response.data.count || 0,
-            page: params.page || 1,
-            limit: params.page_size || 10
+            total: response.data.pagination?.count || 0,
+            page: response.data.pagination?.current_page || params.page || 1,
+            limit: response.data.pagination?.page_size || params.page_size || 10
           };
           return response;
         } else {
@@ -594,6 +596,46 @@ export const useLicenseStore = defineStore("license", {
     },
 
     /**
+     * 下载许可证文件
+     */
+    async downloadLicense(id: number, format: "json" | "txt" | "xml" = "json") {
+      console.log("Store downloadLicense 被调用", { id, format });
+      this.loading.exportLicenses = true;
+      try {
+        console.log("调用 API downloadLicense");
+        // API返回的是原始blob数据，不是标准的{success, data}格式
+        const blob = await licenseApi.downloadLicense(id, format);
+        console.log("API 调用完成", { blob, blobType: typeof blob });
+        
+        // 确保获得的是Blob对象
+        if (!(blob instanceof Blob)) {
+          console.error("响应不是Blob", { blob, type: typeof blob });
+          throw new Error("响应数据不是有效的文件格式");
+        }
+        
+        console.log("开始创建下载链接");
+        // 创建下载链接
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `license_${id}.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        console.log("下载链接已触发");
+        
+        return { success: true };
+      } catch (error) {
+        console.error("Store downloadLicense 错误", error);
+        logger.error("下载许可证失败", error);
+        throw error;
+      } finally {
+        this.loading.exportLicenses = false;
+      }
+    },
+
+    /**
      * 删除许可证
      */
     async deleteLicense(id: number) {
@@ -730,6 +772,80 @@ export const useLicenseStore = defineStore("license", {
         throw error;
       } finally {
         this.loading.productUpdate = false;
+      }
+    },
+
+    // ============================
+    // 机器绑定管理 Actions
+    // ============================
+
+    /**
+     * 获取机器绑定列表
+     */
+    async fetchMachineBindingList(params: MachineBindingListParams = {}) {
+      this.loading.machineBindingList = true;
+      try {
+        const response = (await licenseApi.getMachineBindingList(params)) as any;
+        if (response.success) {
+          this.machineBindings = {
+            data: response.data.results || [],
+            total: response.data.count || 0,
+            page: params.page || 1,
+            limit: params.page_size || 20
+          };
+          return response;
+        } else {
+          logger.error(response.message || "获取机器绑定列表失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("获取机器绑定列表失败", error);
+        throw error;
+      } finally {
+        this.loading.machineBindingList = false;
+      }
+    },
+
+    /**
+     * 获取机器绑定详情
+     */
+    async fetchMachineBindingDetail(id: number) {
+      this.loading.machineBindingDetail = true;
+      try {
+        const response = await licenseApi.getMachineBindingDetail(id);
+        if (response.success) {
+          this.currentMachineBinding = response.data;
+          return response;
+        } else {
+          logger.error(response.message || "获取机器绑定详情失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("获取机器绑定详情失败", error);
+        throw error;
+      } finally {
+        this.loading.machineBindingDetail = false;
+      }
+    },
+
+    /**
+     * 阻止机器绑定
+     */
+    async blockMachineBinding(id: number, params: MachineBindingBlockParams = {}) {
+      this.loading.machineBindingDetail = true;
+      try {
+        const response = await licenseApi.blockMachineBinding(id, params);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "阻止机器绑定失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("阻止机器绑定失败", error);
+        throw error;
+      } finally {
+        this.loading.machineBindingDetail = false;
       }
     }
   }

@@ -1992,24 +1992,32 @@ license:
     copyBtn: Copy Key
 
   machines:
-    title: Machine Management
-    list: Machine List
-    detail: Machine Detail
-    view: View Machine
-    delete: Delete Machine  
-    unbind: Unbind Machine
-    batchUnbind: Batch Unbind
-    search: Search Machine
-    searchPlaceholder: Search by machine ID or fingerprint
-    filter: Filter Machine
+    title: Machine Binding Management
+    management: Machine Binding Management
+    list: Machine Binding List
+    detail: Machine Binding Detail
+    view: View Machine Binding
+    delete: Delete Machine Binding
+    search: Search Machine Binding
+    searchPlaceholder: Search by machine ID or license
+    filter: Filter Machine Binding
     cancel: Cancel
     backToList: Back to List
     
-    # Form fields
-    id: Machine ID
-    fingerprint: Machine Fingerprint
+    # Status options
+    status: Status
+    statusPlaceholder: Please select status
+    statusAll: All Status
+    statusActive: Active
+    statusInactive: Inactive
+    statusBlocked: Blocked
+    
+    # Basic fields
+    id: ID
+    machineId: Machine ID
     licenseKey: License Key
     license: License
+    fingerprint: Machine Fingerprint
     hostname: Hostname
     osInfo: OS Information
     osName: OS Name
@@ -2022,42 +2030,84 @@ license:
     ipAddress: IP Address
     macAddress: MAC Address
     userAgent: User Agent
-    firstActivatedAt: First Activated At
-    lastActivatedAt: Last Activated At
+    hardwareInfo: Hardware Information
+    lastSeen: Last Seen
+    firstSeen: First Seen
+    daysSinceLastSeen: Days Since Last Seen
     activationCount: Activation Count
-    status: Status
-    statusActive: Active
-    statusInactive: Inactive
-    statusBlacklisted: Blacklisted
-    statusAll: All Status
     isActive: Active
     createdAt: Created At
     updatedAt: Updated At
     actions: Actions
     metadata: Metadata
     
+    # Time-related
+    never: Never
+    today: Today
+    yesterday: Yesterday
+    justNow: Just now
+    minutesAgo: "{minutes} minutes ago"
+    hoursAgo: "{hours} hours ago"
+    daysAgo: "{days} days ago"
+    lastSeenDaysAgo: "Active {days} days ago"
+    
+    # Detail page sections
+    basicInfo: Basic Information
+    systemInfo: System Information
+    licenseInfo: License Information
+    connectionInfo: Connection Information
+    statistics: Statistics
+    recentActivity: Recent Activity
+    timeline: Timeline
+    activeLicensesList: Active Licenses List
+    
+    # Status indicators
+    online: Online
+    offline: Offline
+    uptime: Uptime
+    licenseId: License ID
+    
+    # Actions
+    activate: Activate
+    block: Block
+    blocked: Blocked
+    reset: Reset
+    
+    # Block operations
+    blockConfirm: Are you sure you want to block machine {machineId}?
+    blockReason: Block Reason
+    blockReasonPlaceholder: Please enter block reason
+    blockSuccess: Machine blocked successfully
+    blockError: Failed to block machine
+    batchBlock: Batch Block
+    batchBlockConfirm: Are you sure you want to block {count} selected machine bindings?
+    batchBlockSuccess: Batch block successful
+    batchBlockError: Failed to batch block
+    
     # Selection
-    selectMachines: Please select machines first
-    selectedCount: Selected {count} machines
+    selectMachines: Please select machine bindings first
+    selectedCount: Selected {count} machine bindings
+    total: Total {count} machine bindings
     
     # Messages
-    unbindSuccess: Machine unbound successfully
-    unbindError: Failed to unbind machine
-    batchUnbindSuccess: Machines unbound successfully
-    batchUnbindError: Failed to unbind machines
-    deleteSuccess: Machine deleted successfully
-    deleteFailed: Failed to delete machine
-    fetchFailed: Failed to fetch machine list
-    fetchDetailFailed: Failed to fetch machine details
+    fetchError: Failed to fetch machine binding list
+    fetchFailed: Failed to fetch machine binding list
+    fetchDetailFailed: Failed to fetch machine binding details
+    deleteSuccess: Machine binding deleted successfully
+    deleteFailed: Failed to delete machine binding
     confirmDelete: Confirm Delete
-    confirmDeleteMessage: Are you sure you want to delete machine {fingerprint}?
-    confirmUnbind: Confirm Unbind
-    confirmUnbindMessage: Are you sure you want to unbind machine {fingerprint}?
-    confirmBatchUnbind: Confirm Batch Unbind
-    confirmBatchUnbindMessage: Are you sure you want to unbind {count} selected machines?
+    confirmDeleteMessage: Are you sure you want to delete machine binding {machineId}?
     viewBtn: View
     deleteBtn: Delete
-    unbindBtn: Unbind
+    blockBtn: Block
+    
+    # Operation results
+    invalidId: Invalid machine binding ID
+    loadFailed: Failed to load machine binding details
+    machineIdCopied: Machine ID copied successfully
+    machineBlocked: Machine has been blocked
+    machineActive: Machine is in active state
+    machineFirstSeen: Machine first binding
 
   activations:
     title: Activation Management

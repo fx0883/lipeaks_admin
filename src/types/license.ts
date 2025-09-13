@@ -182,34 +182,52 @@ export interface LicenseUpdateParams {
 }
 
 // 机器绑定相关类型
-export type BindingStatus = "active" | "inactive" | "suspended";
+export type MachineBindingStatus = "active" | "inactive" | "blocked";
 
 export interface MachineBinding {
   id: number;
-  license_id: string;
-  machine_fingerprint: string;
-  machine_name: string;
-  machine_info: {
-    os: string;
-    cpu: string;
-    memory: string;
-    disk: string;
-    network: string;
+  license: number; // 关联的许可证ID
+  license_key_preview: string; // 许可证密钥预览
+  machine_id: string; // 机器唯一标识符
+  hardware_summary: {
+    cpu?: string;
+    memory?: string;
+    disk?: string;
+    motherboard?: string;
+    graphics?: string;
+    bios?: string;
+    network_adapters?: string[];
   };
-  status: BindingStatus;
-  bound_at: string;
-  last_heartbeat: string;
-  created_at: string;
-  updated_at: string;
-  license?: License;
+  os_info: {
+    name?: string;
+    version?: string;
+    build?: string; // Windows构建号
+    kernel?: string; // Linux内核版本
+    architecture?: string;
+    install_date?: string;
+    last_boot_time?: string;
+    timezone?: string;
+    language?: string;
+    domain?: string;
+  };
+  last_ip_address: string; // 最后访问的IP地址
+  status: MachineBindingStatus; // 绑定状态
+  first_seen_at: string; // 首次绑定时间
+  last_seen_at: string; // 最后活跃时间
+  days_since_last_seen: number; // 距离最后活跃的天数
 }
 
 export interface MachineBindingListParams {
-  search?: string;
-  license_id?: string;
-  status?: BindingStatus;
+  search?: string; // 按机器ID搜索
+  license?: number; // 按许可证ID过滤
+  status?: MachineBindingStatus; // 按状态过滤
+  ordering?: string; // 排序字段
   page?: number;
   page_size?: number;
+}
+
+export interface MachineBindingBlockParams {
+  reason?: string; // 阻止原因
 }
 
 // 许可证激活相关类型
