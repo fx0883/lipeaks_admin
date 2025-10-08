@@ -11,11 +11,18 @@ import type {
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-// 移除未使用的导入
 import { useUserStoreHook } from "@/store/modules/user";
-// 移除未使用的 message 导入
-// import { message } from "@/utils/message";
-import logger from "@/utils/logger"; // 导入日志工具
+import logger from "@/utils/logger";
+import {
+  getErrorCode,
+  getUserFriendlyMessage,
+  shouldClearAuth
+} from "./errorCodes";
+import {
+  errorHandlerChain,
+  type StandardErrorResponse
+} from "./errorHandlers";
+import { tokenManager } from "./tokenManager";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -127,11 +134,7 @@ class PureHttp {
     this.httpInterceptorsResponse();
   }
 
-  /** 等待重试的请求队列 */
-  private static pendingRequests: Array<() => Promise<any>> = [];
-
-  /** 防止重复刷新`token` */
-  private static isRefreshing = false;
+  // 移除静态变量，由TokenManager管理
 
   /** 初始化配置对象 */
   private static initConfig: PureHttpRequestConfig = {};
@@ -184,8 +187,8 @@ class PureHttp {
           return config;
         }
 
-        // 从localStorage获取token
-        const token = localStorage.getItem("access_token");
+        // 使用TokenManager获取token
+        const token = tokenManager.getAccessToken();
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
@@ -337,14 +340,13 @@ class PureHttp {
           });
         }
 
-        // 创建统一的错误响应格式
-        let errorResponse = {
+        // 创建统一的标准错误响应格式
+        let errorResponse: StandardErrorResponse = {
           success: false,
           code: 5000, // 默认服务器错误
           message: "服务器内部错误",
           data: null,
-          // 增加errors字段用于存储详细错误信息
-          errors: null
+          error_code: "INTERNAL_SERVER_ERROR"
         };
 
         if (error.response) {
@@ -357,65 +359,81 @@ class PureHttp {
               PureHttp.isRefreshing = true;
 
               try {
-                // 尝试刷新Token
-                const result = await this.refreshToken();
-                if (result) {
-                  // Token刷新成功，执行队列中的请求
-                  PureHttp.pendingRequests.forEach(callback => callback());
-                  PureHttp.pendingRequests = [];
-                  return this.retryRequest(errorConfig);
+                // 使用TokenManager刷新Token
+                const newToken = await tokenManager.refreshToken();
+                if (newToken) {
+                  // Token刷新成功，重试原请求
+                  const newConfig = {
+                    ...errorConfig,
+                    headers: {
+                      ...errorConfig.headers,
+                      'Authorization': `Bearer ${newToken}`
+                    }
+                  };
+                  return await PureHttp.axiosInstance(newConfig);
                 } else {
-                  // Token刷新失败，执行登出
-                  this.logout();
-
+                  // Token刷新失败
                   errorResponse = {
                     success: false,
                     code: 4001,
                     message: "登录已过期，请重新登录",
                     data: null,
-                    errors: null
+                    error_code: "AUTH_TOKEN_EXPIRED"
                   };
                 }
               } catch (refreshError) {
-                // 刷新Token出错，执行登出
+                // 刷新Token出错
                 logger.error("刷新Token失败", refreshError);
-                this.logout();
-
                 errorResponse = {
                   success: false,
                   code: 4001,
                   message: "登录已过期，请重新登录",
                   data: null,
-                  errors: null
+                  error_code: "AUTH_TOKEN_EXPIRED"
                 };
               } finally {
                 PureHttp.isRefreshing = false;
               }
             } else {
-              // 已经在刷新Token，将请求加入队列
-              return new Promise(resolve => {
-                PureHttp.pendingRequests.push(() => {
-                  resolve(this.retryRequest(errorConfig));
-                  return Promise.resolve();
-                });
-              });
+              // 已经在刷新Token，等待刷新完成
+              try {
+                const newToken = await tokenManager.waitForTokenRefresh();
+                const newConfig = {
+                  ...errorConfig,
+                  headers: {
+                    ...errorConfig.headers,
+                    'Authorization': `Bearer ${newToken}`
+                  }
+                };
+                return await PureHttp.axiosInstance(newConfig);
+              } catch (waitError) {
+                logger.error('等待Token刷新失败:', waitError);
+                errorResponse = {
+                  success: false,
+                  code: 4001,
+                  message: "登录已过期，请重新登录",
+                  data: null,
+                  error_code: "AUTH_TOKEN_EXPIRED"
+                };
+              }
             }
           } else if (status === 403) {
+            const errorCode = getErrorCode(4003);
             errorResponse = {
               success: false,
               code: 4003,
-              message: "没有权限执行此操作",
+              message: getUserFriendlyMessage(errorCode, "没有权限执行此操作"),
               data: error.response.data,
-              // 增加errors字段
-              errors: error.response.data
+              error_code: errorCode
             };
           } else if (status === 404) {
+            const errorCode = getErrorCode(4004) || "RESOURCE_NOT_FOUND";
             errorResponse = {
               success: false,
               code: 4004,
               message: "请求的资源不存在",
               data: null,
-              errors: null
+              error_code: errorCode
             };
           } else if (status === 400) {
             // 处理表单验证错误
@@ -491,121 +509,65 @@ class PureHttp {
               success: false,
               code: 4000,
               message: errorMsg,
-              data: null,
-              // errors字段存储原始错误信息，用于前端可能的详细错误展示
-              errors: errorDetails
+              data: errorDetails, // 验证错误时，data字段包含字段错误信息
+              error_code: "VALIDATION_ERROR"
             };
           } else if (status >= 500) {
+            const errorCode = getErrorCode(5000);
             errorResponse = {
               success: false,
               code: 5000,
-              message: "服务器内部错误",
-              data: error.response.data,
-              errors: error.response.data
+              message: getUserFriendlyMessage(errorCode, "服务器内部错误"),
+              data: null,
+              error_code: errorCode
             };
           }
         } else if (error.message && error.message.includes("timeout")) {
+          const errorCode = getErrorCode(5001);
           errorResponse = {
             success: false,
             code: 5001,
-            message: "请求超时，请稍后重试",
+            message: getUserFriendlyMessage(errorCode, "请求超时，请稍后重试"),
             data: null,
-            errors: { timeout: true }
+            error_code: errorCode
           };
         } else if (error.message && error.message.includes("Network Error")) {
+          const errorCode = getErrorCode(5002);
           errorResponse = {
             success: false,
             code: 5002,
-            message: "网络连接错误，请检查网络设置",
+            message: getUserFriendlyMessage(errorCode, "网络连接错误，请检查网络设置"),
             data: null,
-            errors: { network: true }
+            error_code: errorCode
           };
         }
 
         // 记录错误日志
         logger.logError(error);
 
-        // 移除显示错误消息的代码，由业务层处理
-        // message(errorResponse.message, { type: "error" });
+        // 使用错误处理器链处理错误
+        try {
+          const handleResult = await errorHandlerChain.handle(errorResponse);
+
+          // 如果需要重试，在一定延迟后重试
+          if (handleResult.shouldRetry && handleResult.retryAfter) {
+            await new Promise(resolve => setTimeout(resolve, handleResult.retryAfter!));
+            return this.retryRequest(error.config);
+          }
+        } catch (handlerError) {
+          logger.error('错误处理器执行失败:', handlerError);
+        }
 
         return Promise.reject(errorResponse);
       }
     );
   }
 
-  /**
-   * 刷新Token
-   */
-  private async refreshToken(): Promise<boolean> {
-    try {
-      const refreshToken = localStorage.getItem("refresh_token");
-      if (!refreshToken) {
-        return false;
-      }
+  // 移除旧的refreshToken方法，使用TokenManager
 
-      const response = await Axios.post(
-        `${defaultConfig.baseURL}/auth/token/refresh/`,
-        { refresh: refreshToken },
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
+  // 移除旧的retryRequest方法，直接在拦截器中处理
 
-      if (response.status === 200 && response.data.access) {
-        // 更新存储的token
-        localStorage.setItem("access_token", response.data.access);
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      logger.error("刷新Token请求失败", error);
-      return false;
-    }
-  }
-
-  /**
-   * 重试请求
-   */
-  private async retryRequest(config: AxiosRequestConfig): Promise<any> {
-    try {
-      // 获取新的token
-      const token = localStorage.getItem("access_token");
-
-      // 创建新的请求配置
-      const newConfig = { ...config };
-      if (token) {
-        newConfig.headers = {
-          ...newConfig.headers,
-          Authorization: `Bearer ${token}`
-        };
-      }
-
-      // 发起重试请求
-      const response = await Axios(newConfig);
-      return response.data;
-    } catch (error) {
-      logger.error("重试请求失败", error);
-      return Promise.reject(error);
-    }
-  }
-
-  /**
-   * 登出操作
-   */
-  private logout(): void {
-    // 清除token
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-
-    // 使用store的登出方法
-    useUserStoreHook().logOut();
-
-    // 跳转到登录页
-    window.location.href = "/login";
-  }
+  // 移除旧的logout方法，由TokenManager和错误处理器处理
 
   /**
    * 通用请求工具函数
