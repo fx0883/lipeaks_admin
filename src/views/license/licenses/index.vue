@@ -384,6 +384,12 @@ const handleBatchOperation = (command: string) => {
     case "batch-revoke":
       handleBatchRevoke();
       break;
+    case "batch-suspend":
+      handleBatchSuspend();
+      break;
+    case "batch-activate":
+      handleBatchActivate();
+      break;
     case "batch-delete":
       handleBatchDelete();
       break;
@@ -506,6 +512,114 @@ const handleBatchRevoke = async () => {
     if (error !== "cancel") {
       logger.error("批量撤销许可证失败", error);
       ElMessage.error(t("license.licenses.batchRevokeError"));
+    }
+  }
+};
+
+// 批量暂停许可证
+const handleBatchSuspend = async () => {
+  try {
+    const { value: reason } = await ElMessageBox.prompt(
+      t("license.licenses.batchSuspendConfirm", {
+        count: multipleSelection.value.length
+      }),
+      t("license.licenses.suspendReason"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        inputPlaceholder: t("license.licenses.reasonPlaceholder")
+      }
+    );
+
+    const loading = ElLoading.service({
+      lock: true,
+      text: t("license.licenses.batchSuspending"),
+      background: "rgba(0, 0, 0, 0.7)"
+    });
+
+    try {
+      const licenseIds = multipleSelection.value.map(license => license.id);
+      const result = await licenseStore.batchOperationLicenses({
+        license_ids: licenseIds,
+        operation: "suspend",
+        reason: reason || ""
+      });
+
+      if (result.success) {
+        ElMessage.success(
+          t("license.licenses.batchSuspendSuccess", {
+            count: licenseIds.length
+          })
+        );
+      } else {
+        ElMessage.error(
+          result.message || t("license.licenses.batchSuspendFailed")
+        );
+      }
+
+      await fetchLicenses();
+      multipleSelection.value = [];
+    } finally {
+      loading.close();
+    }
+  } catch (error) {
+    if (error !== "cancel") {
+      logger.error("批量暂停许可证失败", error);
+      ElMessage.error(t("license.licenses.batchSuspendError"));
+    }
+  }
+};
+
+// 批量激活许可证
+const handleBatchActivate = async () => {
+  try {
+    const { value: reason } = await ElMessageBox.prompt(
+      t("license.licenses.batchActivateConfirm", {
+        count: multipleSelection.value.length
+      }),
+      t("license.licenses.activateReason"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        inputPlaceholder: t("license.licenses.reasonPlaceholder")
+      }
+    );
+
+    const loading = ElLoading.service({
+      lock: true,
+      text: t("license.licenses.batchActivating"),
+      background: "rgba(0, 0, 0, 0.7)"
+    });
+
+    try {
+      const licenseIds = multipleSelection.value.map(license => license.id);
+      const result = await licenseStore.batchOperationLicenses({
+        license_ids: licenseIds,
+        operation: "activate",
+        reason: reason || ""
+      });
+
+      if (result.success) {
+        ElMessage.success(
+          t("license.licenses.batchActivateSuccess", {
+            count: licenseIds.length
+          })
+        );
+      } else {
+        ElMessage.error(
+          result.message || t("license.licenses.batchActivateFailed")
+        );
+      }
+
+      await fetchLicenses();
+      multipleSelection.value = [];
+    } finally {
+      loading.close();
+    }
+  } catch (error) {
+    if (error !== "cancel") {
+      logger.error("批量激活许可证失败", error);
+      ElMessage.error(t("license.licenses.batchActivateError"));
     }
   }
 };
@@ -673,6 +787,12 @@ onMounted(() => {
               <el-dropdown-menu>
                 <el-dropdown-item command="batch-extend">
                   {{ t("license.licenses.batchExtend") }}
+                </el-dropdown-item>
+                <el-dropdown-item command="batch-suspend">
+                  {{ t("license.licenses.batchSuspend") }}
+                </el-dropdown-item>
+                <el-dropdown-item command="batch-activate">
+                  {{ t("license.licenses.batchActivate") }}
                 </el-dropdown-item>
                 <el-dropdown-item command="batch-revoke">
                   {{ t("license.licenses.batchRevoke") }}

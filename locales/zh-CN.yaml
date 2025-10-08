@@ -1223,6 +1223,15 @@ license:
     codeFormat: 方案代码只能包含字母、数字、下划线和横线
     productRequired: 产品为必填项
     typeRequired: 方案类型为必填项
+    # 新字段名
+    defaultMaxActivations: 默认最大激活数
+    defaultMaxActivationsPlaceholder: 请输入默认最大激活数
+    defaultMaxActivationsRequired: 默认最大激活数为必填项
+    defaultValidityDays: 默认有效天数
+    defaultValidityDaysPlaceholder: 请输入默认有效天数
+    defaultValidityDaysRequired: 默认有效天数为必填项
+    
+    # 向后兼容字段名
     maxMachines: 最大机器数
     maxMachinesRequired: 最大机器数为必填项
     validityDaysRequired: 有效天数为必填项
@@ -1311,6 +1320,10 @@ license:
     features: 功能特性
     metadata: 元数据
     metadataPlaceholder: 请输入JSON格式的元数据
+    productPlan: 产品方案
+    additionalInfo: 附加信息
+    productReadonly: 产品信息不可修改
+    planReadonly: 方案信息不可修改
     activations: 激活数
     expiresAt: 过期时间
     customer: 客户
@@ -1320,6 +1333,7 @@ license:
     autoRenew: 自动续费
     licenseKeyPlaceholder: 许可证密钥将自动生成
     selectPlan: 选择计划
+    selectProduct: 选择产品
     generateKey: 生成密钥
     planId: 计划ID
     maxUsers: 最大用户数
@@ -1340,9 +1354,13 @@ license:
     customerPhone: 电话
     customerPhonePlaceholder: 请输入电话号码
     maxActivationsPlaceholder: 请输入最大激活数
+    maxActivationsWithDefault: 默认 {default}，可自定义
     maxActivationsTip: 指定此许可证可以激活的最大次数
+    maxActivationsOptionalTip: 留空使用计划默认值 ({default})，或输入自定义值
     validityDaysPlaceholder: 请输入有效天数
+    validityDaysWithDefault: 默认 {default} 天，可自定义
     validityDaysTip: 许可证的有效期（以天为单位）
+    validityDaysOptionalTip: 留空使用计划默认值 ({default} 天)，或输入自定义值
     notesPlaceholder: 请输入备注信息
     plansFilteredByProduct: 已为所选产品过滤出 {count} 个计划（共 {total} 个）
     
@@ -1400,6 +1418,57 @@ license:
     suspend: 暂停
     renew: 续费
     exportLicense: 导出许可证
+    
+    # 批量操作
+    batchOperation: 批量操作
+    batchExtend: 批量延期
+    batchRevoke: 批量撤销
+    batchSuspend: 批量暂停
+    batchActivate: 批量激活
+    batchDelete: 批量删除
+    pleaseSelectLicenses: 请先选择许可证
+    
+    # 批量延期
+    extendDays: 延期天数
+    batchExtendConfirm: 确认要为选中的 {count} 个许可证延期吗？
+    batchExtending: 正在批量延期...
+    batchExtendSuccess: 批量延期成功（{count}个）
+    batchExtendFailed: 批量延期失败
+    batchExtendError: 批量延期操作失败
+    
+    # 批量撤销
+    revokeReason: 撤销原因
+    batchRevokeConfirm: 确认要撤销选中的 {count} 个许可证吗？此操作不可逆！
+    batchRevoking: 正在批量撤销...
+    batchRevokeSuccess: 批量撤销成功（{count}个）
+    batchRevokeFailed: 批量撤销失败
+    batchRevokeError: 批量撤销操作失败
+    
+    # 批量暂停
+    suspendReason: 暂停原因
+    batchSuspendConfirm: 确认要暂停选中的 {count} 个许可证吗？
+    batchSuspending: 正在批量暂停...
+    batchSuspendSuccess: 批量暂停成功（{count}个）
+    batchSuspendFailed: 批量暂停失败
+    batchSuspendError: 批量暂停操作失败
+    
+    # 批量激活
+    activateReason: 激活原因
+    batchActivateConfirm: 确认要激活选中的 {count} 个许可证吗？
+    batchActivating: 正在批量激活...
+    batchActivateSuccess: 批量激活成功（{count}个）
+    batchActivateFailed: 批量激活失败
+    batchActivateError: 批量激活操作失败
+    
+    # 批量删除
+    batchDeleteConfirm: 确认要删除选中的 {count} 个许可证吗？此操作不可逆！
+    batchDeleting: 正在批量删除...
+    batchDeleteSuccess: 批量删除成功（成功{success}个，共{total}个）
+    batchDeleteFailed: 批量删除失败
+    batchDeleteError: 批量删除操作失败
+    
+    # 通用
+    reasonPlaceholder: 请输入操作原因（可选）
 
   machines:
     title: 机器绑定管理
@@ -2021,21 +2090,15 @@ member:
   phone: 手机号
   phonePlaceholder: 请输入手机号
   phoneInvalid: 手机号格式不正确
-  password: 密码
-  passwordPlaceholder: 请输入密码
-  passwordRequired: 密码不能为空
-  passwordLength: 密码长度不能少于8个字符
-  confirmPassword: 确认密码
-  confirmPasswordPlaceholder: 请再次输入密码
-  confirmPasswordRequired: 请确认密码
-  passwordMismatch: 两次输入的密码不一致
+  wechatId: 微信号
+  wechatIdPlaceholder: 请输入微信号
+  wechatIdLength: 微信号不能超过32个字符
   status: 状态
   statusPlaceholder: 请选择状态
   statusRequired: 请选择状态
   statusActive: 活跃
+  statusSuspended: 已暂停
   statusInactive: 未激活
-  statusLocked: 已锁定
-  statusPending: 待审核
   statusFilterPlaceholder: 状态筛选
   tenant: 所属租户
   tenantPlaceholder: 请选择租户
@@ -2085,8 +2148,22 @@ member:
   setPrimarySuccess: 设置主要客户成功
   relationNotesPlaceholder: 请输入关系备注
   passwordManagement: 密码管理
+  password: 密码
+  passwordPlaceholder: 请输入密码（至少8位，包含大小写字母和数字）
+  passwordRequired: 密码不能为空
+  passwordLength: 密码长度不能少于8个字符
+  passwordMinLength: 密码至少需要8位字符
+  passwordStrength: 密码必须包含大小写字母和数字
+  passwordWeak: 弱
+  passwordMedium: 中
+  passwordStrong: 强
+  confirmPassword: 确认密码
+  confirmPasswordPlaceholder: 请再次输入密码
+  confirmPasswordRequired: 请确认密码
+  passwordMismatch: 两次输入的密码不一致
   resetPassword: 重置密码
   resetPasswordTitle: 重置密码
   resetPasswordConfirm: 请输入新密码
   resetPasswordSuccess: 密码重置成功
+  newPassword: 新密码
   newPasswordPlaceholder: 请输入新密码

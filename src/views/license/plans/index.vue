@@ -398,25 +398,25 @@ onMounted(() => {
         </el-table-column>
 
         <el-table-column
-          prop="max_machines"
-          :label="t('license.plans.maxMachines')"
-          width="120"
+          prop="default_max_activations"
+          :label="t('license.plans.defaultMaxActivations')"
+          width="140"
         >
           <template #default="{ row }">
-            <span v-if="row.max_machines === -1">{{
+            <span v-if="row.default_max_activations === -1">{{
               t("license.plans.unlimited")
             }}</span>
-            <span v-else>{{ row.max_machines }}</span>
+            <span v-else>{{ row.default_max_activations }}</span>
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="validity_days"
-          :label="t('license.plans.validityDays')"
-          width="120"
+          prop="default_validity_days"
+          :label="t('license.plans.defaultValidityDays')"
+          width="140"
         >
           <template #default="{ row }">
-            {{ formatDuration(row.validity_days) }}
+            {{ formatDuration(row.default_validity_days) }}
           </template>
         </el-table-column>
 

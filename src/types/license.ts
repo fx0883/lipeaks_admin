@@ -35,7 +35,7 @@ export interface ProductCreateParams {
   is_active?: boolean;
 }
 
-export interface ProductUpdateParams extends Partial<ProductCreateParams> {}
+export interface ProductUpdateParams extends Partial<ProductCreateParams> { }
 
 // 产品编辑表单数据类型
 export interface ProductEditFormData {
@@ -71,8 +71,8 @@ export interface LicensePlan {
   name: string;
   code: string;
   plan_type: PlanType;
-  max_machines: number;
-  validity_days: number;
+  default_max_activations: number; // 新字段名：方案默认最大激活数
+  default_validity_days: number;   // 新字段名：方案默认有效天数
   features?: Record<string, any>; // JSON对象
   price: string; // API返回字符串格式
   currency: string;
@@ -80,6 +80,12 @@ export interface LicensePlan {
   licenses_count?: number; // 只读字段
   created_at: string;
   updated_at: string;
+}
+
+// 向后兼容的接口定义，用于过渡期
+export interface LegacyLicensePlan extends LicensePlan {
+  max_machines: number;  // 映射到 default_max_activations
+  validity_days: number; // 映射到 default_validity_days
 }
 
 export interface PlanListParams {
@@ -97,15 +103,15 @@ export interface PlanCreateParams {
   name: string;
   code: string;
   plan_type: PlanType;
-  max_machines: number;
-  validity_days: number;
+  default_max_activations: number; // 使用新字段名
+  default_validity_days: number;   // 使用新字段名
   features?: Record<string, any>;
   price: string; // decimal作为字符串传输
   currency?: string;
   status?: "active" | "inactive";
 }
 
-export interface PlanUpdateParams extends Partial<PlanCreateParams> {}
+export interface PlanUpdateParams extends Partial<PlanCreateParams> { }
 
 // 客户信息接口
 export interface CustomerInfo {
@@ -345,7 +351,7 @@ export interface LicenseRevokeParams {
 // 批量操作相关类型
 export interface BatchOperationParams {
   license_ids: number[];
-  operation: "revoke" | "suspend" | "activate" | "extend";
+  operation: "revoke" | "suspend" | "activate" | "extend" | "delete";
   parameters?: Record<string, any>;
   reason?: string;
 }

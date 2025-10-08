@@ -86,13 +86,13 @@
               </template>
 
               <el-descriptions :column="2" border>
-                <el-descriptions-item :label="$t('license.plans.maxMachines')">
-                  {{ planData.max_machines || $t("common.unlimited") }}
+                <el-descriptions-item :label="$t('license.plans.defaultMaxActivations')">
+                  {{ planData.default_max_activations || $t("common.unlimited") }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.plans.validityDays')">
+                <el-descriptions-item :label="$t('license.plans.defaultValidityDays')">
                   {{
-                    planData.validity_days
-                      ? `${planData.validity_days} ${$t("common.days")}`
+                    planData.default_validity_days
+                      ? `${planData.default_validity_days} ${$t("common.days")}`
                       : $t("common.unlimited")
                   }}
                 </el-descriptions-item>

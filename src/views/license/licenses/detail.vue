@@ -525,7 +525,7 @@ const copyLicenseKey = async () => {
 const handleAction = (command: string) => {
   switch (command) {
     case "edit":
-      router.push(`/license/licenses/edit/${licenseData.id}`);
+      router.push(`/license/licenses/${licenseData.id}/edit`);
       break;
     case "activate":
     case "suspend":

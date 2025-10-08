@@ -162,44 +162,6 @@
             </el-col>
           </el-row>
 
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item
-                :label="$t('license.licenses.maxActivations')"
-                prop="maxActivations"
-              >
-                <el-input-number
-                  v-model="form.maxActivations"
-                  :min="1"
-                  :step="1"
-                  style="width: 100%"
-                  :placeholder="
-                    $t('license.licenses.maxActivationsPlaceholder')
-                  "
-                />
-                <div class="form-tip">
-                  {{ $t("license.licenses.maxActivationsTip") }}
-                </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                :label="$t('license.licenses.validityDays')"
-                prop="validityDays"
-              >
-                <el-input-number
-                  v-model="form.validityDays"
-                  :min="1"
-                  :step="1"
-                  style="width: 100%"
-                  :placeholder="$t('license.licenses.validityDaysPlaceholder')"
-                />
-                <div class="form-tip">
-                  {{ $t("license.licenses.validityDaysTip") }}
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
 
           <el-form-item :label="$t('license.licenses.notes')" prop="notes">
             <el-input
@@ -262,8 +224,6 @@ interface LicenseForm {
     company: string;
     phone: string;
   };
-  maxActivations: number | null;
-  validityDays: number | null;
   notes: string;
 }
 
@@ -281,8 +241,6 @@ const form = reactive<LicenseForm>({
     company: "",
     phone: ""
   },
-  maxActivations: null,
-  validityDays: null,
   notes: ""
 });
 
@@ -328,23 +286,6 @@ const rules = reactive<FormRules<LicenseForm>>({
     {
       max: 200,
       message: t("license.licenses.customerCompanyMaxLength", { max: 200 }),
-      trigger: "blur"
-    }
-  ],
-  // 可选字段的验证
-  maxActivations: [
-    {
-      type: "number",
-      min: 1,
-      message: t("license.licenses.maxActivationsMinValue"),
-      trigger: "blur"
-    }
-  ],
-  validityDays: [
-    {
-      type: "number",
-      min: 1,
-      message: t("license.licenses.validityDaysMinValue"),
       trigger: "blur"
     }
   ],
@@ -400,6 +341,7 @@ const getSelectedProduct = () => {
   if (!form.productId) return null;
   return availableProducts.value.find(product => product.id === form.productId);
 };
+
 
 // 方案变化时的处理逻辑（级联选择）
 const onPlanChange = (planId: number | null) => {
@@ -475,6 +417,7 @@ const handleSubmit = async () => {
     submitting.value = true;
 
     // 根据API文档推荐做法：只提供plan参数，让系统自动设置product
+    // max_activations和validity_days由系统从plan中自动获取
     // 租户信息将由后端从管理员token中获取
     const submitData = {
       plan: form.planId!,
@@ -489,8 +432,6 @@ const handleSubmit = async () => {
         })
       },
       // 可选参数：只在有值时传递
-      ...(form.maxActivations && { max_activations: form.maxActivations }),
-      ...(form.validityDays && { validity_days: form.validityDays }),
       ...(form.notes?.trim() && { notes: form.notes.trim() })
     };
 
@@ -535,16 +476,6 @@ const handleSubmit = async () => {
               message: errorData.customer_info[0]
             })
           );
-        } else if (
-          errorData.max_activations &&
-          errorData.max_activations.length > 0
-        ) {
-          ElMessage.error(errorData.max_activations[0]);
-        } else if (
-          errorData.validity_days &&
-          errorData.validity_days.length > 0
-        ) {
-          ElMessage.error(errorData.validity_days[0]);
         } else {
           // 显示第一个错误信息
           const firstError = Object.values(errorData)[0];

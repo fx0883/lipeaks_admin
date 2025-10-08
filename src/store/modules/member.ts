@@ -6,6 +6,7 @@ import {
   getMemberDetail,
   createMember,
   updateMember,
+  partialUpdateMember,
   deleteMember,
   bulkUpdateMembers,
   bulkDeleteMembers,
@@ -14,7 +15,6 @@ import {
   updateMemberCustomerRelation,
   deleteMemberCustomerRelation,
   setPrimaryCustomerRelation,
-  resetMemberPassword,
   searchMembers,
   uploadMemberAvatar
 } from "@/api/modules/member";
@@ -89,24 +89,24 @@ export const useMemberStore = defineStore("member", {
     },
     error: null
   }),
-  
+
   getters: {
     // 获取会员列表
     getMembers: (state) => state.memberList.data,
-    
+
     // 获取当前会员
     getCurrentMember: (state) => state.currentMember,
-    
+
     // 获取会员的客户关系列表
     getCustomerRelations: (state) => state.memberCustomerRelations.data,
-    
+
     // 获取加载状态
     isLoading: (state) => (key: keyof MemberState['loading']) => state.loading[key],
-    
+
     // 获取错误信息
     getError: (state) => state.error
   },
-  
+
   actions: {
     /**
      * 获取会员列表
@@ -114,7 +114,7 @@ export const useMemberStore = defineStore("member", {
     async fetchMemberList(params: MemberListParams = {}) {
       this.loading.list = true;
       this.error = null;
-      
+
       try {
         const response = await getMemberList(params);
         if (response.success) {
@@ -146,14 +146,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.list = false;
       }
     },
-    
+
     /**
      * 获取会员详情
      */
     async fetchMemberDetail(id: number) {
       this.loading.detail = true;
       this.error = null;
-      
+
       try {
         const response = await getMemberDetail(id);
         if (response.success) {
@@ -162,31 +162,31 @@ export const useMemberStore = defineStore("member", {
         } else {
           // 记录错误但不显示消息，将错误传递给视图层处理
           this.error = response.message || "获取会员详情失败";
-          
+
           // 直接抛出包含完整错误信息的错误对象
           return Promise.reject(response);
         }
       } catch (error: any) {
         // 记录错误日志
         logger.error("获取会员详情失败", error);
-        
+
         // 存储错误信息
         this.error = error.message || "获取会员详情失败";
-        
+
         // 向上抛出原始错误，让视图层处理
         throw error;
       } finally {
         this.loading.detail = false;
       }
     },
-    
+
     /**
      * 创建会员
      */
     async createNewMember(data: MemberCreateUpdateParams) {
       this.loading.create = true;
       this.error = null;
-      
+
       try {
         const response = await createMember(data);
         if (response.success) {
@@ -194,33 +194,33 @@ export const useMemberStore = defineStore("member", {
         } else {
           // 记录错误但不显示消息，将错误传递给视图层处理
           this.error = response.message || "创建会员失败";
-          
+
           // 直接抛出包含完整错误信息的错误对象
           return Promise.reject(response);
         }
       } catch (error: any) {
         // 记录错误日志
         logger.error("创建会员失败", error);
-        
+
         // 存储错误信息
         this.error = error.message || "创建会员失败";
-        
+
         // 向上抛出原始错误，让视图层处理
         throw error;
       } finally {
         this.loading.create = false;
       }
     },
-    
+
     /**
-     * 更新会员信息
+     * 更新会员信息（使用PATCH部分更新）
      */
-    async updateMemberInfo(id: number, data: MemberCreateUpdateParams) {
+    async updateMemberInfo(id: number, data: Partial<MemberCreateUpdateParams>) {
       this.loading.update = true;
       this.error = null;
-      
+
       try {
-        const response = await updateMember(id, data);
+        const response = await partialUpdateMember(id, data);
         if (response.success) {
           // 如果更新的是当前选中的会员，更新本地数据
           if (this.currentMember && this.currentMember.id === id) {
@@ -236,36 +236,36 @@ export const useMemberStore = defineStore("member", {
               notes: data.notes || this.currentMember.notes
             };
           }
-          
+
           return response;
         } else {
           // 记录错误但不显示消息，将错误传递给视图层处理
           this.error = response.message || "更新会员信息失败";
-          
+
           // 直接抛出包含完整错误信息的错误对象
           return Promise.reject(response);
         }
       } catch (error: any) {
         // 记录错误日志
         logger.error("更新会员信息失败", error);
-        
+
         // 存储错误信息
         this.error = error.message || "更新会员信息失败";
-        
+
         // 向上抛出原始错误，让视图层处理
         throw error;
       } finally {
         this.loading.update = false;
       }
     },
-    
+
     /**
      * 删除会员
      */
     async removeMember(id: number) {
       this.loading.delete = true;
       this.error = null;
-      
+
       try {
         const response = await deleteMember(id);
         if (response.success) {
@@ -289,14 +289,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.delete = false;
       }
     },
-    
+
     /**
      * 批量更新会员
      */
     async bulkUpdateMembers(data: MemberBulkOperationParams) {
       this.loading.bulkUpdate = true;
       this.error = null;
-      
+
       try {
         const response = await bulkUpdateMembers(data);
         if (response.success) {
@@ -319,14 +319,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.bulkUpdate = false;
       }
     },
-    
+
     /**
      * 批量删除会员
      */
     async bulkDeleteMembers(memberIds: number[]) {
       this.loading.bulkDelete = true;
       this.error = null;
-      
+
       try {
         const response = await bulkDeleteMembers(memberIds);
         if (response.success) {
@@ -350,14 +350,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.bulkDelete = false;
       }
     },
-    
+
     /**
      * 获取会员的客户关系列表
      */
     async fetchMemberCustomerRelations(memberId: number, params: { page?: number; page_size?: number } = {}) {
       this.loading.customerRelations = true;
       this.error = null;
-      
+
       try {
         const response = await getMemberCustomerRelations(memberId, params);
         if (response.success) {
@@ -405,14 +405,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.customerRelations = false;
       }
     },
-    
+
     /**
      * 创建会员-客户关系
      */
     async createMemberCustomerRelation(data: MemberCustomerRelationCreateUpdateParams) {
       this.loading.createCustomerRelation = true;
       this.error = null;
-      
+
       try {
         const response = await createMemberCustomerRelation(data);
         if (response.success) {
@@ -430,14 +430,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.createCustomerRelation = false;
       }
     },
-    
+
     /**
      * 更新会员-客户关系
      */
     async updateMemberCustomerRelation(memberId: number, relationId: number, data: Omit<MemberCustomerRelationCreateUpdateParams, 'member_id'>) {
       this.loading.updateCustomerRelation = true;
       this.error = null;
-      
+
       try {
         const response = await updateMemberCustomerRelation(memberId, relationId, data);
         if (response.success) {
@@ -460,14 +460,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.updateCustomerRelation = false;
       }
     },
-    
+
     /**
      * 删除会员-客户关系
      */
     async removeMemberCustomerRelation(memberId: number, customerId: number) {
       this.loading.deleteCustomerRelation = true;
       this.error = null;
-      
+
       try {
         // 使用新的API，传递会员ID和客户ID数组
         const response = await deleteMemberCustomerRelation(memberId, [customerId]);
@@ -488,14 +488,14 @@ export const useMemberStore = defineStore("member", {
         this.loading.deleteCustomerRelation = false;
       }
     },
-    
+
     /**
      * 设置主要客户关系
      */
     async setPrimaryCustomerRelation(memberId: number, relationId: number) {
       this.loading.updateCustomerRelation = true;
       this.error = null;
-      
+
       try {
         const response = await setPrimaryCustomerRelation(memberId, relationId);
         if (response.success) {
@@ -518,16 +518,20 @@ export const useMemberStore = defineStore("member", {
         this.loading.updateCustomerRelation = false;
       }
     },
-    
+
     /**
-     * 重置会员密码
+     * 重置会员密码（使用PATCH部分更新）
      */
-    async resetMemberPassword(memberId: number, data: MemberPasswordResetParams) {
+    async resetMemberPassword(memberId: number, data: { new_password: string; confirm_password?: string }) {
       this.loading.resetPassword = true;
       this.error = null;
-      
+
       try {
-        const response = await resetMemberPassword(memberId, data);
+        // 使用部分更新API重置密码
+        const response = await partialUpdateMember(memberId, {
+          password: data.new_password,
+          confirm_password: data.confirm_password || data.new_password
+        });
         if (response.success) {
           // 移除成功消息提示，由视图层负责
           return response;
@@ -543,17 +547,17 @@ export const useMemberStore = defineStore("member", {
         this.loading.resetPassword = false;
       }
     },
-    
+
     /**
      * 搜索会员
      */
     async searchMembers(query: string, params: MemberListParams = {}) {
       this.error = null;
-      
+
       try {
         // 使用 API 模块中定义的 searchMembers 函数
         const response = await searchMembers(query, params);
-        
+
         if (response.success) {
           return response;
         } else {
@@ -566,21 +570,26 @@ export const useMemberStore = defineStore("member", {
         throw error;
       }
     },
-    
+
     /**
      * 上传会员头像
      */
     async uploadMemberAvatar(memberId: number, formData: FormData) {
       this.loading.uploadAvatar = true;
       this.error = null;
-      
+
       try {
         const response = await uploadMemberAvatar(memberId, formData);
         if (response.success) {
           // 如果当前选中的会员是被更新的会员，则更新当前选中的会员头像
           if (this.currentMember && this.currentMember.id === memberId && response.data) {
             // 使用 response.data.avatar 而不是 response.data.avatar_url
-            const avatarUrl = response.data.avatar || response.data.avatar_url;
+            let avatarUrl = response.data.avatar || response.data.avatar_url;
+            // 如果是相对路径，拼接完整URL
+            if (avatarUrl && avatarUrl.startsWith('/media/')) {
+              const baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:8000';
+              avatarUrl = baseURL + avatarUrl;
+            }
             if (avatarUrl) {
               this.currentMember = {
                 ...this.currentMember,
@@ -602,7 +611,7 @@ export const useMemberStore = defineStore("member", {
         this.loading.uploadAvatar = false;
       }
     },
-    
+
     /**
      * 重置会员状态
      */

@@ -96,11 +96,21 @@
     
     <el-row :gutter="16">
       <el-col :span="8">
-        <el-form-item :label="t('license.plans.duration')" prop="duration">
+        <el-form-item :label="t('license.plans.defaultValidityDays')" prop="defaultValidityDays">
           <el-input-number
-            v-model="formData.duration"
+            v-model="formData.defaultValidityDays"
             :min="1"
-            :placeholder="t('license.plans.durationPlaceholder')"
+            :placeholder="t('license.plans.defaultValidityDaysPlaceholder')"
+            style="width: 100%"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item :label="t('license.plans.defaultMaxActivations')" prop="defaultMaxActivations">
+          <el-input-number
+            v-model="formData.defaultMaxActivations"
+            :min="1"
+            :placeholder="t('license.plans.defaultMaxActivationsPlaceholder')"
             style="width: 100%"
           />
         </el-form-item>
@@ -111,16 +121,6 @@
             v-model="formData.maxActivations"
             :min="1"
             :placeholder="t('license.plans.maxActivationsPlaceholder')"
-            style="width: 100%"
-          />
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item :label="t('license.plans.maxMachines')" prop="maxMachines">
-          <el-input-number
-            v-model="formData.maxMachines"
-            :min="1"
-            :placeholder="t('license.plans.maxMachinesPlaceholder')"
             style="width: 100%"
           />
         </el-form-item>
@@ -188,9 +188,8 @@ export interface PlanFormData {
   description: string
   price: number
   currency: string
-  duration: number
-  maxActivations: number
-  maxMachines: number
+  defaultValidityDays: number      // 新字段名：默认有效天数
+  defaultMaxActivations: number   // 新字段名：默认最大激活数
   features: string
   restrictions: string
   status?: 'active' | 'inactive' | 'archived'
@@ -247,17 +246,17 @@ const formRules: FormRules = {
     { required: true, message: t('license.plans.priceRequired'), trigger: 'blur' },
     { type: 'number', min: 0, message: t('license.plans.priceInvalid'), trigger: 'blur' }
   ],
-  duration: [
-    { required: true, message: t('license.plans.durationRequired'), trigger: 'blur' },
-    { type: 'number', min: 1, message: t('license.plans.durationInvalid'), trigger: 'blur' }
+  defaultValidityDays: [
+    { required: true, message: t('license.plans.defaultValidityDaysRequired'), trigger: 'blur' },
+    { type: 'number', min: 1, message: t('license.plans.defaultValidityDaysInvalid'), trigger: 'blur' }
+  ],
+  defaultMaxActivations: [
+    { required: true, message: t('license.plans.defaultMaxActivationsRequired'), trigger: 'blur' },
+    { type: 'number', min: 1, message: t('license.plans.defaultMaxActivationsInvalid'), trigger: 'blur' }
   ],
   maxActivations: [
     { required: true, message: t('license.plans.maxActivationsRequired'), trigger: 'blur' },
     { type: 'number', min: 1, message: t('license.plans.maxActivationsInvalid'), trigger: 'blur' }
-  ],
-  maxMachines: [
-    { required: true, message: t('license.plans.maxMachinesRequired'), trigger: 'blur' },
-    { type: 'number', min: 1, message: t('license.plans.maxMachinesInvalid'), trigger: 'blur' }
   ]
 }
 

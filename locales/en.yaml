@@ -1474,21 +1474,15 @@ member:
   phone: Phone
   phonePlaceholder: Please enter phone number
   phoneInvalid: Invalid phone format
-  password: Password
-  passwordPlaceholder: Please enter password
-  passwordRequired: Password is required
-  passwordLength: Password must be at least 8 characters
-  confirmPassword: Confirm Password
-  confirmPasswordPlaceholder: Please confirm password
-  confirmPasswordRequired: Please confirm your password
-  passwordMismatch: Passwords do not match
+  wechatId: WeChat ID
+  wechatIdPlaceholder: Please enter WeChat ID
+  wechatIdLength: WeChat ID cannot exceed 32 characters
   status: Status
   statusPlaceholder: Please select status
   statusRequired: Status is required
   statusActive: Active
+  statusSuspended: Suspended
   statusInactive: Inactive
-  statusLocked: Locked
-  statusPending: Pending
   statusFilterPlaceholder: Filter by status
   tenant: Tenant
   tenantPlaceholder: Please select tenant
@@ -1538,10 +1532,24 @@ member:
   setPrimarySuccess: Primary customer set successfully
   relationNotesPlaceholder: Please enter relation notes
   passwordManagement: Password Management
+  password: Password
+  passwordPlaceholder: Please enter password (min 8 chars, with uppercase, lowercase and numbers)
+  passwordRequired: Password is required
+  passwordLength: Password must be at least 8 characters
+  passwordMinLength: Password must be at least 8 characters
+  passwordStrength: Password must contain uppercase, lowercase letters and numbers
+  passwordWeak: Weak
+  passwordMedium: Medium
+  passwordStrong: Strong
+  confirmPassword: Confirm Password
+  confirmPasswordPlaceholder: Please confirm password
+  confirmPasswordRequired: Please confirm your password
+  passwordMismatch: Passwords do not match
   resetPassword: Reset Password
   resetPasswordTitle: Reset Password
   resetPasswordConfirm: Please enter new password
   resetPasswordSuccess: Password reset successfully
+  newPassword: New Password
   newPasswordPlaceholder: Please enter new password
 
 license:
@@ -1743,6 +1751,17 @@ license:
     maxActivationsPlaceholder: Please enter max activations
     maxActivationsRequired: Max activations is required
     maxActivationsInvalid: Max activations must be a positive number
+    # New field names
+    defaultMaxActivations: Default Max Activations
+    defaultMaxActivationsPlaceholder: Please enter default max activations
+    defaultMaxActivationsRequired: Default max activations is required
+    defaultMaxActivationsInvalid: Default max activations must be a positive number
+    defaultValidityDays: Default Validity Days
+    defaultValidityDaysPlaceholder: Please enter default validity days
+    defaultValidityDaysRequired: Default validity days is required
+    defaultValidityDaysInvalid: Default validity days must be a positive number
+    
+    # Legacy field names for compatibility
     maxMachines: Max Machines
     maxMachinesPlaceholder: Please enter max machines
     maxMachinesRequired: Max machines is required
@@ -1905,9 +1924,13 @@ license:
     customerPhone: Phone
     customerPhonePlaceholder: Please enter phone number
     maxActivationsPlaceholder: Please enter max activations
+    maxActivationsWithDefault: Default {default}, customizable
     maxActivationsTip: Specify the maximum number of times this license can be activated
+    maxActivationsOptionalTip: Leave empty to use plan default ({default}), or enter custom value
     validityDaysPlaceholder: Please enter validity days
+    validityDaysWithDefault: Default {default} days, customizable
     validityDaysTip: The validity period of the license (in days)
+    validityDaysOptionalTip: Leave empty to use plan default ({default} days), or enter custom value
     plansFilteredByProduct: Filtered {count} plans for selected product (total {total})
     
     # Validation messages
@@ -1963,6 +1986,57 @@ license:
     suspend: Suspend
     renew: Renew
     exportLicense: Export License
+    
+    # Batch operations
+    batchOperation: Batch Operation
+    batchExtend: Batch Extend
+    batchRevoke: Batch Revoke
+    batchSuspend: Batch Suspend
+    batchActivate: Batch Activate
+    batchDelete: Batch Delete
+    pleaseSelectLicenses: Please select licenses first
+    
+    # Batch extend
+    extendDays: Extend Days
+    batchExtendConfirm: Confirm to extend {count} selected licenses?
+    batchExtending: Batch extending...
+    batchExtendSuccess: Batch extend successful ({count} licenses)
+    batchExtendFailed: Batch extend failed
+    batchExtendError: Batch extend operation failed
+    
+    # Batch revoke
+    revokeReason: Revoke Reason
+    batchRevokeConfirm: Confirm to revoke {count} selected licenses? This action is irreversible!
+    batchRevoking: Batch revoking...
+    batchRevokeSuccess: Batch revoke successful ({count} licenses)
+    batchRevokeFailed: Batch revoke failed
+    batchRevokeError: Batch revoke operation failed
+    
+    # Batch suspend
+    suspendReason: Suspend Reason
+    batchSuspendConfirm: Confirm to suspend {count} selected licenses?
+    batchSuspending: Batch suspending...
+    batchSuspendSuccess: Batch suspend successful ({count} licenses)
+    batchSuspendFailed: Batch suspend failed
+    batchSuspendError: Batch suspend operation failed
+    
+    # Batch activate
+    activateReason: Activate Reason
+    batchActivateConfirm: Confirm to activate {count} selected licenses?
+    batchActivating: Batch activating...
+    batchActivateSuccess: Batch activate successful ({count} licenses)
+    batchActivateFailed: Batch activate failed
+    batchActivateError: Batch activate operation failed
+    
+    # Batch delete
+    batchDeleteConfirm: Confirm to delete {count} selected licenses? This action is irreversible!
+    batchDeleting: Batch deleting...
+    batchDeleteSuccess: Batch delete successful ({success} succeeded, {total} total)
+    batchDeleteFailed: Batch delete failed
+    batchDeleteError: Batch delete operation failed
+    
+    # Common
+    reasonPlaceholder: Enter operation reason (optional)
     
     # Actions
     licenseKeyCopied: License key copied successfully

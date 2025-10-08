@@ -121,11 +121,11 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item
-                :label="$t('license.plans.maxMachines')"
-                prop="max_machines"
+                :label="$t('license.plans.defaultMaxActivations')"
+                prop="default_max_activations"
               >
                 <el-input-number
-                  v-model="form.max_machines"
+                  v-model="form.default_max_activations"
                   :min="1"
                   :step="1"
                   style="width: 100%"
@@ -134,11 +134,11 @@
             </el-col>
             <el-col :span="12">
               <el-form-item
-                :label="$t('license.plans.validityDays')"
-                prop="validity_days"
+                :label="$t('license.plans.defaultValidityDays')"
+                prop="default_validity_days"
               >
                 <el-input-number
-                  v-model="form.validity_days"
+                  v-model="form.default_validity_days"
                   :min="1"
                   :step="1"
                   style="width: 100%"
@@ -206,8 +206,8 @@ interface PlanForm {
   name: string;
   code: string;
   plan_type: string;
-  max_machines: number | null;
-  validity_days: number | null;
+  default_max_activations: number | null;
+  default_validity_days: number | null;
   features: string;
   price: string;
   currency: string;
@@ -219,8 +219,8 @@ const form = reactive<PlanForm>({
   name: "",
   code: "",
   plan_type: "",
-  max_machines: null,
-  validity_days: null,
+  default_max_activations: null,
+  default_validity_days: null,
   features: "{}",
   price: "0.00",
   currency: "CNY",
@@ -261,17 +261,17 @@ const rules = reactive<FormRules<PlanForm>>({
       trigger: "change"
     }
   ],
-  max_machines: [
+  default_max_activations: [
     {
       required: true,
-      message: t("license.plans.maxMachinesRequired"),
+      message: t("license.plans.defaultMaxActivationsRequired"),
       trigger: "blur"
     }
   ],
-  validity_days: [
+  default_validity_days: [
     {
       required: true,
-      message: t("license.plans.validityDaysRequired"),
+      message: t("license.plans.defaultValidityDaysRequired"),
       trigger: "blur"
     }
   ],
@@ -322,8 +322,8 @@ const handleSubmit = async () => {
       name: form.name,
       code: form.code,
       plan_type: form.plan_type as any,
-      max_machines: form.max_machines!,
-      validity_days: form.validity_days!,
+      default_max_activations: form.default_max_activations!,
+      default_validity_days: form.default_validity_days!,
       features: featuresObj,
       price: form.price,
       currency: form.currency,

@@ -556,7 +556,7 @@ export function downloadLicense(id: number, format: "json" | "txt" | "xml" = "js
   return http.request<Blob>(
     "get",
     url,
-    { 
+    {
       params: { format },
       responseType: "blob"
     }
@@ -602,7 +602,33 @@ export function batchRevokeLicenses(license_ids: number[], reason?: string) {
 }
 
 /**
- * 批量操作
+ * 批量暂停许可证
+ */
+export function batchSuspendLicenses(license_ids: number[], reason?: string) {
+  logger.debug("API请求: 批量暂停许可证", { license_ids, reason });
+
+  return http.request<ApiResponse<BatchOperationResult>>(
+    "post",
+    "/licenses/admin/licenses/batch_operation/",
+    { data: { license_ids, operation: "suspend", reason } }
+  );
+}
+
+/**
+ * 批量激活许可证
+ */
+export function batchActivateLicenses(license_ids: number[], reason?: string) {
+  logger.debug("API请求: 批量激活许可证", { license_ids, reason });
+
+  return http.request<ApiResponse<BatchOperationResult>>(
+    "post",
+    "/licenses/admin/licenses/batch_operation/",
+    { data: { license_ids, operation: "activate", reason } }
+  );
+}
+
+/**
+ * 批量操作（通用方法）
  */
 export function batchOperation(params: BatchOperationParams) {
   logger.debug("API请求: 批量操作", params);
