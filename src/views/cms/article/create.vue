@@ -38,7 +38,17 @@ const tags = ref([]);
 // 提交表单
 const handleSubmit = async (formData: ArticleCreateParams) => {
   try {
-    await cmsStore.createArticle(formData);
+    // 转换字段名以符合API要求
+    const apiData = {
+      ...formData,
+      category_ids: formData.categories || [],
+      tag_ids: formData.tags || []
+    };
+    // 删除旧字段
+    delete apiData.categories;
+    delete apiData.tags;
+    
+    await cmsStore.createArticle(apiData);
     ElMessage.success(t("cms.article.createSuccess"));
 
     // 创建成功后跳转到文章列表

@@ -816,6 +816,67 @@ cms:
     fetchDetailFailed: 获取文章详情失败
     basicInfo: 基本信息
     fetchCategoriesTagsFailed: 获取分类和标签数据失败
+    import: 导入文章
+    importArticles: 批量导入文章
+    importTitle: 文章导入
+    importSelectCategory: 选择文章分类
+    selectCategoryPlaceholder: 请选择要导入的分类
+    selectFolder: 选择文件夹
+    selectFolderTip: 点击选择包含文章文件的文件夹
+    dragFolderTip: 或将文件夹拖拽到此处
+    folderSelected: 已选择文件夹
+    parsing: 解析中...
+    importPreview: 预览导入列表
+    previewList: 预览列表
+    startImport: 开始导入
+    importing: 正在导入...
+    importSuccess: 导入完成
+    importComplete: 导入完成！
+    importFailed: 导入失败
+    importStatistics: 导入统计
+    totalArticles: 总文章数
+    markdownCount: Markdown 文章
+    htmlCount: HTML 文章
+    successCount: 成功导入
+    failedCount: 导入失败
+    pendingCount: 待导入
+    editTitle: 编辑标题
+    removeArticle: 移除
+    selectAll: 全选
+    unselectAll: 取消全选
+    deleteSelected: 删除选中
+    noCoverImage: 无封面
+    hasCoverImage: 有封面
+    uploadingCover: 上传封面中...
+    uploadingImages: 上传图片中...
+    creatingArticle: 创建文章中...
+    noFilesSelected: 请选择文件夹
+    noCategorySelected: 请先选择分类
+    confirmImport: 确认导入 {count} 篇文章？
+    importError: 导入错误
+    parsingFiles: 正在解析文件...
+    parsedSuccess: 解析完成
+    parsedFailed: 解析失败
+    importStep1: 选择分类
+    importStep2: 选择文件
+    importStep3: 预览确认
+    importStep4: 执行导入
+    backToList: 返回列表
+    fileName: 文件名
+    fileType: 类型
+    importCoverImage: 封面图
+    importStatus: 状态
+    currentStep: 当前步骤
+    errorMessage: 错误信息
+    preparing: 准备中...
+    processing: 处理中...
+    importStatusPending: 待导入
+    importStatusUploading: 上传中
+    importStatusSuccess: 成功
+    importStatusFailed: 失败
+    noArticlesToImport: 没有可导入的文章
+    articleTypeMarkdown: Markdown
+    articleTypeHtml: HTML
 
   category:
     editCategory: 编辑分类

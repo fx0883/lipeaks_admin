@@ -291,7 +291,18 @@ const handleCreate = async () => {
 const handleFormSubmit = async (formData: ArticleCreateParams) => {
   try {
     createArticleDialog.loading = true;
-    await cmsStore.createArticle(formData);
+    
+    // 转换字段名以符合API要求
+    const apiData = {
+      ...formData,
+      category_ids: formData.categories || [],
+      tag_ids: formData.tags || []
+    };
+    // 删除旧字段
+    delete apiData.categories;
+    delete apiData.tags;
+    
+    await cmsStore.createArticle(apiData);
     ElMessage.success(t("cms.article.createSuccess"));
     createArticleDialog.visible = false;
     // 刷新文章列表
@@ -438,7 +449,17 @@ const handleEditFormSubmit = async (formData: ArticleCreateParams) => {
       throw new Error("文章ID不存在");
     }
 
-    await cmsStore.updateArticle(editArticleDialog.articleId, formData);
+    // 转换字段名以符合API要求
+    const apiData = {
+      ...formData,
+      category_ids: formData.categories || [],
+      tag_ids: formData.tags || []
+    };
+    // 删除旧字段
+    delete apiData.categories;
+    delete apiData.tags;
+
+    await cmsStore.updateArticle(editArticleDialog.articleId, apiData);
     ElMessage.success(t("cms.article.updateSuccess"));
     editArticleDialog.visible = false;
 
@@ -487,9 +508,14 @@ onMounted(() => {
       <h2 class="article-list-title">
         {{ t("cms.article.articleManagement") }}
       </h2>
-      <el-button type="primary" :icon="Plus" @click="handleCreate">
-        {{ t("cms.article.createArticle") }}
-      </el-button>
+      <div class="header-buttons">
+        <el-button type="success" :icon="Upload" @click="router.push('/cms/article/import')">
+          {{ t("cms.article.import") }}
+        </el-button>
+        <el-button type="primary" :icon="Plus" @click="handleCreate">
+          {{ t("cms.article.createArticle") }}
+        </el-button>
+      </div>
     </div>
 
     <!-- 搜索和筛选 -->
@@ -852,6 +878,11 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
 }
 
 .article-list-title {

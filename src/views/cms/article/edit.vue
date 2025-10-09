@@ -58,7 +58,17 @@ const fetchArticleDetail = async () => {
 // 提交表单
 const handleSubmit = async (formData: ArticleUpdateParams) => {
   try {
-    await cmsStore.updateArticle(articleId.value, formData);
+    // 转换字段名以符合API要求
+    const apiData = {
+      ...formData,
+      category_ids: formData.categories || [],
+      tag_ids: formData.tags || []
+    };
+    // 删除旧字段
+    delete apiData.categories;
+    delete apiData.tags;
+    
+    await cmsStore.updateArticle(articleId.value, apiData);
     ElMessage.success(t("cms.article.updateSuccess"));
 
     // 更新成功后跳转到文章列表
