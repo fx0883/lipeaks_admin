@@ -389,6 +389,11 @@ const handleDelete = (row: Article) => {
   confirmDialog.visible = true;
 };
 
+// 跳转到导出页面
+const handleGotoExport = () => {
+  router.push('/cms/article/export');
+};
+
 // 批量删除文章
 const handleBatchDelete = async (force = false) => {
   if (multipleSelection.value.length === 0) {
@@ -673,6 +678,13 @@ onMounted(() => {
           </el-button>
           <el-button @click="resetSearch">
             {{ t("common.reset") }}
+          </el-button>
+          <el-button
+            type="success"
+            :icon="Download"
+            @click="handleGotoExport"
+          >
+            导出文章
           </el-button>
           <el-button
             type="danger"

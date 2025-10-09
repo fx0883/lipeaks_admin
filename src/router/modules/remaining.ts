@@ -47,5 +47,15 @@ export default [
       showLink: false,
       rank: 104
     }
+  },
+  {
+    path: "/cms/article/export",
+    name: "ArticleExport",
+    component: () => import("@/views/cms/article/export.vue"),
+    meta: {
+      title: "导出文章",
+      showLink: false,
+      rank: 105
+    }
   }
 ] satisfies Array<RouteConfigsTable>;
