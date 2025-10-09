@@ -101,15 +101,21 @@ export function deleteArticle(id: number) {
 
 /**
  * 批量删除文章
- * @param ids 文章ID数组
+ * @param article_ids 文章ID数组
+ * @param force 是否强制删除
  */
-export function batchDeleteArticles(ids: number[]) {
-  logger.debug("API请求: 批量删除文章", { ids });
+export function batchDeleteArticles(article_ids: number[], force = false) {
+  logger.debug("API请求: 批量删除文章", { article_ids, force });
 
-  return http.request<ApiResponse<{ deleted: number[] }>>(
+  return http.request<ApiResponse<{
+    message: string;
+    requested_count: number;
+    deleted_count: number;
+    deleted_ids: number[];
+  }>>(
     "post",
     "/cms/articles/batch-delete/",
-    { data: { ids } }
+    { data: { article_ids, force } }
   );
 }
 
@@ -301,31 +307,31 @@ export function getCategoryList(params?: CategoryListParams) {
     params
   }).then(response => {
     console.log("[CmsApi] getCategoryList - 请求成功, 响应:", response);
-    
+
     // 详细检查响应格式
     if (!response) {
       console.error("[CmsApi] getCategoryList - 响应为空");
       throw new Error("获取分类列表失败: 响应为空");
     }
-    
+
     if (!response.data) {
       console.error("[CmsApi] getCategoryList - 响应中没有data字段:", response);
       console.error("[CmsApi] getCategoryList - 响应类型:", typeof response);
       console.error("[CmsApi] getCategoryList - 响应包含的属性:", Object.keys(response));
       throw new Error("获取分类列表失败: 响应中没有data字段");
     }
-    
+
     if (!Array.isArray(response.data)) {
       console.error("[CmsApi] getCategoryList - data不是数组:", response.data);
       console.error("[CmsApi] getCategoryList - data类型:", typeof response.data);
       throw new Error("获取分类列表失败: 响应中的data不是数组");
     }
-    
+
     console.log("[CmsApi] getCategoryList - 成功获取分类列表, 数量:", response.data.length);
     if (response.data.length > 0) {
       console.log("[CmsApi] getCategoryList - 第一个分类示例:", response.data[0]);
     }
-    
+
     return response;
   }).catch(error => {
     console.error("[CmsApi] getCategoryList - 请求失败:", error);

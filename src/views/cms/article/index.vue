@@ -15,6 +15,7 @@ import {
 } from "@element-plus/icons-vue";
 import { useCmsStoreHook } from "@/store/modules/cms";
 import { useUserStoreHook } from "@/store/modules/user";
+import { useErrorHandling } from "@/composables/useErrorHandling";
 import ConfirmDialog from "@/components/Cms/Article/ConfirmDialog.vue";
 import ArticleForm from "@/components/Cms/Article/ArticleForm.vue";
 import type {
@@ -389,27 +390,51 @@ const handleDelete = (row: Article) => {
 };
 
 // 批量删除文章
-const handleBatchDelete = () => {
+const handleBatchDelete = async (force = false) => {
   if (multipleSelection.value.length === 0) {
     ElMessage.warning(t("cms.article.selectArticlesToDelete"));
     return;
   }
 
-  const ids = multipleSelection.value.map(item => item.id);
+  const article_ids = multipleSelection.value.map(item => item.id);
+  
   confirmDialog.title = t("cms.article.confirmBatchDelete");
   confirmDialog.content = t("cms.article.confirmBatchDeleteMessage", {
-    count: ids.length
+    count: article_ids.length
   });
   confirmDialog.type = "warning";
   confirmDialog.confirmAction = async () => {
     try {
-      await cmsStore.batchDeleteArticles(ids);
-      ElMessage.success(t("cms.article.batchDeleteSuccess"));
-      fetchArticles();
-      multipleSelection.value = [];
+      const response = await cmsStore.batchDeleteArticles(article_ids, force);
+      
+      if (response.success && response.data) {
+        const { deleted_count, requested_count } = response.data;
+        
+        if (deleted_count === requested_count) {
+          ElMessage.success(
+            t("cms.article.batchDeleteSuccess") + ` (${deleted_count}/${requested_count})`
+          );
+        } else {
+          ElMessage.warning(
+            `部分删除成功：已删除 ${deleted_count}/${requested_count} 个文章`
+          );
+        }
+        
+        fetchArticles();
+        multipleSelection.value = [];
+      }
     } catch (error) {
       logger.error("批量删除文章失败", error);
-      ElMessage.error(t("cms.article.batchDeleteFailed"));
+      
+      // 使用新的错误处理系统
+      if (error && typeof error === 'object' && 'error_code' in error) {
+        // 标准错误格式，交给错误处理系统
+        const { handleError } = useErrorHandling();
+        await handleError(error);
+      } else {
+        // 降级处理
+        ElMessage.error(t("cms.article.batchDeleteFailed"));
+      }
     }
   };
   confirmDialog.visible = true;
