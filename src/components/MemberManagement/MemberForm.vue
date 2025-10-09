@@ -85,6 +85,15 @@
 
     <el-row :gutter="20">
       <el-col :span="12">
+        <el-form-item :label="$t('member.wechatId')" prop="wechat_id">
+          <el-input
+            v-model="form.wechat_id"
+            :placeholder="$t('member.wechatIdPlaceholder')"
+            autocomplete="off"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item :label="$t('member.status')" prop="status">
           <el-select
             v-model="form.status"
@@ -100,7 +109,10 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col v-if="showTenantSelect" :span="12">
+    </el-row>
+
+    <el-row v-if="showTenantSelect" :gutter="20">
+      <el-col :span="12">
         <el-form-item :label="$t('member.tenant')" prop="tenant_id">
           <el-select
             v-model="form.tenant_id"
@@ -121,6 +133,93 @@
         </el-form-item>
       </el-col>
     </el-row>
+
+    <!-- 密码输入框 -->
+    <template v-if="!isEdit">
+      <!-- 创建模式：密码必填 -->
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item :label="$t('member.password')" prop="password" required>
+            <el-input
+              v-model="form.password"
+              type="password"
+              :placeholder="$t('member.passwordPlaceholder')"
+              show-password
+              autocomplete="new-password"
+            />
+            <!-- 密码强度指示器 -->
+            <div v-if="form.password" class="password-strength">
+              <div class="strength-bar">
+                <div 
+                  class="strength-fill" 
+                  :class="passwordStrength.class"
+                  :style="{ width: passwordStrength.width }"
+                ></div>
+              </div>
+              <span class="strength-text" :class="passwordStrength.class">
+                {{ passwordStrength.text }}
+              </span>
+            </div>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('member.confirmPassword')" prop="confirm_password" required>
+            <el-input
+              v-model="form.confirm_password"
+              type="password"
+              :placeholder="$t('member.confirmPasswordPlaceholder')"
+              show-password
+              autocomplete="new-password"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </template>
+    <template v-else>
+      <!-- 编辑模式：可选择是否重置密码 -->
+      <el-form-item>
+        <el-checkbox v-model="resetPassword">
+          {{ $t('member.resetPassword') }}
+        </el-checkbox>
+      </el-form-item>
+      <el-row v-if="resetPassword" :gutter="20">
+        <el-col :span="12">
+          <el-form-item :label="$t('member.newPassword')" prop="password">
+            <el-input
+              v-model="form.password"
+              type="password"
+              :placeholder="$t('member.passwordPlaceholder')"
+              show-password
+              autocomplete="new-password"
+            />
+            <!-- 密码强度指示器 -->
+            <div v-if="form.password" class="password-strength">
+              <div class="strength-bar">
+                <div 
+                  class="strength-fill" 
+                  :class="passwordStrength.class"
+                  :style="{ width: passwordStrength.width }"
+                ></div>
+              </div>
+              <span class="strength-text" :class="passwordStrength.class">
+                {{ passwordStrength.text }}
+              </span>
+            </div>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('member.confirmPassword')" prop="confirm_password">
+            <el-input
+              v-model="form.confirm_password"
+              type="password"
+              :placeholder="$t('member.confirmPasswordPlaceholder')"
+              show-password
+              autocomplete="new-password"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </template>
 
     <el-form-item :label="$t('member.notes')" prop="notes">
       <el-input
@@ -204,6 +303,9 @@ const tenantLoading = ref(false);
 // 头像上传状态
 const avatarUploading = ref(false);
 
+// 是否重置密码（编辑模式使用）
+const resetPassword = ref(false);
+
 // 租户选项
 const tenantOptions = ref([]);
 
@@ -214,16 +316,12 @@ const statusOptions = [
     label: t("member.statusActive")
   },
   {
+    value: "suspended",
+    label: t("member.statusSuspended")
+  },
+  {
     value: "inactive",
     label: t("member.statusInactive")
-  },
-  {
-    value: "locked",
-    label: t("member.statusLocked")
-  },
-  {
-    value: "pending",
-    label: t("member.statusPending")
   }
 ];
 
@@ -235,11 +333,53 @@ const form = reactive({
   last_name: "",
   email: "",
   phone: "",
+  wechat_id: "",
+  password: "",
+  confirm_password: "",
   status: "active" as MemberStatus,
   tenant_id: undefined as number | undefined,
   notes: "",
   avatar: "",
   avatarFile: null as File | null
+});
+
+// 计算密码强度
+const passwordStrength = computed(() => {
+  const pwd = form.password;
+  if (!pwd) return { width: '0%', class: '', text: '' };
+  
+  let strength = 0;
+  // 长度检查
+  if (pwd.length >= 8) strength += 1;
+  if (pwd.length >= 12) strength += 1;
+  // 包含小写字母
+  if (/[a-z]/.test(pwd)) strength += 1;
+  // 包含大写字母
+  if (/[A-Z]/.test(pwd)) strength += 1;
+  // 包含数字
+  if (/[0-9]/.test(pwd)) strength += 1;
+  // 包含特殊字符
+  if (/[^a-zA-Z0-9]/.test(pwd)) strength += 1;
+  
+  if (strength <= 2) {
+    return { 
+      width: '33%', 
+      class: 'weak', 
+      text: t('member.passwordWeak') 
+    };
+  } else if (strength <= 4) {
+    return { 
+      width: '66%', 
+      class: 'medium', 
+      text: t('member.passwordMedium') 
+    };
+  } else {
+    return { 
+      width: '100%', 
+      class: 'strong', 
+      text: t('member.passwordStrong') 
+    };
+  }
 });
 
 // 表单验证规则
@@ -256,6 +396,58 @@ const rules = reactive<FormRules>({
     {
       pattern: /^[0-9\-+\s()]*$/,
       message: t("member.phoneInvalid"),
+      trigger: "blur"
+    }
+  ],
+  wechat_id: [
+    { max: 32, message: t("member.wechatIdLength"), trigger: "blur" }
+  ],
+  password: [
+    { 
+      required: !props.isEdit, 
+      message: t("member.passwordRequired"), 
+      trigger: "blur" 
+    },
+    { 
+      min: 8, 
+      message: t("member.passwordMinLength"), 
+      trigger: "blur" 
+    },
+    {
+      validator: (rule, value, callback) => {
+        // 创建模式或编辑模式勾选重置密码时验证
+        if ((!props.isEdit || resetPassword.value) && value) {
+          // 检查是否包含大小写字母和数字
+          const hasLower = /[a-z]/.test(value);
+          const hasUpper = /[A-Z]/.test(value);
+          const hasNumber = /[0-9]/.test(value);
+          
+          if (!hasLower || !hasUpper || !hasNumber) {
+            callback(new Error(t("member.passwordStrength")));
+          } else {
+            callback();
+          }
+        } else {
+          callback();
+        }
+      },
+      trigger: "blur"
+    }
+  ],
+  confirm_password: [
+    { 
+      required: !props.isEdit || resetPassword.value, 
+      message: t("member.confirmPasswordRequired"), 
+      trigger: "blur" 
+    },
+    {
+      validator: (rule, value, callback) => {
+        if ((!props.isEdit || resetPassword.value) && value !== form.password) {
+          callback(new Error(t("member.passwordMismatch")));
+        } else {
+          callback();
+        }
+      },
       trigger: "blur"
     }
   ],
@@ -287,10 +479,16 @@ const initFormData = () => {
     form.last_name = props.memberData.last_name || "";
     form.email = props.memberData.email || "";
     form.phone = props.memberData.phone || "";
+    form.wechat_id = props.memberData.wechat_id || "";
     form.status = props.memberData.status as MemberStatus;
     form.tenant_id = props.memberData.tenant_id;
     form.notes = props.memberData.notes || "";
     form.avatar = props.memberData.avatar || "";
+    
+    // 编辑模式下重置密码相关字段
+    form.password = "";
+    form.confirm_password = "";
+    resetPassword.value = false;
 
     // 如果有租户信息，添加到租户选项中
     if (props.memberData.tenant_id && props.memberData.tenant_name) {
@@ -317,11 +515,15 @@ const resetForm = () => {
   form.last_name = "";
   form.email = "";
   form.phone = "";
+  form.wechat_id = "";
+  form.password = "";
+  form.confirm_password = "";
   form.status = "active" as MemberStatus;
   form.tenant_id = undefined;
   form.notes = "";
   form.avatar = "";
   form.avatarFile = null;
+  resetPassword.value = false;
 };
 
 // 提交表单
@@ -344,14 +546,15 @@ const submitForm = async () => {
 
     // 可选字段
     if (form.phone) submitData.phone = form.phone;
+    if (form.wechat_id) submitData.wechat_id = form.wechat_id;
     if (form.notes) submitData.notes = form.notes;
     if (form.tenant_id && props.showTenantSelect)
       submitData.tenant_id = form.tenant_id;
 
-    // 如果是创建模式，添加密码
-    if (!props.isEdit) {
-      submitData.password = "12345_abcdef"; // 创建模式下直接使用默认密码
-      submitData.password_confirm = "12345_abcdef"; // 创建模式下直接使用默认密码
+    // 如果是创建模式或编辑模式勾选了重置密码，添加密码
+    if (!props.isEdit || resetPassword.value) {
+      submitData.password = form.password;
+      submitData.confirm_password = form.confirm_password;
     }
 
     // 如果有头像文件，添加到提交数据
@@ -413,5 +616,52 @@ onMounted(() => {
   display: flex;
   justify-content: flex-start;
   margin-bottom: 20px;
+}
+
+.password-strength {
+  margin-top: 8px;
+}
+
+.strength-bar {
+  height: 4px;
+  background-color: #e4e7ed;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.strength-fill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.strength-fill.weak {
+  background-color: #f56c6c;
+}
+
+.strength-fill.medium {
+  background-color: #e6a23c;
+}
+
+.strength-fill.strong {
+  background-color: #67c23a;
+}
+
+.strength-text {
+  font-size: 12px;
+  transition: color 0.3s ease;
+}
+
+.strength-text.weak {
+  color: #f56c6c;
+}
+
+.strength-text.medium {
+  color: #e6a23c;
+}
+
+.strength-text.strong {
+  color: #67c23a;
 }
 </style>

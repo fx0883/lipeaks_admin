@@ -1099,6 +1099,96 @@ export const useCmsStore = defineStore("cms", {
     },
 
     /**
+     * 批量导入文章
+     * @param articles 解析后的文章列表
+     * @param categoryId 目标分类ID
+     * @param onProgress 进度回调
+     */
+    async importArticles(
+      articles: any[],
+      categoryId: number,
+      onProgress: (item: any) => void
+    ) {
+      const statistics = {
+        total: articles.length,
+        success: 0,
+        failed: 0,
+        pending: articles.length
+      };
+
+      for (const article of articles) {
+        try {
+          // 更新状态为上传中
+          article.status = "uploading";
+          article.currentStep = "准备导入";
+          onProgress(article);
+
+          // 1. 上传封面图（如果有）
+          let coverImageUrl = "";
+          if (article.coverImage) {
+            article.currentStep = "上传封面图";
+            onProgress(article);
+
+            const coverResponse = await this.uploadCoverImage(
+              article.coverImage,
+              "article_covers"
+            );
+            coverImageUrl = coverResponse.url;
+          }
+
+          // 2. 处理 Markdown 图片（如果是 Markdown）
+          let finalContent = article.content;
+          if (article.fileType === "markdown" && article.markdownImages.length > 0) {
+            article.currentStep = "处理图片引用";
+            onProgress(article);
+
+            // 这部分逻辑会在主页面中处理，这里只接收处理后的内容
+            // 因为需要访问 allFilesMap
+          }
+
+          // 3. 创建文章
+          article.currentStep = "创建文章";
+          onProgress(article);
+
+          const articleData = {
+            title: article.title,
+            content: finalContent,
+            content_type: article.fileType === "markdown" ? "markdown" : "html",
+            status: "published",
+            category_ids: [categoryId],
+            tag_ids: [],
+            cover_image: coverImageUrl || undefined,
+            visibility: "public",
+            allow_comment: true,
+            is_featured: false,
+            is_pinned: false
+          };
+
+          const response = await this.createArticle(articleData);
+
+          // 成功
+          article.status = "success";
+          article.articleId = response.data?.id;
+          article.currentStep = "导入成功";
+          statistics.success++;
+          statistics.pending--;
+          onProgress(article);
+        } catch (error) {
+          // 失败
+          article.status = "failed";
+          article.error = error instanceof Error ? error.message : String(error);
+          article.currentStep = "导入失败";
+          statistics.failed++;
+          statistics.pending--;
+          onProgress(article);
+          logger.error(`导入文章失败: ${article.title}`, error);
+        }
+      }
+
+      return statistics;
+    },
+
+    /**
      * 重置CMS状态
      */
     resetCmsState() {

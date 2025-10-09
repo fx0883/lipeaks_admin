@@ -423,6 +423,8 @@ const handleAvatarUpload = async (file: File) => {
     formData.append("avatar", file);
     await memberStore.uploadMemberAvatar(memberId.value, formData);
     ElMessage.success(t("member.avatarUploadSuccess"));
+    // 重新加载会员详情以获取最新的头像URL
+    await fetchMemberDetail();
   } catch (error) {
     logger.error("上传头像失败", error);
   } finally {

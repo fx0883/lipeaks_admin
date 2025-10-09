@@ -322,16 +322,12 @@ const statusOptions = [
     label: t("member.statusActive")
   },
   {
+    value: "suspended",
+    label: t("member.statusSuspended")
+  },
+  {
     value: "inactive",
     label: t("member.statusInactive")
-  },
-  {
-    value: "locked",
-    label: t("member.statusLocked")
-  },
-  {
-    value: "pending",
-    label: t("member.statusPending")
   }
 ];
 

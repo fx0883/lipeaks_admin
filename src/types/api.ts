@@ -19,8 +19,19 @@ export interface PaginationData<T = any> {
   data: T[];             // 数据列表
 }
 
+// Django REST Framework 分页响应数据接口
+export interface DRFPaginationData<T = any> {
+  count: number;          // 总条数
+  next?: string;          // 下一页URL
+  previous?: string;      // 上一页URL
+  results: T[];           // 数据列表
+}
+
 // 分页响应接口
 export interface PaginationResponse<T = any> extends ApiResponse<PaginationData<T>> {}
+
+// Django REST Framework 分页响应接口
+export interface DRFPaginationResponse<T = any> extends ApiResponse<DRFPaginationData<T>> {}
 
 // 用户信息接口
 export interface UserInfo {

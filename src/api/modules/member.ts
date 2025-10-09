@@ -23,10 +23,10 @@ import logger from "@/utils/logger";
  */
 export function getMemberList(params: MemberListParams = {}) {
   logger.debug("API请求: 获取会员列表", params);
-  
+
   return http.request<PaginationResponse<Member>>(
     "get",
-    "/members/",
+    "/admin/members/",
     { params }
   );
 }
@@ -36,10 +36,10 @@ export function getMemberList(params: MemberListParams = {}) {
  */
 export function getMemberDetail(id: number) {
   logger.debug("API请求: 获取会员详情", { id });
-  
+
   return http.request<ApiResponse<Member>>(
     "get",
-    `/members/${id}/`
+    `/admin/members/${id}/`
   );
 }
 
@@ -48,23 +48,36 @@ export function getMemberDetail(id: number) {
  */
 export function createMember(data: MemberCreateUpdateParams) {
   logger.debug("API请求: 创建会员", data);
-  
+
   return http.request<ApiResponse<Member>>(
     "post",
-    "/members/",
+    "/admin/members/",
     { data }
   );
 }
 
 /**
- * 更新会员
+ * 完整更新会员
  */
 export function updateMember(id: number, data: MemberCreateUpdateParams) {
-  logger.debug("API请求: 更新会员", { id, data });
-  
+  logger.debug("API请求: 完整更新会员", { id, data });
+
   return http.request<ApiResponse<Member>>(
     "put",
-    `/members/${id}/`,
+    `/admin/members/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 部分更新会员（推荐用于编辑和重置密码）
+ */
+export function partialUpdateMember(id: number, data: Partial<MemberCreateUpdateParams>) {
+  logger.debug("API请求: 部分更新会员", { id, data });
+
+  return http.request<ApiResponse<Member>>(
+    "patch",
+    `/admin/members/${id}/`,
     { data }
   );
 }
@@ -74,10 +87,10 @@ export function updateMember(id: number, data: MemberCreateUpdateParams) {
  */
 export function deleteMember(id: number) {
   logger.debug("API请求: 删除会员", { id });
-  
+
   return http.request<ApiResponse<any>>(
     "delete",
-    `/members/${id}/`
+    `/admin/members/${id}/`
   );
 }
 
@@ -86,10 +99,10 @@ export function deleteMember(id: number) {
  */
 export function searchMembers(query: string, params: MemberListParams = {}) {
   logger.debug("API请求: 搜索会员", { query, params });
-  
+
   return http.request<PaginationResponse<MemberSearchResult>>(
     "get",
-    `/members/?search=${encodeURIComponent(query)}`,
+    `/admin/members/?search=${encodeURIComponent(query)}`,
     { params }
   );
 }
@@ -103,10 +116,10 @@ export function searchMembers(query: string, params: MemberListParams = {}) {
  */
 export function bulkUpdateMembers(data: MemberBulkOperationParams) {
   logger.debug("API请求: 批量更新会员", { count: data.member_ids.length });
-  
+
   return http.request<ApiResponse<MemberBulkOperationResponse>>(
     "put",
-    "/members/bulk/update/",
+    "/admin/members/bulk/update/",
     { data }
   );
 }
@@ -116,10 +129,10 @@ export function bulkUpdateMembers(data: MemberBulkOperationParams) {
  */
 export function bulkDeleteMembers(memberIds: number[]) {
   logger.debug("API请求: 批量删除会员", { count: memberIds.length });
-  
+
   return http.request<ApiResponse<MemberBulkOperationResponse>>(
     "delete",
-    "/members/bulk/delete/",
+    "/admin/members/bulk/delete/",
     { data: { member_ids: memberIds } }
   );
 }
@@ -133,7 +146,7 @@ export function bulkDeleteMembers(memberIds: number[]) {
  */
 export function getMemberCustomerRelations(memberId: number, params: { page?: number; page_size?: number } = {}) {
   logger.debug("API请求: 获取会员的客户关系", { memberId, params });
-  
+
   return http.request<ApiResponse<any[]>>(
     "get",
     `/customers/members/relations/member-customers/?member_id=${memberId}`,
@@ -146,7 +159,7 @@ export function getMemberCustomerRelations(memberId: number, params: { page?: nu
  */
 export function createMemberCustomerRelation(data: MemberCustomerRelationCreateUpdateParams) {
   logger.debug("API请求: 创建会员-客户关系", data);
-  
+
   return http.request<ApiResponse<MemberCustomerRelation>>(
     "post",
     `/customers/members/relations/`,
@@ -159,7 +172,7 @@ export function createMemberCustomerRelation(data: MemberCustomerRelationCreateU
  */
 export function getMemberCustomerRelationDetail(memberId: number, relationId: number) {
   logger.debug("API请求: 获取会员-客户关系详情", { memberId, relationId });
-  
+
   return http.request<ApiResponse<MemberCustomerRelation>>(
     "get",
     `/members/${memberId}/customers/${relationId}/`
@@ -171,7 +184,7 @@ export function getMemberCustomerRelationDetail(memberId: number, relationId: nu
  */
 export function updateMemberCustomerRelation(memberId: number, relationId: number, data: Omit<MemberCustomerRelationCreateUpdateParams, 'member_id'>) {
   logger.debug("API请求: 更新会员-客户关系", { memberId, relationId, data });
-  
+
   return http.request<ApiResponse<MemberCustomerRelation>>(
     "put",
     `/customers/members/relations/${relationId}/`,
@@ -184,7 +197,7 @@ export function updateMemberCustomerRelation(memberId: number, relationId: numbe
  */
 export function deleteMemberCustomerRelation(memberId: number, relationId: number) {
   logger.debug("API请求: 删除会员-客户关系", { memberId, relationId });
-  
+
   return http.request<ApiResponse<any>>(
     "delete",
     `/members/${memberId}/customers/${relationId}/`
@@ -196,7 +209,7 @@ export function deleteMemberCustomerRelation(memberId: number, relationId: numbe
  */
 export function setPrimaryCustomerRelation(memberId: number, relationId: number) {
   logger.debug("API请求: 设置主要客户", { memberId, relationId });
-  
+
   return http.request<ApiResponse<MemberCustomerRelation>>(
     "post",
     `/members/${memberId}/customers/${relationId}/set-primary/`
@@ -208,7 +221,7 @@ export function setPrimaryCustomerRelation(memberId: number, relationId: number)
  */
 export function getPrimaryCustomerRelation(memberId: number) {
   logger.debug("API请求: 获取主要客户", { memberId });
-  
+
   return http.request<ApiResponse<MemberCustomerRelation>>(
     "get",
     `/members/${memberId}/customers/primary/`
@@ -220,17 +233,18 @@ export function getPrimaryCustomerRelation(memberId: number) {
  */
 
 /**
- * 重置会员密码
+ * 重置会员密码（已废弃 - 请使用 partialUpdateMember 并传入 password 和 confirm_password 字段）
+ * @deprecated 使用 partialUpdateMember 代替
  */
-export function resetMemberPassword(memberId: number, data: MemberPasswordResetParams) {
-  logger.debug("API请求: 重置会员密码", { memberId });
-  
-  return http.request<ApiResponse<any>>(
-    "post",
-    `/members/${memberId}/reset-password/`,
-    { data }
-  );
-}
+// export function resetMemberPassword(memberId: number, data: MemberPasswordResetParams) {
+//   logger.debug("API请求: 重置会员密码", { memberId });
+//   
+//   return http.request<ApiResponse<any>>(
+//     "post",
+//     `/members/${memberId}/reset-password/`,
+//     { data }
+//   );
+// }
 
 /**
  * 会员头像管理API
@@ -241,10 +255,10 @@ export function resetMemberPassword(memberId: number, data: MemberPasswordResetP
  */
 export function uploadMemberAvatar(memberId: number, formData: FormData) {
   logger.debug("API请求: 上传会员头像", { memberId });
-  
+
   return http.request<ApiResponse<MemberAvatarUploadResponse>>(
     "post",
-    `/members/${memberId}/avatar/upload/`,
+    `/admin/members/${memberId}/avatar/upload/`,
     {
       data: formData,
       headers: {
@@ -259,15 +273,15 @@ export function uploadMemberAvatar(memberId: number, formData: FormData) {
  */
 export function deleteMemberCustomerRelations(memberId: number, customerIds: number[]) {
   logger.debug("API请求: 删除会员-客户关系", { memberId, customerIds });
-  
+
   return http.request<ApiResponse<any>>(
     "post",
     `/customers/members/relations/member-customers/delete/`,
-    { 
-      data: { 
-        member_id: memberId, 
-        customer_ids: customerIds 
-      } 
+    {
+      data: {
+        member_id: memberId,
+        customer_ids: customerIds
+      }
     }
   );
 } 

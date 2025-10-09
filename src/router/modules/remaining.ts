@@ -37,5 +37,15 @@ export default [
       showLink: false,
       rank: 103
     }
+  },
+  {
+    path: "/cms/article/import",
+    name: "ArticleImport",
+    component: () => import("@/views/cms/article/import.vue"),
+    meta: {
+      title: $t("cms.article.import"),
+      showLink: false,
+      rank: 104
+    }
   }
 ] satisfies Array<RouteConfigsTable>;

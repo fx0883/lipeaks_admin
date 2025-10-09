@@ -9,6 +9,13 @@ import { createApp, type Directive } from "vue";
 import { useElementPlus } from "@/plugins/elementPlus";
 import { injectResponsiveStorage } from "@/utils/responsive";
 import logger from "@/utils/logger"; // 导入日志工具
+import { initTokenManager } from "@/utils/http/tokenManager"; // 导入Token管理器初始化
+import setupErrorHandling from "@/plugins/errorHandling"; // 导入错误处理插件
+// 开发环境导入测试工具
+if (import.meta.env.DEV) {
+  import("@/utils/errorSystem.test");
+  import("@/utils/errorMigration");
+}
 
 import Table from "@pureadmin/table";
 // import PureDescriptions from "@pureadmin/descriptions";
@@ -81,6 +88,15 @@ getPlatformConfig(app).then(async config => {
   app.use(router);
   await router.isReady();
   injectResponsiveStorage(app, config);
+
+  // 初始化Token管理器
+  initTokenManager();
+
+  // 设置全局错误处理
+  setupErrorHandling(app, {
+    reportToMonitoring: !import.meta.env.DEV // 生产环境上报错误
+  });
+
   app
     .use(MotionPlugin)
     .use(useI18n)

@@ -3,7 +3,7 @@
  */
 
 // 会员状态
-export type MemberStatus = "active" | "inactive" | "locked" | "pending";
+export type MemberStatus = "active" | "suspended" | "inactive";
 
 // 会员基本信息接口
 export interface Member {
@@ -13,12 +13,21 @@ export interface Member {
   email: string; // 邮箱
   phone?: string; // 手机号
   avatar?: string; // 头像URL
+  wechat_id?: string; // 微信号
   status: MemberStatus; // 状态
   tenant_id?: number; // 所属租户ID
+  tenant?: number; // 所属租户ID（别名）
   tenant_name?: string; // 所属租户名称（可选，仅在详情中返回）
-  created_at: string; // 创建时间
-  updated_at: string; // 更新时间
+  parent?: number | null; // 父账号ID（子账号时有值）
+  parent_username?: string | null; // 父账号用户名
+  is_sub_account?: boolean; // 是否为子账号
+  is_active?: boolean; // 是否激活
+  is_deleted?: boolean; // 是否已删除
+  created_at?: string; // 创建时间
+  updated_at?: string; // 更新时间
+  date_joined?: string; // 注册时间（ISO 8601）
   last_login?: string; // 最后登录时间
+  last_login_ip?: string | null; // 最后登录IP
   notes?: string; // 备注
   customer_count?: number; // 关联客户数量（可选，仅在详情中返回）
   first_name?: string; // 名
@@ -44,8 +53,9 @@ export interface MemberCreateUpdateParams {
   last_name?: string; // 姓
   email: string; // 邮箱
   phone?: string; // 手机号
+  wechat_id?: string; // 微信号
   password?: string; // 密码（仅创建时需要）
-  password_confirm?: string; // 确认密码（仅创建时需要）
+  confirm_password?: string; // 确认密码（仅创建时需要）
   status?: MemberStatus; // 状态
   tenant_id?: number; // 所属租户ID
   notes?: string; // 备注
