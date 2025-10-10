@@ -477,24 +477,35 @@ export const useCmsStore = defineStore("cms", {
 
     /**
      * 批量删除文章
+     * @param article_ids 文章ID数组
+     * @param force 是否强制删除
      */
-    async batchDeleteArticles(ids: number[]) {
+    async batchDeleteArticles(article_ids: number[], force = false) {
       this.loading.articleDelete = true;
       try {
-        const response = await cmsApi.batchDeleteArticles(ids);
-        if (response.success) {
+        const response = await cmsApi.batchDeleteArticles(article_ids, force);
+        if (response.success && response.data) {
+          const { deleted_ids, deleted_count, requested_count } = response.data;
+
+          logger.info(`批量删除成功: 请求${requested_count}个，删除${deleted_count}个`);
+
           // 如果当前选中的文章在被删除列表中，则清空当前选中的文章
-          if (this.currentArticle && ids.includes(this.currentArticle.id)) {
+          if (this.currentArticle && deleted_ids.includes(this.currentArticle.id)) {
             this.currentArticle = null;
           }
-          // 刷新列表
+
+          // 从列表中移除已删除的文章
           this.articles.data = this.articles.data.filter(
-            item => !ids.includes(item.id)
+            item => !deleted_ids.includes(item.id)
           );
+
+          // 更新总数
+          this.articles.total = Math.max(0, this.articles.total - deleted_count);
+
           return response;
         } else {
           logger.error(response.message || "批量删除文章失败");
-          return Promise.reject(new Error(response.message));
+          return Promise.reject(response);
         }
       } catch (error) {
         logger.error("批量删除文章失败", error);
