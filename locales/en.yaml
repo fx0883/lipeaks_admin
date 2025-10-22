@@ -2333,3 +2333,224 @@ license:
     statusTagRevoked: Revoked
     statusTagSuspended: Suspended
     statusTagBlacklisted: Blacklisted
+
+# Feedback System
+feedback:
+  feedbackManagement: Feedback Management
+  dashboard: Feedback Dashboard
+  
+  # Software Management
+  softwareManagement: Software Management
+  software:
+    categories: Software Categories
+    products: Software Products
+    productCreate: Create Software
+    productDetail: Software Detail
+    versions: Software Versions
+    createCategory: Create Category
+    editCategory: Edit Category
+    createProduct: Create Software Product
+    categoryName: Category Name
+    categoryCode: Category Code
+    categoryNamePlaceholder: Enter category name
+    categoryCodePlaceholder: Enter category code (e.g., web, mobile)
+    categoryNameRequired: Category name is required
+    categoryCodeRequired: Category code is required
+    categoryCodeFormat: Code can only contain lowercase letters, numbers and underscores
+    categoryCodeFormatError: Code format error, only lowercase letters, numbers and underscores allowed
+    description: Description
+    descriptionPlaceholder: Enter description
+    icon: Icon
+    iconPlaceholder: Enter icon name
+    sortOrder: Sort Order
+    softwareCount: Software Count
+    status: Status
+    deleteCategoryConfirm: Are you sure to delete category {name}?
+    productName: Product Name
+    productCode: Product Code
+    productNamePlaceholder: Enter product name
+    productCodePlaceholder: Enter product code (e.g., crm_system)
+    productNameRequired: Product name is required
+    productCodeRequired: Product code is required
+    category: Category
+    selectCategory: Select Category
+    categoryRequired: Please select category
+    website: Website
+    websitePlaceholder: Enter website URL
+    owner: Owner
+    ownerPlaceholder: Enter owner name
+    team: Team
+    teamPlaceholder: Enter team name
+    contactEmail: Contact Email
+    emailPlaceholder: Enter contact email
+    emailInvalid: Invalid email format
+    productStatus: Product Status
+    deleteProductConfirm: Are you sure to delete software product {name}?
+    feedbackCount: Feedback Count
+    versionCount: Version Count
+    currentVersion: Current Version
+    selectSoftware: Select Software
+    versionNumber: Version Number
+    versionCode: Version Code
+    releaseDate: Release Date
+    releaseNotes: Release Notes
+    stable: Stable
+    notFound: Software product not found
+    statistics: Statistics
+    totalFeedbacks: Total Feedbacks
+    openFeedbacks: Open Feedbacks
+    createProductTip: After creating a software product, you can add versions and receive user feedback
+    codeFormat: Code can only contain lowercase letters, numbers and underscores
+    
+  # Feedback Management
+  feedbacks:
+    list: Feedback List
+    submit: Submit Feedback
+    detail: Feedback Detail
+    edit: Edit Feedback
+    title: Title
+    status: Status
+    votes: Votes
+    createdAt: Created At
+    noData: No Feedback
+    
+  # Email System
+  emailManagement: Email Management
+  email:
+    templates: Email Templates
+    logs: Email Logs
+    createTemplate: Create Template
+    editTemplate: Edit Template
+    templateName: Template Name
+    templateType: Template Type
+    subject: Email Subject
+    bodyTemplate: Email Template
+    templateNamePlaceholder: Enter template name
+    selectTemplateType: Select template type
+    subjectPlaceholder: Enter email subject
+    bodyPlaceholder: Enter email template content (HTML supported)
+    templateNameRequired: Template name is required
+    templateTypeRequired: Please select template type
+    subjectRequired: Email subject is required
+    bodyRequired: Email template content is required
+    variableTip: You can use variables like {{user_name}}, {{feedback_title}}, etc.
+    availableVariables: Available Variables
+    deleteTemplateConfirm: Are you sure to delete template {name}?
+    updatedAt: Updated At
+    emailType: Email Type
+    type: Type
+    recipient: Recipient
+    sentAt: Sent At
+    retryCount: Retry Count
+    logDetail: Log Detail
+    
+  # Statistics
+  statistics: Statistics
+  stats:
+    total: Total
+    open: Open
+    resolved: Resolved
+    avgTime: Avg Resolution Time
+    totalFeedbacks: Total Feedbacks
+    openFeedbacks: Open Feedbacks
+    resolvedFeedbacks: Resolved Feedbacks
+    avgResolutionTime: Avg Resolution Time
+    feedbacksByType: Feedbacks by Type
+    feedbacksByStatus: Feedbacks by Status
+    priorityDistribution: Priority Distribution
+    dailyTrend: Daily Trend
+    topVoted: Top Voted
+    recentFeedbacks: Recent Feedbacks
+    startDate: Start Date
+    endDate: End Date
+    
+  # System Health
+  systemHealth: System Health
+  health:
+    overallStatus: Overall Status
+    healthy: Healthy
+    degraded: Degraded
+    unhealthy: Unhealthy
+    database: Database
+    asyncTasks: Async Tasks
+    email: Email Service
+    mode: Mode
+    version: Version
+    memory: Memory Usage
+    clients: Connected Clients
+    type: Type
+    fallback: Fallback Support
+    recommendations: Recommendations
+    
+  # Common
+  anonymous: Anonymous User
+  
+  # Filters
+  filters:
+    category: Category
+    allCategories: All Categories
+    type: Type
+    allTypes: All Types
+    status: Status
+    allStatuses: All Statuses
+    priority: Priority
+    allPriorities: All Priorities
+    ordering: Ordering
+    search: Search feedback...
+    all: All
+    
+  # Form
+  form:
+    category: Software Category
+    selectCategory: Select software category
+    categoryRequired: Please select software category
+    software: Software Product
+    selectSoftware: Select software product
+    softwareRequired: Please select software product
+    version: Software Version
+    selectVersion: Select version (optional)
+    type: Feedback Type
+    typeRequired: Please select feedback type
+    priority: Priority
+    priorityRequired: Please select priority
+    title: Feedback Title
+    titlePlaceholder: Briefly describe the issue or suggestion
+    titleRequired: Feedback title is required
+    titleLength: Title length should be between 5-200 characters
+    description: Detailed Description
+    descriptionPlaceholder: Please describe your issue or suggestion in detail...
+    descriptionRequired: Detailed description is required
+    descriptionLength: Description requires at least 10 characters
+    contactEmail: Contact Email
+    emailPlaceholder: For receiving feedback notifications
+    emailInvalid: Invalid email format
+    emailTip: Provide email to receive feedback progress notifications
+    contactName: Contact Name
+    namePlaceholder: Enter your name
+    submit: Submit Feedback
+    
+  # Detail Page
+  detail:
+    submitter: Submitter
+    software: Software
+    createdAt: Created At
+    resolvedAt: Resolved At
+    description: Detailed Description
+    environmentInfo: Environment Info
+    attachments: Attachments
+    voteUp: Vote Up
+    voteDown: Vote Down
+    replies: Replies
+    replyPlaceholder: Enter reply content...
+    internalNote: Internal Note (not visible to users)
+    sendReply: Send Reply
+    replyRequired: Reply content is required
+    noReplies: No replies yet
+    internal: Internal
+    statusHistory: Status History
+    adminActions: Admin Actions
+    selectStatus: Select new status
+    changeStatus: Change Status
+    statusChangeReason: Please enter status change reason
+    reasonRequired: Change reason is required
+    notFound: Feedback not found
