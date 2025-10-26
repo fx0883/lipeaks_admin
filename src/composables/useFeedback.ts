@@ -66,13 +66,44 @@ export function useFeedbackList(initialParams?: FeedbackListParams) {
     try {
       const response = await getFeedbackList(params);
 
+      logger.debug("反馈列表API响应", response);
+
       if (response.success && response.data) {
-        feedbacks.value = response.data.results || [];
-        pagination.total = response.data.count || 0;
-        pagination.page = params.page || 1;
-        pagination.pageSize = params.page_size || 20;
-        pagination.hasNext = !!response.data.next;
-        pagination.hasPrevious = !!response.data.previous;
+        // 处理自定义分页响应
+        if (response.data.results && Array.isArray(response.data.results)) {
+          feedbacks.value = response.data.results;
+          
+          // 提取分页信息
+          if (response.data.pagination) {
+            pagination.total = response.data.pagination.count || 0;
+            pagination.page = response.data.pagination.current_page || params.page || 1;
+            pagination.pageSize = response.data.pagination.page_size || params.page_size || 20;
+            pagination.hasNext = !!response.data.pagination.next;
+            pagination.hasPrevious = !!response.data.pagination.previous;
+          } else {
+            // 兼容 DRF 格式
+            pagination.total = response.data.count || 0;
+            pagination.page = params.page || 1;
+            pagination.pageSize = params.page_size || 20;
+            pagination.hasNext = !!response.data.next;
+            pagination.hasPrevious = !!response.data.previous;
+          }
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          // 处理双层嵌套数据格式 {data: {data: [...]}}
+          feedbacks.value = response.data.data;
+          pagination.total = response.data.data.length;
+          pagination.page = params.page || 1;
+          pagination.pageSize = params.page_size || 20;
+        } else if (Array.isArray(response.data)) {
+          // 如果直接是数组
+          feedbacks.value = response.data;
+          pagination.total = response.data.length;
+          pagination.page = params.page || 1;
+          pagination.pageSize = params.page_size || 20;
+        } else {
+          logger.warn("反馈列表数据格式异常", response.data);
+          feedbacks.value = [];
+        }
 
         logger.debug("获取反馈列表成功", {
           count: feedbacks.value.length,
@@ -85,6 +116,7 @@ export function useFeedbackList(initialParams?: FeedbackListParams) {
       error.value = err.message || "获取反馈列表失败";
       logger.error("获取反馈列表失败", err);
       message(error.value, { type: "error" });
+      feedbacks.value = [];
     } finally {
       loading.value = false;
     }
@@ -373,8 +405,22 @@ export function useFeedbackReplies(feedbackId: Ref<number> | number) {
     try {
       const response = await getFeedbackReplies(id);
 
+      logger.debug("回复列表API响应", response);
+
       if (response.success && response.data) {
-        replies.value = response.data;
+        // 处理自定义分页响应
+        if (response.data.results && Array.isArray(response.data.results)) {
+          replies.value = response.data.results;
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          // 处理双层嵌套数据格式 {data: {data: [...]}}
+          replies.value = response.data.data;
+        } else if (Array.isArray(response.data)) {
+          // 兼容直接返回数组的情况
+          replies.value = response.data;
+        } else {
+          logger.warn("回复数据格式异常", response.data);
+          replies.value = [];
+        }
         logger.debug("获取回复列表成功", { count: replies.value.length });
       } else {
         throw new Error(response.message || "获取回复失败");
@@ -382,6 +428,7 @@ export function useFeedbackReplies(feedbackId: Ref<number> | number) {
     } catch (err: any) {
       error.value = err.message || "获取回复失败";
       logger.error("获取回复失败", err);
+      replies.value = [];
     } finally {
       loading.value = false;
     }
@@ -444,11 +491,23 @@ export function useFeedbackAttachments(feedbackId: Ref<number> | number) {
     try {
       const response = await getFeedbackAttachments(id);
 
+      logger.debug("附件列表API响应", response);
+
       if (response.success && response.data) {
-        attachments.value = response.data;
+        // 处理自定义分页响应
+        if (response.data.results && Array.isArray(response.data.results)) {
+          attachments.value = response.data.results;
+        } else if (Array.isArray(response.data)) {
+          // 兼容直接返回数组的情况
+          attachments.value = response.data;
+        } else {
+          logger.warn("附件数据格式异常", response.data);
+          attachments.value = [];
+        }
       }
     } catch (err: any) {
       logger.error("获取附件列表失败", err);
+      attachments.value = [];
     } finally {
       loading.value = false;
     }

@@ -164,6 +164,145 @@
         />
       </div>
     </el-card>
+
+    <!-- 提交反馈对话框 -->
+    <el-dialog
+      v-model="submitDialogVisible"
+      :title="t('feedback.feedbacks.submit')"
+      width="800px"
+      @close="handleSubmitDialogClose"
+    >
+      <el-form
+        ref="submitFormRef"
+        :model="submitFormData"
+        :rules="submitRules"
+        label-width="120px"
+      >
+        <!-- 软件分类选择 -->
+        <el-form-item :label="t('feedback.form.category')" prop="categoryId">
+          <el-select
+            v-model="submitFormData.categoryId"
+            :placeholder="t('feedback.form.selectCategory')"
+            @change="handleCategoryChange"
+          >
+            <el-option
+              v-for="category in categories"
+              :key="category.id"
+              :label="category.name"
+              :value="category.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <!-- 软件产品选择 -->
+        <el-form-item :label="t('feedback.form.software')" prop="software">
+          <el-select
+            v-model="submitFormData.software"
+            :placeholder="t('feedback.form.selectSoftware')"
+            :disabled="!submitFormData.categoryId"
+            @change="handleSoftwareChange"
+          >
+            <el-option
+              v-for="software in softwareList"
+              :key="software.id"
+              :label="software.name"
+              :value="software.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <!-- 软件版本选择（可选） -->
+        <el-form-item :label="t('feedback.form.version')">
+          <el-select
+            v-model="submitFormData.software_version"
+            :placeholder="t('feedback.form.selectVersion')"
+            :disabled="!submitFormData.software"
+            clearable
+          >
+            <el-option
+              v-for="version in versions"
+              :key="version.id"
+              :label="version.version"
+              :value="version.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <!-- 反馈类型 -->
+        <el-form-item :label="t('feedback.form.type')" prop="feedback_type">
+          <el-radio-group v-model="submitFormData.feedback_type">
+            <el-radio value="bug">Bug报告</el-radio>
+            <el-radio value="feature">功能请求</el-radio>
+            <el-radio value="improvement">改进建议</el-radio>
+            <el-radio value="question">问题咨询</el-radio>
+            <el-radio value="other">其他</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <!-- 优先级 -->
+        <el-form-item :label="t('feedback.form.priority')" prop="priority">
+          <el-radio-group v-model="submitFormData.priority">
+            <el-radio value="critical">紧急</el-radio>
+            <el-radio value="high">高</el-radio>
+            <el-radio value="medium">中</el-radio>
+            <el-radio value="low">低</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <!-- 标题 -->
+        <el-form-item :label="t('feedback.form.title')" prop="title">
+          <el-input
+            v-model="submitFormData.title"
+            :placeholder="t('feedback.form.titlePlaceholder')"
+            maxlength="200"
+            show-word-limit
+          />
+        </el-form-item>
+
+        <!-- 详细描述 -->
+        <el-form-item
+          :label="t('feedback.form.description')"
+          prop="description"
+        >
+          <el-input
+            v-model="submitFormData.description"
+            type="textarea"
+            :rows="5"
+            :placeholder="t('feedback.form.descriptionPlaceholder')"
+            maxlength="2000"
+            show-word-limit
+          />
+        </el-form-item>
+
+        <!-- 联系信息 -->
+        <el-form-item :label="t('feedback.form.contactName')">
+          <el-input
+            v-model="submitFormData.contact_name"
+            :placeholder="t('feedback.form.namePlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.form.contactEmail')">
+          <el-input
+            v-model="submitFormData.contact_email"
+            :placeholder="t('feedback.form.emailPlaceholder')"
+          />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="submitDialogVisible = false">
+          {{ t("buttons.cancel") }}
+        </el-button>
+        <el-button
+          type="primary"
+          :loading="submittingFeedback"
+          @click="handleSubmitFeedback"
+        >
+          {{ t("buttons.submit") }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -172,9 +311,14 @@ import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useFeedbackList } from "@/composables/useFeedback";
+import { useSoftwareSelector } from "@/composables/useSoftware";
+import { createFeedback } from "@/api/modules/feedback";
 import { ElMessageBox } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
 import { useDebounceFn } from "@vueuse/core";
+import type { FormInstance, FormRules } from "element-plus";
+import type { FeedbackCreateParams } from "@/types/feedback";
+import { message } from "@/utils/message";
 import dayjs from "dayjs";
 
 // Icons
@@ -201,8 +345,95 @@ const {
   changePage
 } = useFeedbackList();
 
+// 软件选择器
+const {
+  categories,
+  softwareList,
+  versions,
+  selectedCategoryId,
+  selectedSoftwareId,
+  selectedVersionId,
+  selectCategory,
+  selectSoftware,
+  selectVersion
+} = useSoftwareSelector();
+
 // 搜索文本（用于防抖）
 const searchText = ref("");
+
+// 提交反馈对话框
+const submitDialogVisible = ref(false);
+const submitFormRef = ref<FormInstance>();
+const submittingFeedback = ref(false);
+
+// 提交表单数据
+const submitFormData = reactive<{
+  categoryId: number | null;
+  software: number | null;
+  software_version: number | null;
+  feedback_type: string;
+  priority: string;
+  title: string;
+  description: string;
+  contact_email: string;
+  contact_name: string;
+}>({
+  categoryId: null,
+  software: null,
+  software_version: null,
+  feedback_type: "bug",
+  priority: "medium",
+  title: "",
+  description: "",
+  contact_email: "",
+  contact_name: ""
+});
+
+// 提交表单验证规则
+const submitRules = reactive<FormRules>({
+  categoryId: [
+    {
+      required: true,
+      message: t("feedback.form.categoryRequired"),
+      trigger: "change"
+    }
+  ],
+  software: [
+    {
+      required: true,
+      message: t("feedback.form.softwareRequired"),
+      trigger: "change"
+    }
+  ],
+  feedback_type: [
+    {
+      required: true,
+      message: t("feedback.form.typeRequired"),
+      trigger: "change"
+    }
+  ],
+  priority: [
+    {
+      required: true,
+      message: t("feedback.form.priorityRequired"),
+      trigger: "change"
+    }
+  ],
+  title: [
+    {
+      required: true,
+      message: t("feedback.form.titleRequired"),
+      trigger: "blur"
+    }
+  ],
+  description: [
+    {
+      required: true,
+      message: t("feedback.form.descriptionRequired"),
+      trigger: "blur"
+    }
+  ]
+});
 
 // 页面加载时获取数据
 onMounted(() => {
@@ -250,7 +481,87 @@ const handleViewDetail = (id: number) => {
  * 创建反馈
  */
 const handleCreate = () => {
-  router.push("/feedback/feedbacks/submit");
+  resetSubmitForm();
+  submitDialogVisible.value = true;
+};
+
+/**
+ * 处理分类变化
+ */
+const handleCategoryChange = (categoryId: number) => {
+  selectCategory(categoryId);
+  submitFormData.software = null;
+  submitFormData.software_version = null;
+};
+
+/**
+ * 处理软件变化
+ */
+const handleSoftwareChange = (softwareId: number) => {
+  selectSoftware(softwareId);
+  submitFormData.software_version = null;
+};
+
+/**
+ * 提交反馈
+ */
+const handleSubmitFeedback = async () => {
+  if (!submitFormRef.value) return;
+
+  await submitFormRef.value.validate(async valid => {
+    if (!valid) return;
+
+    submittingFeedback.value = true;
+
+    try {
+      const feedbackData: FeedbackCreateParams = {
+        title: submitFormData.title,
+        description: submitFormData.description,
+        feedback_type: submitFormData.feedback_type as any,
+        priority: submitFormData.priority as any,
+        software: submitFormData.software!,
+        software_version: submitFormData.software_version || undefined,
+        contact_email: submitFormData.contact_email || undefined,
+        contact_name: submitFormData.contact_name || undefined
+      };
+
+      const response = await createFeedback(feedbackData);
+
+      if (response.success) {
+        message(t("common.createSuccess"), { type: "success" });
+        submitDialogVisible.value = false;
+        fetchFeedbacks(); // 刷新列表
+        resetSubmitForm();
+      }
+    } catch (error) {
+      console.error("提交失败:", error);
+    } finally {
+      submittingFeedback.value = false;
+    }
+  });
+};
+
+/**
+ * 对话框关闭
+ */
+const handleSubmitDialogClose = () => {
+  resetSubmitForm();
+  submitFormRef.value?.clearValidate();
+};
+
+/**
+ * 重置提交表单
+ */
+const resetSubmitForm = () => {
+  submitFormData.categoryId = null;
+  submitFormData.software = null;
+  submitFormData.software_version = null;
+  submitFormData.feedback_type = "bug";
+  submitFormData.priority = "medium";
+  submitFormData.title = "";
+  submitFormData.description = "";
+  submitFormData.contact_email = "";
+  submitFormData.contact_name = "";
 };
 
 /**

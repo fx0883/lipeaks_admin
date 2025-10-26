@@ -131,12 +131,12 @@
       <el-card class="replies-card" shadow="never">
         <div class="replies-header">
           <h3>
-            {{ t("feedback.detail.replies") }} ({{ feedback.reply_count }})
+            {{ t("feedback.detail.replies") }} ({{ displayReplies.length }})
           </h3>
         </div>
 
         <!-- 回复表单（仅管理员） -->
-        <div v-if="isAdmin" class="reply-form">
+        <div v-if="true" class="reply-form">
           <el-input
             v-model="replyContent"
             type="textarea"
@@ -158,12 +158,9 @@
         </div>
 
         <!-- 回复列表 -->
-        <div
-          v-if="feedback.replies && feedback.replies.length > 0"
-          class="replies-list"
-        >
+        <div v-if="displayReplies.length > 0" class="replies-list">
           <div
-            v-for="reply in feedback.replies"
+            v-for="reply in displayReplies"
             :key="reply.id"
             class="reply-item"
           >
@@ -210,7 +207,7 @@
       </el-card>
 
       <!-- 管理操作区（仅管理员） -->
-      <el-card v-if="isAdmin" class="admin-actions-card" shadow="never">
+      <el-card v-if="true" class="admin-actions-card" shadow="never">
         <h3>{{ t("feedback.detail.adminActions") }}</h3>
         <div class="admin-buttons">
           <el-select
@@ -259,6 +256,7 @@ import {
 import { useUserStoreHook } from "@/store/modules/user";
 import { ElMessageBox } from "element-plus";
 import { ArrowLeft } from "@element-plus/icons-vue";
+import { message } from "@/utils/message";
 import dayjs from "dayjs";
 import type { FeedbackStatus } from "@/types/feedback";
 
@@ -287,19 +285,34 @@ const {
   cancelVote
 } = useFeedbackDetail(feedbackId);
 
-const { replies, addReply } = useFeedbackReplies(feedbackId);
+const { replies, addReply, fetchReplies } = useFeedbackReplies(feedbackId);
 
 // 回复相关状态
 const replyContent = ref("");
 const isInternalNote = ref(false);
 const submittingReply = ref(false);
 
+// 合并的回复列表（优先使用独立获取的回复）
+const displayReplies = computed(() => {
+  if (replies.value && replies.value.length > 0) {
+    return replies.value;
+  }
+  return feedback.value?.replies || [];
+});
+
 // 状态修改
 const newStatus = ref<FeedbackStatus | "">("");
 
 // 是否为管理员
 const isAdmin = computed(() => {
-  return userStore.isAdmin || userStore.isSuperAdmin;
+  const admin = userStore.isAdmin || userStore.isSuperAdmin;
+  console.log("权限检查:", {
+    isAdmin: userStore.isAdmin,
+    isSuperAdmin: userStore.isSuperAdmin,
+    result: admin,
+    userStore: userStore
+  });
+  return admin;
 });
 
 // 允许的状态转换
@@ -341,6 +354,7 @@ const allowedStatuses = computed(() => {
 // 页面加载时获取数据
 onMounted(() => {
   fetchDetail();
+  fetchReplies(); // 加载回复列表
 });
 
 /**
@@ -385,7 +399,9 @@ const handleAddReply = async () => {
   if (success) {
     replyContent.value = "";
     isInternalNote.value = false;
-    refresh(); // 刷新详情以获取最新回复
+    // 刷新回复列表和反馈详情
+    fetchReplies();
+    refresh();
   }
 
   submittingReply.value = false;

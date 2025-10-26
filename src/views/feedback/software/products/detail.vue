@@ -30,7 +30,7 @@
             {{ software.code }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('feedback.software.category')">
-            {{ software.category_name }}
+            {{ getCategoryName(software) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('feedback.software.owner')">
             {{ software.owner || "-" }}
@@ -212,6 +212,16 @@ const getStatusLabel = (status: string) => {
     deprecated: "已废弃"
   };
   return statusLabels[status] || status;
+};
+
+/**
+ * 获取分类名称
+ */
+const getCategoryName = (soft: Software) => {
+  if (typeof soft.category === "object" && soft.category !== null) {
+    return soft.category.name;
+  }
+  return soft.category_name || "-";
 };
 
 // 页面加载

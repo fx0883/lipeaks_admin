@@ -48,8 +48,22 @@ export function useSoftwareCategories(autoFetch = true) {
     try {
       const response = await getSoftwareCategoryList(params);
 
+      logger.debug("软件分类API响应", response);
+
       if (response.success && response.data) {
-        categories.value = response.data;
+        // 处理自定义分页响应格式
+        if (response.data.results && Array.isArray(response.data.results)) {
+          categories.value = response.data.results;
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          // 处理双层嵌套数据格式 {data: {data: [...]}}
+          categories.value = response.data.data;
+        } else if (Array.isArray(response.data)) {
+          // 兼容直接返回数组的情况
+          categories.value = response.data;
+        } else {
+          logger.warn("分类数据格式异常", response.data);
+          categories.value = [];
+        }
         logger.debug("获取软件分类成功", { count: categories.value.length });
       } else {
         throw new Error(response.message || "获取软件分类失败");
@@ -58,6 +72,7 @@ export function useSoftwareCategories(autoFetch = true) {
       error.value = err.message || "获取软件分类失败";
       logger.error("获取软件分类失败", err);
       message(error.value, { type: "error" });
+      categories.value = [];
     } finally {
       loading.value = false;
     }
@@ -189,13 +204,44 @@ export function useSoftwareList(initialParams?: SoftwareListParams) {
     try {
       const response = await getSoftwareList(params);
 
+      logger.debug("软件列表API响应", response);
+
       if (response.success && response.data) {
-        softwareList.value = response.data.results || [];
-        pagination.total = response.data.count || 0;
-        pagination.page = params.page || 1;
-        pagination.pageSize = params.page_size || 20;
-        pagination.hasNext = !!response.data.next;
-        pagination.hasPrevious = !!response.data.previous;
+        // 处理自定义分页响应
+        if (response.data.results && Array.isArray(response.data.results)) {
+          softwareList.value = response.data.results;
+          
+          // 提取分页信息
+          if (response.data.pagination) {
+            pagination.total = response.data.pagination.count || 0;
+            pagination.page = response.data.pagination.current_page || params.page || 1;
+            pagination.pageSize = response.data.pagination.page_size || params.page_size || 20;
+            pagination.hasNext = !!response.data.pagination.next;
+            pagination.hasPrevious = !!response.data.pagination.previous;
+          } else {
+            // 兼容 DRF 格式
+            pagination.total = response.data.count || 0;
+            pagination.page = params.page || 1;
+            pagination.pageSize = params.page_size || 20;
+            pagination.hasNext = !!response.data.next;
+            pagination.hasPrevious = !!response.data.previous;
+          }
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          // 处理双层嵌套数据格式 {data: {data: [...]}}
+          softwareList.value = response.data.data;
+          pagination.total = response.data.data.length;
+          pagination.page = params.page || 1;
+          pagination.pageSize = params.page_size || 20;
+        } else if (Array.isArray(response.data)) {
+          // 如果直接是数组
+          softwareList.value = response.data;
+          pagination.total = response.data.length;
+          pagination.page = params.page || 1;
+          pagination.pageSize = params.page_size || 20;
+        } else {
+          logger.warn("软件列表数据格式异常", response.data);
+          softwareList.value = [];
+        }
 
         logger.debug("获取软件列表成功", {
           count: softwareList.value.length,
@@ -208,6 +254,7 @@ export function useSoftwareList(initialParams?: SoftwareListParams) {
       error.value = err.message || "获取软件列表失败";
       logger.error("获取软件列表失败", err);
       message(error.value, { type: "error" });
+      softwareList.value = [];
     } finally {
       loading.value = false;
     }
@@ -355,8 +402,22 @@ export function useSoftwareVersions(softwareId: Ref<number | null> | number | nu
     try {
       const response = await getSoftwareVersions(id);
 
+      logger.debug("软件版本API响应", response);
+
       if (response.success && response.data) {
-        versions.value = response.data;
+        // 处理自定义分页响应
+        if (response.data.results && Array.isArray(response.data.results)) {
+          versions.value = response.data.results;
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          // 处理双层嵌套数据格式 {data: {data: [...]}}
+          versions.value = response.data.data;
+        } else if (Array.isArray(response.data)) {
+          // 兼容直接返回数组的情况
+          versions.value = response.data;
+        } else {
+          logger.warn("版本数据格式异常", response.data);
+          versions.value = [];
+        }
         logger.debug("获取软件版本成功", { count: versions.value.length });
       } else {
         throw new Error(response.message || "获取软件版本失败");
@@ -364,6 +425,7 @@ export function useSoftwareVersions(softwareId: Ref<number | null> | number | nu
     } catch (err: any) {
       error.value = err.message || "获取软件版本失败";
       logger.error("获取软件版本失败", err);
+      versions.value = [];
     } finally {
       loading.value = false;
     }

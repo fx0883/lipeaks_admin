@@ -27,6 +27,11 @@ common:
   yes: 是
   no: 否
   close: 关闭
+  unknown: 未知
+  unavailable: 不可用
+  disabled: 禁用
+  enabled: 启用
+  normal: 正常
   filter: 筛选
   advancedFilter: 高级筛选
   collapseFilter: 收起筛选
@@ -1061,6 +1066,7 @@ buttons:
   cancel: 取消
   submit: 提交
   back: 返回
+  refresh: 刷新
 
 panel:
   pureSystemSet: 系统设置
@@ -2296,6 +2302,20 @@ feedback:
     openFeedbacks: 未解决反馈
     createProductTip: 创建软件产品后，可以为其添加版本并接收用户反馈
     codeFormat: 代码只能包含小写字母、数字和下划线
+    codeFormatError: 代码格式错误，只能包含小写字母、数字和下划线
+    productEdit: 编辑软件产品
+    createVersion: 创建版本
+    editVersion: 编辑版本
+    versionPlaceholder: 请输入版本号（如：v2.1.0）
+    versionRequired: 版本号不能为空
+    versionFormatError: 版本号格式错误，应为 v主版本.次版本.修订版本
+    versionCodeRequired: 版本代码不能为空
+    versionCodeMin: 版本代码必须大于0
+    releaseNotesPlaceholder: "## 新功能\n- 功能1\n\n## Bug修复\n- 修复1"
+    downloadUrl: 下载链接
+    downloadUrlPlaceholder: 请输入下载链接
+    selectDate: 选择日期
+    deleteVersionConfirm: 确定要删除版本 {version} 吗？
     
   # 反馈管理
   feedbacks:
@@ -2328,7 +2348,7 @@ feedback:
     templateTypeRequired: 请选择模板类型
     subjectRequired: 邮件主题不能为空
     bodyRequired: 邮件模板内容不能为空
-    variableTip: 可使用变量如 {{user_name}}, {{feedback_title}} 等
+    variableTip: 可使用变量如 {user_name}, {feedback_title} 等
     availableVariables: 可用变量
     deleteTemplateConfirm: 确定要删除模板 {name} 吗？
     updatedAt: 更新时间
@@ -2449,31 +2469,3 @@ feedback:
     statusChangeReason: 请输入状态变更原因
     reasonRequired: 变更原因不能为空
     notFound: 反馈不存在
-
-# 按钮翻译
-buttons:
-  back: 返回
-  cancel: 取消
-  confirm: 确认
-  submit: 提交
-  reset: 重置
-  refresh: 刷新
-  view: 查看
-  edit: 编辑
-  delete: 删除
-  save: 保存
-  
-# 通用翻译
-common:
-  warning: 警告
-  active: 启用
-  inactive: 停用
-  normal: 正常
-  unavailable: 不可用
-  enabled: 已启用
-  disabled: 已禁用
-  unknown: 未知
-  createSuccess: 创建成功
-  updateSuccess: 更新成功
-  deleteSuccess: 删除成功
-  error: 错误

@@ -127,10 +127,10 @@
 
         <el-form-item
           :label="t('feedback.email.bodyTemplate')"
-          prop="body_template"
+          prop="body_html"
         >
           <el-input
-            v-model="dialogFormData.body_template"
+            v-model="dialogFormData.body_html"
             type="textarea"
             :rows="12"
             :placeholder="t('feedback.email.bodyPlaceholder')"
@@ -215,7 +215,7 @@ const dialogFormData = reactive<EmailTemplateCreateParams>({
   template_type: "reply",
   name: "",
   subject: "",
-  body_template: "",
+  body_html: "",
   is_active: true
 });
 
@@ -249,7 +249,7 @@ const dialogRules = reactive<FormRules>({
       trigger: "blur"
     }
   ],
-  body_template: [
+  body_html: [
     {
       required: true,
       message: t("feedback.email.bodyRequired"),
@@ -268,10 +268,26 @@ const fetchTemplates = async () => {
     const response = await getEmailTemplateList();
 
     if (response.success && response.data) {
-      templates.value = response.data;
+      // 处理多种数据格式
+      if (Array.isArray(response.data)) {
+        templates.value = response.data;
+      } else if (
+        response.data.results &&
+        Array.isArray(response.data.results)
+      ) {
+        templates.value = response.data.results;
+      } else if (response.data.data && Array.isArray(response.data.data)) {
+        templates.value = response.data.data;
+      } else if (response.data.id) {
+        // 如果返回的是单个对象，包装成数组
+        templates.value = [response.data];
+      } else {
+        templates.value = [];
+      }
     }
   } catch (error) {
     console.error("获取邮件模板失败:", error);
+    templates.value = [];
   } finally {
     loading.value = false;
   }
@@ -297,7 +313,7 @@ const handleEdit = (template: EmailTemplate) => {
   dialogFormData.template_type = template.template_type;
   dialogFormData.name = template.name;
   dialogFormData.subject = template.subject;
-  dialogFormData.body_template = template.body_template;
+  dialogFormData.body_html = template.body_html;
   dialogFormData.is_active = template.is_active;
 
   dialogVisible.value = true;
@@ -357,9 +373,38 @@ const handleDialogSubmit = async () => {
         );
         dialogVisible.value = false;
         fetchTemplates();
+      } else if (response && !response.success) {
+        // 处理业务错误
+        if (response.code === 4003) {
+          message("权限不足：只有租户管理员可以管理邮件模板", {
+            type: "error"
+          });
+          console.error("权限错误详情:", response);
+        } else {
+          message(response.message || "操作失败", { type: "error" });
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("操作失败:", error);
+
+      // 处理HTTP错误
+      if (error.response) {
+        if (error.response.status === 403) {
+          message("权限不足：只有租户管理员可以管理邮件模板", {
+            type: "error"
+          });
+          console.error("HTTP 403 错误 - 权限不足");
+          console.error("当前用户信息:", error.response.data);
+        } else if (error.response.status === 401) {
+          message("登录已过期，请重新登录", { type: "error" });
+        } else {
+          message(error.response.data?.message || "操作失败", {
+            type: "error"
+          });
+        }
+      } else {
+        message("网络错误或服务器异常", { type: "error" });
+      }
     } finally {
       submitting.value = false;
     }
@@ -381,7 +426,7 @@ const resetDialogForm = () => {
   dialogFormData.template_type = "reply";
   dialogFormData.name = "";
   dialogFormData.subject = "";
-  dialogFormData.body_template = "";
+  dialogFormData.body_html = "";
   dialogFormData.is_active = true;
 };
 

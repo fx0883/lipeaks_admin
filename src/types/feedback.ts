@@ -74,9 +74,9 @@ export interface Software {
   name: string;
   code: string;
   description?: string;
-  category: number;
+  category?: number;
+  category_id?: number;
   category_name?: string;
-  category_detail?: SoftwareCategory;
   logo?: string;
   website?: string;
   owner?: string;
@@ -90,6 +90,7 @@ export interface Software {
   open_feedbacks?: number;
   version_count?: number;
   versions?: SoftwareVersion[];
+  metadata?: Record<string, any>;
   created_at: string;
   updated_at: string;
 }
@@ -378,7 +379,7 @@ export interface EmailTemplate {
   template_type: EmailTemplateType;
   name: string;
   subject: string;
-  body_template: string;
+  body_html: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -400,7 +401,7 @@ export interface EmailTemplateCreateParams {
   template_type: EmailTemplateType;
   name: string;
   subject: string;
-  body_template: string;
+  body_html: string;
   is_active?: boolean;
 }
 
@@ -499,31 +500,48 @@ export interface RedisStatus {
   }>;
 }
 
+// ==================== 自定义分页响应类型 ====================
+
+/**
+ * 自定义分页响应格式（后端使用）
+ */
+export interface CustomPaginationResponse<T = any> {
+  pagination: {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    page_size: number;
+    current_page: number;
+    total_pages: number;
+  };
+  results: T[];
+}
+
 // ==================== API 响应类型 ====================
 
 export type SoftwareCategoryResponse = ApiResponse<SoftwareCategory>;
-export type SoftwareCategoryListResponse = ApiResponse<SoftwareCategory[]>;
+export type SoftwareCategoryListResponse = ApiResponse<SoftwareCategory[] | CustomPaginationResponse<SoftwareCategory>>;
 
 export type SoftwareResponse = ApiResponse<Software>;
-export type SoftwareListResponse = DRFPaginationResponse<Software>;
+export type SoftwareListResponse = ApiResponse<Software[] | CustomPaginationResponse<Software>>;
 
 export type SoftwareVersionResponse = ApiResponse<SoftwareVersion>;
-export type SoftwareVersionListResponse = ApiResponse<SoftwareVersion[]>;
+export type SoftwareVersionListResponse = ApiResponse<SoftwareVersion[] | CustomPaginationResponse<SoftwareVersion>>;
 
 export type FeedbackResponse = ApiResponse<FeedbackDetail>;
-export type FeedbackListResponse = DRFPaginationResponse<Feedback>;
+export type FeedbackListResponse = ApiResponse<CustomPaginationResponse<Feedback>>;
 
 export type FeedbackReplyResponse = ApiResponse<FeedbackReply>;
-export type FeedbackReplyListResponse = ApiResponse<FeedbackReply[]>;
+export type FeedbackReplyListResponse = ApiResponse<CustomPaginationResponse<FeedbackReply>>;
 
 export type FeedbackAttachmentResponse = ApiResponse<FeedbackAttachment>;
-export type FeedbackAttachmentListResponse = ApiResponse<FeedbackAttachment[]>;
+export type FeedbackAttachmentListResponse = ApiResponse<CustomPaginationResponse<FeedbackAttachment>>;
 
 export type EmailTemplateResponse = ApiResponse<EmailTemplate>;
-export type EmailTemplateListResponse = ApiResponse<EmailTemplate[]>;
+export type EmailTemplateListResponse = ApiResponse<CustomPaginationResponse<EmailTemplate>>;
 
 export type EmailLogResponse = ApiResponse<EmailLog>;
-export type EmailLogListResponse = DRFPaginationResponse<EmailLog>;
+export type EmailLogListResponse = ApiResponse<CustomPaginationResponse<EmailLog>>;
 
 export type FeedbackStatisticsResponse = ApiResponse<FeedbackStatistics>;
 export type SystemHealthResponse = ApiResponse<SystemHealth>;

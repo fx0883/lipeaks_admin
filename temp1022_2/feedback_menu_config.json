@@ -102,6 +102,20 @@
           "component": "/src/views/feedback/software/products/detail.vue"
         },
         {
+          "path": "/feedback/software/products/edit/:id",
+          "name": "SoftwareProductEdit",
+          "meta": {
+            "title": "feedback.software.productEdit",
+            "rank": 0,
+            "showLink": false,
+            "showParent": false,
+            "keepAlive": false,
+            "frameLoading": false,
+            "hiddenTag": false
+          },
+          "component": "/src/views/feedback/software/products/edit.vue"
+        },
+        {
           "path": "/feedback/software/versions",
           "name": "SoftwareVersions",
           "meta": {

@@ -27,6 +27,11 @@ common:
   yes: Yes
   no: No
   close: Close
+  unknown: Unknown
+  unavailable: Unavailable
+  disabled: Disabled
+  enabled: Enabled
+  normal: Normal
   filter: Filter
   advancedFilter: Advanced Filter
   collapseFilter: Collapse Filter
@@ -987,6 +992,7 @@ buttons:
   cancel: Cancel
   submit: Submit
   back: Back
+  refresh: Refresh
 
 panel:
   pureSystemSet: System Settings
@@ -2401,6 +2407,20 @@ feedback:
     openFeedbacks: Open Feedbacks
     createProductTip: After creating a software product, you can add versions and receive user feedback
     codeFormat: Code can only contain lowercase letters, numbers and underscores
+    codeFormatError: Code format error, only lowercase letters, numbers and underscores allowed
+    productEdit: Edit Software Product
+    createVersion: Create Version
+    editVersion: Edit Version
+    versionPlaceholder: Enter version (e.g., v2.1.0)
+    versionRequired: Version is required
+    versionFormatError: Version format error, should be vMAJOR.MINOR.PATCH
+    versionCodeRequired: Version code is required
+    versionCodeMin: Version code must be greater than 0
+    releaseNotesPlaceholder: "## New Features\n- Feature 1\n\n## Bug Fixes\n- Fix 1"
+    downloadUrl: Download URL
+    downloadUrlPlaceholder: Enter download URL
+    selectDate: Select Date
+    deleteVersionConfirm: Are you sure to delete version {version}?
     
   # Feedback Management
   feedbacks:
@@ -2433,7 +2453,7 @@ feedback:
     templateTypeRequired: Please select template type
     subjectRequired: Email subject is required
     bodyRequired: Email template content is required
-    variableTip: You can use variables like {{user_name}}, {{feedback_title}}, etc.
+    variableTip: You can use variables like {user_name}, {feedback_title}, etc.
     availableVariables: Available Variables
     deleteTemplateConfirm: Are you sure to delete template {name}?
     updatedAt: Updated At

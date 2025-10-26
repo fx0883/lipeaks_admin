@@ -173,21 +173,129 @@
       </div>
     </el-card>
 
-    <!-- 创建对话框（简化版） -->
+    <!-- 创建/编辑对话框 -->
     <el-dialog
       v-model="createDialogVisible"
-      :title="t('feedback.software.createProduct')"
+      :title="
+        dialogMode === 'create'
+          ? t('feedback.software.createProduct')
+          : t('feedback.software.productEdit')
+      "
       width="700px"
+      @close="handleDialogClose"
     >
-      <el-alert type="info" :closable="false" style="margin-bottom: 20px">
-        {{ t("feedback.software.createProductTip") }}
-      </el-alert>
+      <el-form
+        ref="dialogFormRef"
+        :model="dialogFormData"
+        :rules="dialogRules"
+        label-width="120px"
+      >
+        <el-form-item :label="t('feedback.software.productName')" prop="name">
+          <el-input
+            v-model="dialogFormData.name"
+            :placeholder="t('feedback.software.productNamePlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.productCode')" prop="code">
+          <el-input
+            v-model="dialogFormData.code"
+            :placeholder="t('feedback.software.productCodePlaceholder')"
+          />
+          <template #extra>
+            <span class="form-tip">{{
+              t("feedback.software.codeFormat")
+            }}</span>
+          </template>
+        </el-form-item>
+
+        <el-form-item
+          :label="t('feedback.software.category')"
+          prop="category_id"
+        >
+          <el-select
+            v-model="dialogFormData.category_id"
+            :placeholder="t('feedback.software.selectCategory')"
+          >
+            <el-option
+              v-for="category in categories"
+              :key="category.id"
+              :label="category.name"
+              :value="category.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.description')">
+          <el-input
+            v-model="dialogFormData.description"
+            type="textarea"
+            :rows="3"
+            :placeholder="t('feedback.software.descriptionPlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.website')">
+          <el-input
+            v-model="dialogFormData.website"
+            :placeholder="t('feedback.software.websitePlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.owner')">
+          <el-input
+            v-model="dialogFormData.owner"
+            :placeholder="t('feedback.software.ownerPlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.team')">
+          <el-input
+            v-model="dialogFormData.team"
+            :placeholder="t('feedback.software.teamPlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.contactEmail')">
+          <el-input
+            v-model="dialogFormData.contact_email"
+            :placeholder="t('feedback.software.emailPlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.productStatus')">
+          <el-select v-model="dialogFormData.status">
+            <el-option label="开发中" value="development" />
+            <el-option label="测试中" value="testing" />
+            <el-option label="已发布" value="released" />
+            <el-option label="维护中" value="maintenance" />
+            <el-option label="已废弃" value="deprecated" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item :label="t('feedback.software.status')">
+          <el-switch v-model="dialogFormData.is_active" />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="createDialogVisible = false">
+          {{ t("buttons.cancel") }}
+        </el-button>
+        <el-button
+          type="primary"
+          :loading="submitting"
+          @click="handleDialogSubmit"
+        >
+          {{ t("buttons.confirm") }}
+        </el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useSoftwareCategories } from "@/composables/useSoftware";
@@ -195,7 +303,10 @@ import { useSoftwareList } from "@/composables/useSoftware";
 import { ElMessageBox } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
 import { useDebounceFn } from "@vueuse/core";
-import type { Software } from "@/types/feedback";
+import { createSoftware } from "@/api/modules/feedback";
+import type { FormInstance, FormRules } from "element-plus";
+import type { Software, SoftwareCreateParams } from "@/types/feedback";
+import { message } from "@/utils/message";
 
 const Search = "ep:search";
 
@@ -222,8 +333,63 @@ const filterCategoryId = ref<number | null>(null);
 const filterStatus = ref<string>("");
 const searchText = ref("");
 
-// 创建对话框
+// 创建/编辑对话框
 const createDialogVisible = ref(false);
+const dialogFormRef = ref<FormInstance>();
+const submitting = ref(false);
+const dialogMode = ref<"create" | "edit">("create");
+const editingId = ref<number | null>(null);
+
+// 对话框表单数据
+const dialogFormData = reactive<SoftwareCreateParams>({
+  name: "",
+  code: "",
+  description: "",
+  category_id: 0,
+  website: "",
+  owner: "",
+  team: "",
+  contact_email: "",
+  status: "development",
+  is_active: true
+});
+
+// 对话框表单验证规则
+const dialogRules = reactive<FormRules>({
+  name: [
+    {
+      required: true,
+      message: t("feedback.software.productNameRequired"),
+      trigger: "blur"
+    }
+  ],
+  code: [
+    {
+      required: true,
+      message: t("feedback.software.productCodeRequired"),
+      trigger: "blur"
+    },
+    {
+      pattern: /^[a-z0-9_]+$/,
+      message: t("feedback.software.codeFormatError"),
+      trigger: "blur"
+    }
+  ],
+  category_id: [
+    {
+      required: true,
+      message: t("feedback.software.categoryRequired"),
+      trigger: "change"
+    }
+  ],
+  contact_email: [
+    {
+      type: "email",
+      message: t("feedback.software.emailInvalid"),
+      trigger: "blur"
+    }
+  ]
+});
 
 // 页面加载时获取数据
 onMounted(() => {
@@ -268,7 +434,76 @@ const handleSizeChange = (size: number) => {
  * 创建产品
  */
 const handleCreate = () => {
-  router.push("/feedback/software/products/create");
+  dialogMode.value = "create";
+  editingId.value = null;
+  resetDialogForm();
+  createDialogVisible.value = true;
+};
+
+/**
+ * 对话框提交
+ */
+const handleDialogSubmit = async () => {
+  if (!dialogFormRef.value) return;
+
+  await dialogFormRef.value.validate(async valid => {
+    if (!valid) return;
+
+    submitting.value = true;
+
+    try {
+      let response;
+      if (dialogMode.value === "create") {
+        response = await createSoftware(dialogFormData);
+      } else if (editingId.value) {
+        const { updateSoftware } = await import("@/api/modules/feedback");
+        response = await updateSoftware(editingId.value, dialogFormData);
+      }
+
+      if (response?.success && response.data) {
+        message(
+          dialogMode.value === "create"
+            ? t("common.createSuccess")
+            : t("common.updateSuccess"),
+          { type: "success" }
+        );
+        createDialogVisible.value = false;
+        fetchSoftwareList(); // 刷新列表
+        resetDialogForm();
+      }
+    } catch (error) {
+      console.error(
+        dialogMode.value === "create" ? "创建失败:" : "更新失败:",
+        error
+      );
+    } finally {
+      submitting.value = false;
+    }
+  });
+};
+
+/**
+ * 对话框关闭
+ */
+const handleDialogClose = () => {
+  resetDialogForm();
+  dialogFormRef.value?.clearValidate();
+};
+
+/**
+ * 重置对话框表单
+ */
+const resetDialogForm = () => {
+  dialogFormData.name = "";
+  dialogFormData.code = "";
+  dialogFormData.description = "";
+  dialogFormData.category_id = 0;
+  dialogFormData.website = "";
+  dialogFormData.owner = "";
+  dialogFormData.team = "";
+  dialogFormData.contact_email = "";
+  dialogFormData.status = "development";
+  dialogFormData.is_active = true;
 };
 
 /**
@@ -282,7 +517,29 @@ const handleViewDetail = (id: number) => {
  * 编辑产品
  */
 const handleEdit = (software: Software) => {
-  router.push(`/feedback/software/products/edit/${software.id}`);
+  dialogMode.value = "edit";
+  editingId.value = software.id;
+
+  // 填充表单数据
+  dialogFormData.name = software.name;
+  dialogFormData.code = software.code;
+  dialogFormData.description = software.description || "";
+
+  // 处理category字段
+  if (typeof software.category === "object" && software.category !== null) {
+    dialogFormData.category_id = software.category.id;
+  } else {
+    dialogFormData.category_id = software.category_id || software.category || 0;
+  }
+
+  dialogFormData.website = software.website || "";
+  dialogFormData.owner = software.owner || "";
+  dialogFormData.team = software.team || "";
+  dialogFormData.contact_email = software.contact_email || "";
+  dialogFormData.status = software.status;
+  dialogFormData.is_active = software.is_active;
+
+  createDialogVisible.value = true;
 };
 
 /**
@@ -376,6 +633,12 @@ const getStatusLabel = (status: string) => {
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
+  }
+
+  .form-tip {
+    font-size: 12px;
+    color: #909399;
+    margin-top: 4px;
   }
 }
 </style>
