@@ -300,12 +300,21 @@ export function getCommentReplies(id: number) {
 /**
  * 获取分类列表
  * @param params 查询参数
+ * @param language 语言代码（可选）
  */
-export function getCategoryList(params?: CategoryListParams) {
-  console.log("[CmsApi] getCategoryList - 开始请求分类列表, 参数:", params);
-  return http.request<ApiResponse<Category[]>>("get", "/cms/categories/", {
-    params
-  }).then(response => {
+export function getCategoryList(params?: CategoryListParams, language?: string) {
+  console.log("[CmsApi] getCategoryList - 开始请求分类列表, 参数:", params, "语言:", language);
+  
+  const config: any = { params };
+  
+  // 如果指定了语言，添加Accept-Language头
+  if (language) {
+    config.headers = {
+      'Accept-Language': language
+    };
+  }
+  
+  return http.request<ApiResponse<Category[]>>("get", "/cms/categories/", config).then(response => {
     console.log("[CmsApi] getCategoryList - 请求成功, 响应:", response);
 
     // 详细检查响应格式
@@ -353,10 +362,21 @@ export function getCategoryTree() {
 /**
  * 获取分类详情
  * @param id 分类ID
+ * @param language 语言代码（可选）
  */
-export function getCategoryDetail(id: number) {
-  console.log("[CmsApi] getCategoryDetail - 开始请求分类详情, ID:", id);
-  return http.request<ApiResponse<Category>>('get', `/cms/categories/${id}/`)
+export function getCategoryDetail(id: number, language?: string) {
+  console.log("[CmsApi] getCategoryDetail - 开始请求分类详情, ID:", id, "语言:", language);
+  
+  const config: any = {};
+  
+  // 如果指定了语言，添加Accept-Language头
+  if (language) {
+    config.headers = {
+      'Accept-Language': language
+    };
+  }
+  
+  return http.request<ApiResponse<Category>>('get', `/cms/categories/${id}/`, config)
     .then(response => {
       console.log("[CmsApi] getCategoryDetail - 请求成功, 响应:", response);
       return response;

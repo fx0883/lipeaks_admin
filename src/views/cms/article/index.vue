@@ -57,6 +57,9 @@ const pagination = reactive({
 const searchForm = reactive<ArticleListParams>({
   search: "",
   status: undefined,
+  content_type: undefined,
+  visibility: undefined,
+  has_parent: undefined,
   category_id: undefined,
   tag_id: undefined,
   is_featured: undefined,
@@ -115,6 +118,38 @@ const pinnedOptions = [
   { value: "", label: t("cms.article.pinnedAll") },
   { value: "true", label: t("cms.article.pinnedTrue") },
   { value: "false", label: t("cms.article.pinnedFalse") }
+];
+
+// 内容类型选项
+const contentTypeOptions = [
+  { value: "", label: t("cms.article.contentTypeAll") },
+  { value: "markdown", label: t("cms.article.contentTypeMarkdown") },
+  { value: "html", label: t("cms.article.contentTypeHtml") },
+  { value: "image", label: t("cms.article.contentTypeImage") },
+  { value: "image_upload", label: t("cms.article.contentTypeImageUpload") },
+  { value: "video", label: t("cms.article.contentTypeVideo") },
+  { value: "audio", label: t("cms.article.contentTypeAudio") },
+  { value: "file", label: t("cms.article.contentTypeFile") },
+  { value: "link", label: t("cms.article.contentTypeLink") },
+  { value: "quote", label: t("cms.article.contentTypeQuote") },
+  { value: "code", label: t("cms.article.contentTypeCode") },
+  { value: "table", label: t("cms.article.contentTypeTable") },
+  { value: "list", label: t("cms.article.contentTypeList") }
+];
+
+// 可见性选项
+const visibilityOptions = [
+  { value: "", label: t("cms.article.visibilityAll") },
+  { value: "public", label: t("cms.article.visibilityPublic") },
+  { value: "private", label: t("cms.article.visibilityPrivate") },
+  { value: "password", label: t("cms.article.visibilityPassword") }
+];
+
+// 父文章筛选选项
+const hasParentOptions = [
+  { value: "", label: t("cms.article.hasParentAll") },
+  { value: "true", label: t("cms.article.hasParentTrue") },
+  { value: "false", label: t("cms.article.hasParentFalse") }
 ];
 
 // 多选相关
@@ -251,6 +286,9 @@ const handleSearch = () => {
 const resetSearch = () => {
   searchForm.search = "";
   searchForm.status = undefined;
+  searchForm.content_type = undefined;
+  searchForm.visibility = undefined;
+  searchForm.has_parent = undefined;
   searchForm.category_id = undefined;
   searchForm.tag_id = undefined;
   searchForm.is_featured = undefined;
@@ -565,7 +603,7 @@ onMounted(() => {
               />
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item :label="t('cms.article.status')">
               <el-select v-model="searchForm.status" clearable class="w-full">
                 <el-option
@@ -577,15 +615,23 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
-            <el-form-item :label="t('cms.article.featured')">
-              <el-select
-                v-model="searchForm.is_featured"
-                clearable
-                class="w-full"
-              >
+          <el-col :span="6">
+            <el-form-item :label="t('cms.article.contentType')">
+              <el-select v-model="searchForm.content_type" clearable class="w-full">
                 <el-option
-                  v-for="option in featuredOptions"
+                  v-for="option in contentTypeOptions"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item :label="t('cms.article.visibility')">
+              <el-select v-model="searchForm.visibility" clearable class="w-full">
+                <el-option
+                  v-for="option in visibilityOptions"
                   :key="option.value"
                   :label="option.label"
                   :value="option.value"
@@ -619,7 +665,7 @@ onMounted(() => {
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item :label="t('cms.article.category')">
               <el-select
                 v-model="searchForm.category_id"
@@ -637,7 +683,7 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item :label="t('cms.article.tag')">
               <el-select 
                 v-model="searchForm.tag_id" 
@@ -655,15 +701,31 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item :label="t('cms.article.pinned')">
+          <el-col :span="6">
+            <el-form-item :label="t('cms.article.featured')">
               <el-select
-                v-model="searchForm.is_pinned"
+                v-model="searchForm.is_featured"
                 clearable
                 class="w-full"
               >
                 <el-option
-                  v-for="option in pinnedOptions"
+                  v-for="option in featuredOptions"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item :label="t('cms.article.hasParent')">
+              <el-select
+                v-model="searchForm.has_parent"
+                clearable
+                class="w-full"
+              >
+                <el-option
+                  v-for="option in hasParentOptions"
                   :key="option.value"
                   :label="option.label"
                   :value="option.value"
@@ -791,6 +853,20 @@ onMounted(() => {
           prop="author_info.username"
           width="120"
         />
+
+        <el-table-column :label="t('cms.article.parentArticle')" width="180">
+          <template #default="{ row }">
+            <span v-if="row.parent_info" class="parent-article-link">
+              <el-link 
+                type="primary" 
+                @click="handleDetail({ id: row.parent_info.id } as Article)"
+              >
+                {{ row.parent_info.title }}
+              </el-link>
+            </span>
+            <span v-else class="no-parent">-</span>
+          </template>
+        </el-table-column>
 
         <el-table-column :label="t('cms.article.createTime')" width="180">
           <template #default="{ row }">
@@ -992,5 +1068,21 @@ onMounted(() => {
   align-items: center;
   height: 100%;
   width: 100%;
+}
+
+.parent-article-link {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.parent-article-link .el-link {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.no-parent {
+  color: var(--el-text-color-placeholder);
 }
 </style>

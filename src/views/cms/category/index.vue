@@ -31,12 +31,21 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="状态">
+          <el-col :span="4">
+            <el-form-item label="启用">
               <el-tooltip content="只显示启用的分类">
                 <el-switch
                   v-model="onlyActive"
-                  active-text="只看启用"
+                  @change="handleFilterChange"
+                />
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="置顶">
+              <el-tooltip content="只显示置顶分类">
+                <el-switch
+                  v-model="onlyPinned"
                   @change="handleFilterChange"
                 />
               </el-tooltip>
@@ -90,13 +99,33 @@
               <template #default="{ node, data }">
                 <div class="custom-tree-node">
                   <div class="node-label">
+                    <el-image
+                      v-if="data.cover_image"
+                      :src="data.cover_image"
+                      :preview-src-list="[data.cover_image]"
+                      fit="cover"
+                      class="tree-cover-thumbnail mr-2"
+                    >
+                      <template #error>
+                        <div class="image-error-mini">
+                          <el-icon><el-icon-picture /></el-icon>
+                        </div>
+                      </template>
+                    </el-image>
                     <IconifyIconOnline
-                      v-if="data.icon"
+                      v-else-if="data.icon"
                       :icon="data.icon"
                       class="mr-1"
                     />
                     <el-icon v-else><Folder /></el-icon>
                     <span class="ml-1">{{ node.label }}</span>
+                    <el-tag
+                      v-if="data.is_pinned"
+                      size="small"
+                      type="warning"
+                      class="ml-2"
+                      >置顶</el-tag
+                    >
                     <el-tag
                       v-if="!data.is_active"
                       size="small"
@@ -148,6 +177,24 @@
         <template v-else>
           <el-table :data="filteredCategoryList" border style="width: 100%">
             <el-table-column prop="id" label="ID" width="80" />
+            <el-table-column prop="cover_image" label="封面图" width="100">
+              <template #default="{ row }">
+                <el-image
+                  v-if="row.cover_image"
+                  :src="row.cover_image"
+                  :preview-src-list="[row.cover_image]"
+                  fit="cover"
+                  class="category-cover-thumbnail"
+                >
+                  <template #error>
+                    <div class="image-error">
+                      <el-icon><el-icon-picture /></el-icon>
+                    </div>
+                  </template>
+                </el-image>
+                <span v-else class="text-gray-400 text-xs">无</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="name" label="名称" min-width="180">
               <template #default="{ row }">
                 <div class="flex items-center">
@@ -174,6 +221,32 @@
               </template>
             </el-table-column>
             <el-table-column prop="sort_order" label="排序" width="80" />
+            <el-table-column prop="translations" label="翻译状态" width="120">
+              <template #default="{ row }">
+                <div class="translation-status">
+                  <el-tooltip
+                    v-for="lang in SUPPORTED_LANGUAGES"
+                    :key="lang.code"
+                    :content="`${lang.label}: ${hasTranslation(row, lang.code) ? '已翻译' : '未翻译'}`"
+                  >
+                    <el-tag
+                      :type="hasTranslation(row, lang.code) ? 'success' : 'info'"
+                      size="small"
+                      class="ml-1"
+                    >
+                      {{ lang.shortLabel }}
+                    </el-tag>
+                  </el-tooltip>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="is_pinned" label="置顶" width="80">
+              <template #default="{ row }">
+                <el-tag :type="row.is_pinned ? 'warning' : 'info'">
+                  {{ row.is_pinned ? "置顶" : "普通" }}
+                </el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="is_active" label="状态" width="80">
               <template #default="{ row }">
                 <el-tag :type="row.is_active ? 'success' : 'danger'">
@@ -274,10 +347,11 @@ import {
   Warning
 } from "@element-plus/icons-vue";
 import { useCmsStore } from "@/store/modules/cms";
-import type { Category, CategoryOrderParams } from "@/types/cms";
+import type { Category, CategoryOrderParams, SupportedLanguage } from "@/types/cms";
 import CategoryForm from "@/components/Cms/Category/CategoryForm.vue";
 import ConfirmDialog from "@/components/Cms/Category/ConfirmDialog.vue";
 import { IconifyIconOnline } from "@/components/ReIcon";
+import { SUPPORTED_LANGUAGES } from "@/config/languages";
 
 const cmsStore = useCmsStore();
 const treeRef = ref();
@@ -290,6 +364,8 @@ const showTree = ref(true);
 const searchKeyword = ref("");
 // 仅显示启用的分类
 const onlyActive = ref(false);
+// 仅显示置顶分类
+const onlyPinned = ref(false);
 
 // 调试相关
 const debugMode = ref(false);
@@ -432,6 +508,10 @@ const filteredCategoryTree = computed(() => {
     filteredList = filteredList.filter(item => item.is_active);
   }
 
+  if (onlyPinned.value) {
+    filteredList = filteredList.filter(item => item.is_pinned);
+  }
+
   // 构建树形结构
   const buildTree = () => {
     // 找出所有顶级分类（没有父级的分类）
@@ -487,8 +567,17 @@ const filteredCategoryList = computed(() => {
     list = list.filter(item => item.is_active);
   }
 
-  // 按名称排序
-  return [...list].sort((a, b) => a.name.localeCompare(b.name));
+  if (onlyPinned.value) {
+    list = list.filter(item => item.is_pinned);
+  }
+
+  // 按置顶和名称排序（置顶优先）
+  return [...list].sort((a, b) => {
+    if (a.is_pinned !== b.is_pinned) {
+      return a.is_pinned ? -1 : 1;
+    }
+    return a.name.localeCompare(b.name);
+  });
 });
 
 // 通过ID获取分类名称
@@ -498,6 +587,19 @@ const getCategoryNameById = (id: number): string => {
   }
   const category = cmsStore.categoryList.find(item => item.id === id);
   return category ? category.name : "未知分类";
+};
+
+// 检查分类是否有某个语言的翻译
+const hasTranslation = (category: Category, langCode: SupportedLanguage): boolean => {
+  if (!category.translations) return false;
+  const trans = category.translations[langCode];
+  return !!(trans && trans.name && trans.name.trim());
+};
+
+// 获取翻译完成数量
+const getTranslationCount = (category: Category): number => {
+  if (!category.translations) return 0;
+  return SUPPORTED_LANGUAGES.filter(lang => hasTranslation(category, lang.code)).length;
 };
 
 // 处理搜索
@@ -545,7 +647,9 @@ const handleAddSubCategory = (parent: Category) => {
       name: "",
       slug: "",
       description: "",
+      cover_image: "",
       is_active: true,
+      is_pinned: false,
       sort_order: 0
     } as Category;
 
@@ -826,11 +930,59 @@ const formatDateTime = (dateTimeString: string) => {
   margin-left: 0.5rem;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .flex {
   display: flex;
 }
 
 .items-center {
   align-items: center;
+}
+
+/* 分类封面图样式 */
+.category-cover-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tree-cover-thumbnail {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.image-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f7fa;
+  color: #c0c4cc;
+}
+
+.image-error-mini {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f7fa;
+  color: #c0c4cc;
+  font-size: 14px;
+}
+
+.translation-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 </style>

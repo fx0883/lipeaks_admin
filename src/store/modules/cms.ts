@@ -884,15 +884,29 @@ export const useCmsStore = defineStore("cms", {
     /**
      * 获取分类详情
      */
-    async fetchCategoryDetail(id: number) {
+    async fetchCategoryDetail(id: number, language?: string) {
       this.categoryLoading = true;
       try {
-        console.log("[CmsStore] fetchCategoryDetail - 开始获取分类详情:", id);
-        const response = await getCategoryDetail(id);
+        console.log("[CmsStore] fetchCategoryDetail - 开始获取分类详情:", id, "语言:", language);
+        const response = await getCategoryDetail(id, language);
         console.log("[CmsStore] fetchCategoryDetail - API响应:", response);
 
         if (response && response.data) {
           console.log("[CmsStore] fetchCategoryDetail - 分类详情数据:", response.data);
+          
+          // 确保translations字段存在
+          if (!response.data.translations) {
+            console.log("[CmsStore] fetchCategoryDetail - 响应中没有translations字段，创建默认结构");
+            response.data.translations = {
+              'zh-hans': {
+                name: response.data.name || '',
+                description: response.data.description || '',
+                seo_title: response.data.seo_title || '',
+                seo_description: response.data.seo_description || ''
+              }
+            };
+          }
+          
           this.categoryDetail = response.data;
           this.currentCategory = response.data;
           return response.data;
@@ -1096,7 +1110,16 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await uploadFile(file, folder);
         if (response.success) {
-          return response.data;
+          // 处理相对路径，确保返回完整的 URL
+          let imageUrl = response.data.url;
+          if (imageUrl && imageUrl.startsWith('/media/')) {
+            const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '') || 'http://localhost:8000';
+            imageUrl = baseURL + imageUrl;
+          }
+          return {
+            ...response.data,
+            url: imageUrl
+          };
         } else {
           logger.error(response.message || "图片上传失败");
           return Promise.reject(new Error(response.message));

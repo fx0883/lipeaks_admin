@@ -14,6 +14,7 @@ import type {
 import { slugify } from "@/utils/string";
 import logger from "@/utils/logger";
 import ImageUpload from "./ImageUpload.vue";
+import ParentArticleSelector from "./ParentArticleSelector.vue";
 
 const { t } = useI18n();
 
@@ -69,10 +70,15 @@ const formData = reactive<ArticleCreateParams | ArticleUpdateParams>({
   allow_comment: true,
   visibility: "public",
   password: "",
+  parent: null,
   cover_image: "",
   categories: [],
   tags: []
 });
+
+// 父文章选择器状态
+const parentSelectorVisible = ref(false);
+const selectedParent = ref<Article | null>(null);
 
 // 表单验证规则
 const rules = {
@@ -129,11 +135,39 @@ const visibilityOptions = [
 // 内容类型选项
 const contentTypeOptions = [
   { value: "markdown", label: t("cms.article.contentTypeMarkdown") },
-  { value: "html", label: t("cms.article.contentTypeHtml") }
+  { value: "html", label: t("cms.article.contentTypeHtml") },
+  { value: "image", label: t("cms.article.contentTypeImage") },
+  { value: "image_upload", label: t("cms.article.contentTypeImageUpload") },
+  { value: "video", label: t("cms.article.contentTypeVideo") },
+  { value: "audio", label: t("cms.article.contentTypeAudio") },
+  { value: "file", label: t("cms.article.contentTypeFile") },
+  { value: "link", label: t("cms.article.contentTypeLink") },
+  { value: "quote", label: t("cms.article.contentTypeQuote") },
+  { value: "code", label: t("cms.article.contentTypeCode") },
+  { value: "table", label: t("cms.article.contentTypeTable") },
+  { value: "list", label: t("cms.article.contentTypeList") }
 ];
 
 // 是否需要密码
 const needPassword = computed(() => formData.visibility === "password");
+
+// 打开父文章选择器
+const openParentSelector = () => {
+  parentSelectorVisible.value = true;
+};
+
+// 选择父文章
+const handleSelectParent = (article: Article) => {
+  selectedParent.value = article;
+  formData.parent = article.id;
+  console.log("[ArticleForm] 选择父文章:", article);
+};
+
+// 清除父文章
+const clearParent = () => {
+  selectedParent.value = null;
+  formData.parent = null;
+};
 
 // 编辑模式下，初始化表单数据
 const initFormData = () => {
@@ -171,6 +205,16 @@ const initFormData = () => {
       editorContent.value.substring(0, 100) +
         (editorContent.value.length > 100 ? "..." : "")
     );
+
+    // 处理父文章信息
+    if (article.parent_info) {
+      selectedParent.value = {
+        id: article.parent_info.id,
+        title: article.parent_info.title,
+        slug: article.parent_info.slug
+      } as Article;
+      formData.parent = article.parent_info.id;
+    }
 
     console.log("[ArticleForm] 表单数据初始化完成:", formData);
   } else if (props.mode === "create") {
@@ -214,6 +258,8 @@ const resetForm = () => {
     formRef.value.resetFields();
   }
   editorContent.value = "";
+  selectedParent.value = null;
+  formData.parent = null;
 };
 
 // 监听文章变化，更新表单数据
@@ -393,6 +439,36 @@ onMounted(() => {
       </el-col>
     </el-row>
 
+    <!-- 父文章选择 -->
+    <el-form-item :label="t('cms.article.parentArticle')" prop="parent">
+      <div class="parent-selector-container">
+        <el-input
+          :model-value="selectedParent?.title || ''"
+          :placeholder="t('cms.article.parentArticlePlaceholder')"
+          readonly
+          class="parent-input"
+        >
+          <template #append>
+            <el-button @click="openParentSelector">
+              {{ t("cms.article.selectParent") }}
+            </el-button>
+          </template>
+        </el-input>
+        <el-button
+          v-if="selectedParent"
+          type="danger"
+          text
+          @click="clearParent"
+          class="clear-button"
+        >
+          {{ t("cms.article.clearParentArticle") }}
+        </el-button>
+      </div>
+      <div v-if="selectedParent" class="parent-info">
+        {{ t("cms.article.parentArticleInfo", { title: selectedParent.title }) }}
+      </div>
+    </el-form-item>
+
     <!-- 分类和标签 -->
     <el-form-item :label="t('cms.article.categories')" prop="categories">
       <el-select
@@ -450,6 +526,14 @@ onMounted(() => {
         t("common.reset")
       }}</el-button>
     </el-form-item>
+
+    <!-- 父文章选择器对话框 -->
+    <ParentArticleSelector
+      v-model="parentSelectorVisible"
+      :current-article-id="mode === 'edit' && article ? article.id : null"
+      :selected-parent-id="formData.parent"
+      @select="handleSelectParent"
+    />
   </el-form>
 </template>
 
@@ -482,5 +566,26 @@ onMounted(() => {
 
 :deep(.el-textarea__inner) {
   font-family: "Courier New", Courier, monospace;
+}
+
+.parent-selector-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.parent-input {
+  flex: 1;
+}
+
+.clear-button {
+  flex-shrink: 0;
+}
+
+.parent-info {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 5px;
 }
 </style>

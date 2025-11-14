@@ -1,6 +1,37 @@
 // CMS类型定义文件
 // 所有与CMS模块相关的TypeScript类型定义
 
+// 多语言相关类型
+// --------------------------------------------
+
+// 支持的语言类型
+export type SupportedLanguage = 'zh-hans' | 'en' | 'zh-hant' | 'ja' | 'ko' | 'fr';
+
+// 语言信息接口
+export interface LanguageInfo {
+  code: SupportedLanguage;
+  label: string;
+  shortLabel: string;
+}
+
+// 分类翻译内容接口
+export interface CategoryTranslation {
+  name: string;
+  description?: string;
+  seo_title?: string;
+  seo_description?: string;
+}
+
+// 分类多语言翻译对象
+export interface CategoryTranslations {
+  'zh-hans'?: CategoryTranslation;
+  'en'?: CategoryTranslation;
+  'zh-hant'?: CategoryTranslation;
+  'ja'?: CategoryTranslation;
+  'ko'?: CategoryTranslation;
+  'fr'?: CategoryTranslation;
+}
+
 // 文章相关类型
 // --------------------------------------------
 
@@ -11,7 +42,19 @@ export type ArticleStatus = 'draft' | 'pending' | 'published' | 'archived';
 export type ArticleVisibility = 'public' | 'private' | 'password';
 
 // 内容类型枚举
-export type ContentType = 'markdown' | 'html';
+export type ContentType = 
+  | 'markdown' 
+  | 'html' 
+  | 'image' 
+  | 'image_upload' 
+  | 'video' 
+  | 'audio' 
+  | 'file' 
+  | 'link' 
+  | 'quote' 
+  | 'code' 
+  | 'table' 
+  | 'list';
 
 // 简化的分类信息
 export interface CategorySimple {
@@ -42,12 +85,20 @@ export interface Article {
     username: string;
     avatar: string;
   };
+  author_type?: 'admin' | 'member';
   status: ArticleStatus;
   is_featured: boolean;
   is_pinned: boolean;
   allow_comment: boolean;
   visibility: ArticleVisibility;
   password?: string;
+  parent?: number | null;
+  parent_info?: {
+    id: number;
+    title: string;
+    slug: string;
+  } | null;
+  children_count?: number;
   created_at: string;
   updated_at: string;
   published_at?: string;
@@ -68,9 +119,16 @@ export interface ArticleListParams {
   page_size?: number;
   search?: string;
   status?: ArticleStatus;
+  content_type?: ContentType;
+  visibility?: ArticleVisibility;
   category_id?: number;
   tag_id?: number;
   author_id?: number;
+  user_id?: number;
+  member_id?: number;
+  author_type?: 'admin' | 'member';
+  parent_id?: number;
+  has_parent?: boolean | string;
   is_featured?: boolean;
   is_pinned?: boolean;
   date_from?: string;
@@ -92,6 +150,7 @@ export interface ArticleCreateParams {
   allow_comment?: boolean;
   visibility: ArticleVisibility;
   password?: string;
+  parent?: number | null;
   cover_image?: string;
   template?: string;
   sort_order?: number;
@@ -184,11 +243,19 @@ export interface Category {
   path: string;
   sort_order: number;
   icon?: string;
+  cover_image?: string;
   is_active: boolean;
+  is_pinned: boolean;
   created_at: string;
   updated_at: string;
   article_count?: number;
   children?: Category[];
+  
+  // 多语言翻译对象
+  translations?: CategoryTranslations;
+  // SEO字段
+  seo_title?: string;
+  seo_description?: string;
 }
 
 // 分类列表查询参数
@@ -196,19 +263,29 @@ export interface CategoryListParams {
   search?: string;
   parent?: number | null;
   is_active?: boolean | string;
+  is_pinned?: boolean | string;
+  ordering?: string;
   page?: number;
   page_size?: number;
 }
 
 // 分类创建参数
 export interface CategoryCreateParams {
-  name: string;
+  name?: string;  // 改为可选，因为可能通过translations提供
   slug?: string;
   description?: string;
   parent?: number | null;
   icon?: string;
+  cover_image?: string;
   is_active?: boolean;
+  is_pinned?: boolean;
   sort_order?: number;
+  
+  // 多语言翻译对象
+  translations?: CategoryTranslations;
+  // SEO字段
+  seo_title?: string;
+  seo_description?: string;
 }
 
 // 分类更新参数
@@ -218,8 +295,16 @@ export interface CategoryUpdateParams {
   description?: string;
   parent?: number | null;
   icon?: string;
+  cover_image?: string;
   is_active?: boolean;
+  is_pinned?: boolean;
   sort_order?: number;
+  
+  // 多语言翻译对象
+  translations?: CategoryTranslations;
+  // SEO字段
+  seo_title?: string;
+  seo_description?: string;
 }
 
 // 分类排序更新参数

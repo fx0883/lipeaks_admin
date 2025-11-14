@@ -675,7 +675,19 @@ cms:
     contentType: 内容类型
     contentTypeMarkdown: Markdown
     contentTypeHtml: HTML
+    contentTypeImage: 图片
+    contentTypeImageUpload: 图片上传
+    contentTypeVideo: 视频
+    contentTypeAudio: 音频
+    contentTypeFile: 文件
+    contentTypeLink: 链接
+    contentTypeQuote: 引用
+    contentTypeCode: 代码
+    contentTypeTable: 表格
+    contentTypeList: 列表
+    contentTypeAll: 所有类型
     visibility: 可见性
+    visibilityAll: 所有可见性
     visibilityPublic: 公开
     visibilityPrivate: 私密
     visibilityPassword: 密码保护
@@ -854,6 +866,25 @@ cms:
     hasCoverImage: 有封面
     uploadingCover: 上传封面中...
     uploadingImages: 上传图片中...
+    parentArticle: 父文章
+    selectParentArticle: 选择父文章
+    parentArticlePlaceholder: 请选择父文章
+    hasParent: 有父文章
+    noParent: 无父文章
+    hasParentAll: 全部
+    hasParentTrue: 有父文章
+    hasParentFalse: 无父文章
+    parentArticleSelector: 父文章选择器
+    searchParentArticle: 搜索父文章
+    searchParentArticlePlaceholder: 输入文章标题或ID搜索
+    noParentArticleSelected: 未选择父文章
+    parentArticleInfo: "父文章: {title}"
+    clearParentArticle: 清除父文章
+    selectParent: 选择父文章
+    authorType: 作者类型
+    authorTypeAll: 全部作者
+    authorTypeAdmin: 管理员
+    authorTypeMember: 会员
     creatingArticle: 创建文章中...
     noFilesSelected: 请选择文件夹
     noCategorySelected: 请先选择分类
