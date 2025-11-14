@@ -159,20 +159,30 @@ export interface ArticleCreateParams {
 }
 
 // 文章更新参数
-export interface ArticleUpdateParams extends Partial<ArticleCreateParams> { }
+export interface ArticleUpdateParams extends Partial<ArticleCreateParams> {
+  create_new_version?: boolean;
+  change_description?: string;
+  publish_now?: boolean;
+  scheduled_publish_time?: string;
+}
 
 // 评论相关类型
 // --------------------------------------------
 
 // 评论状态枚举
-export type CommentStatus = 'pending' | 'approved' | 'spam' | 'trash';
+export type CommentStatus = 'pending' | 'approved' | 'spam' | 'trash' | 'rejected';
+
+// 评论作者类型
+export type CommentAuthorType = 'admin' | 'member' | 'guest';
 
 // 评论模型
 export interface Comment {
   id: number;
   article: number;
-  parent?: number;
-  user?: number;
+  parent?: number | null;
+  user?: number | null;
+  member?: number | null;
+  // 兼容旧字段user_info，新字段author_info
   user_info?: {
     id: number;
     username: string;
@@ -181,6 +191,16 @@ export interface Comment {
     email: string;
     avatar: string;
   };
+  author_info?: {
+    id?: number;
+    username?: string;
+    nick_name?: string;
+    avatar?: string;
+    name?: string;
+    email?: string;
+    type?: string;
+  };
+  author_type?: CommentAuthorType;
   guest_name?: string;
   guest_email?: string;
   guest_website?: string;
@@ -203,10 +223,12 @@ export interface CommentListParams {
   status?: CommentStatus;
   article?: number;
   user?: number;
+  member?: number;
   search?: string;
   date_from?: string;
   date_to?: string;
-  parent?: number;
+  parent?: number | string;
+  has_parent?: boolean | string;
 }
 
 // 评论创建参数

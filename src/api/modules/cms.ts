@@ -294,6 +294,65 @@ export function getCommentReplies(id: number) {
   );
 }
 
+/**
+ * 批准评论
+ * @param id 评论ID
+ */
+export function approveComment(id: number) {
+  logger.debug("API请求: 批准评论", { id });
+
+  return http.request<ApiResponse<{ message: string; id: number; status: string }>>(
+    "post",
+    `/cms/comments/${id}/approve/`
+  );
+}
+
+/**
+ * 拒绝评论
+ * @param id 评论ID
+ */
+export function rejectComment(id: number) {
+  logger.debug("API请求: 拒绝评论", { id });
+
+  return http.request<ApiResponse<{ message: string; id: number; status: string }>>(
+    "post",
+    `/cms/comments/${id}/reject/`
+  );
+}
+
+/**
+ * 标记评论为垃圾
+ * @param id 评论ID
+ */
+export function markCommentAsSpam(id: number) {
+  logger.debug("API请求: 标记评论为垃圾", { id });
+
+  return http.request<ApiResponse<{ message: string; id: number; status: string }>>(
+    "post",
+    `/cms/comments/${id}/mark-spam/`
+  );
+}
+
+/**
+ * 批量操作评论
+ * @param comment_ids 评论ID数组
+ * @param action 操作类型：approve, reject, spam, delete
+ */
+export function batchComments(comment_ids: number[], action: string) {
+  logger.debug("API请求: 批量操作评论", { comment_ids, action });
+
+  return http.request<ApiResponse<{
+    message: string;
+    requested_count: number;
+    processed_count: number;
+    processed_ids: number[];
+  }>>(
+    "post",
+    "/cms/comments/batch/",
+    { data: { comment_ids, action } }
+  );
+}
+
 // 分类相关API
 // --------------------------------------------
 
@@ -304,16 +363,16 @@ export function getCommentReplies(id: number) {
  */
 export function getCategoryList(params?: CategoryListParams, language?: string) {
   console.log("[CmsApi] getCategoryList - 开始请求分类列表, 参数:", params, "语言:", language);
-  
+
   const config: any = { params };
-  
+
   // 如果指定了语言，添加Accept-Language头
   if (language) {
     config.headers = {
       'Accept-Language': language
     };
   }
-  
+
   return http.request<ApiResponse<Category[]>>("get", "/cms/categories/", config).then(response => {
     console.log("[CmsApi] getCategoryList - 请求成功, 响应:", response);
 
@@ -366,16 +425,16 @@ export function getCategoryTree() {
  */
 export function getCategoryDetail(id: number, language?: string) {
   console.log("[CmsApi] getCategoryDetail - 开始请求分类详情, ID:", id, "语言:", language);
-  
+
   const config: any = {};
-  
+
   // 如果指定了语言，添加Accept-Language头
   if (language) {
     config.headers = {
       'Accept-Language': language
     };
   }
-  
+
   return http.request<ApiResponse<Category>>('get', `/cms/categories/${id}/`, config)
     .then(response => {
       console.log("[CmsApi] getCategoryDetail - 请求成功, 响应:", response);

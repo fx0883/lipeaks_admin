@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from "element-plus";
 import {
   Search,
@@ -10,7 +10,8 @@ import {
   View,
   Check,
   Close,
-  Warning
+  Warning,
+  Document
 } from "@element-plus/icons-vue";
 import { useCmsStoreHook } from "@/store/modules/cms";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -26,6 +27,7 @@ import logger from "@/utils/logger";
 
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 const cmsStore = useCmsStoreHook();
 const userStore = useUserStoreHook();
 
@@ -58,7 +60,8 @@ const searchForm = reactive<CommentListParams>({
   date_to: "",
   page: 1,
   page_size: 10,
-  parent: undefined
+  parent: undefined,
+  has_parent: undefined
 });
 
 // 回复对话框状态
@@ -91,7 +94,15 @@ const statusOptions = [
   { value: "pending", label: t("cms.comment.statusPending") },
   { value: "approved", label: t("cms.comment.statusApproved") },
   { value: "spam", label: t("cms.comment.statusSpam") },
-  { value: "trash", label: t("cms.comment.statusTrash") }
+  { value: "trash", label: t("cms.comment.statusTrash") },
+  { value: "rejected", label: t("cms.comment.statusRejected") }
+];
+
+// 评论类型选项
+const parentFilterOptions = [
+  { value: "", label: "全部评论" },
+  { value: "false", label: "顶级评论" },
+  { value: "true", label: "回复评论" }
 ];
 
 // 多选相关
@@ -128,6 +139,7 @@ const resetSearch = () => {
   searchForm.date_from = "";
   searchForm.date_to = "";
   searchForm.parent = undefined;
+  searchForm.has_parent = undefined;
   pagination.currentPage = 1;
   fetchComments();
 };
@@ -267,16 +279,16 @@ const handleDelete = (row: Comment) => {
 };
 
 // 批量操作
-const handleBatchAction = (action: CommentStatus) => {
+const handleBatchAction = (action: string) => {
   if (multipleSelection.value.length === 0) {
     ElMessage.warning(t("cms.comment.selectCommentsFirst"));
     return;
   }
 
   const actionLabels = {
-    approved: t("cms.comment.batchApprove"),
+    approve: t("cms.comment.batchApprove"),
     spam: t("cms.comment.batchMarkAsSpam"),
-    trash: t("cms.comment.batchReject")
+    reject: t("cms.comment.batchReject")
   };
 
   confirmDialog.title = t("cms.comment.confirmBatchAction", {
@@ -285,11 +297,11 @@ const handleBatchAction = (action: CommentStatus) => {
   confirmDialog.content = t("cms.comment.confirmBatchActionMessage", {
     count: multipleSelection.value.length
   });
-  confirmDialog.type = action === "approved" ? "info" : "warning";
+  confirmDialog.type = action === "approve" ? "info" : "warning";
   confirmDialog.confirmAction = async () => {
     try {
       const ids = multipleSelection.value.map(item => item.id);
-      await cmsStore.batchProcessComments(ids, action);
+      await cmsStore.batchComments(ids, action);
       ElMessage.success(t("cms.comment.batchActionSuccess"));
       fetchComments();
       multipleSelection.value = [];
@@ -342,10 +354,36 @@ const formatStatus = (status: CommentStatus) => {
     pending: { label: t("cms.comment.statusPending"), type: "warning" },
     approved: { label: t("cms.comment.statusApproved"), type: "success" },
     spam: { label: t("cms.comment.statusSpam"), type: "danger" },
-    trash: { label: t("cms.comment.statusTrash"), type: "info" }
+    trash: { label: t("cms.comment.statusTrash"), type: "info" },
+    rejected: { label: t("cms.comment.statusRejected"), type: "danger" }
   };
 
   return statusMap[status] || { label: status, type: "default" };
+};
+
+// 格式化作者类型
+const formatAuthorType = (comment: Comment) => {
+  const authorType = comment.author_type;
+  if (authorType === "admin") {
+    return { label: "管理员", type: "success" };
+  } else if (authorType === "member") {
+    return { label: "会员", type: "primary" };
+  } else if (authorType === "guest") {
+    return { label: "游客", type: "info" };
+  }
+  return { label: "未知", type: "default" };
+};
+
+// 获取作者显示名称
+const getAuthorName = (comment: Comment) => {
+  if (comment.author_info) {
+    return comment.author_info.username || comment.author_info.nick_name || comment.author_info.name;
+  } else if (comment.user_info) {
+    return comment.user_info.username;
+  } else if (comment.guest_name) {
+    return comment.guest_name;
+  }
+  return t("cms.comment.anonymous");
 };
 
 // 获取评论内容预览
@@ -359,9 +397,63 @@ const getContentPreview = (content: string, maxLength = 100) => {
   return content.substring(0, maxLength) + "...";
 };
 
+// 当前筛选的文章信息
+const currentArticle = ref<{ id: number; title?: string } | null>(null);
+
+// 从URL获取文章ID并筛选
+const initFromUrlParams = () => {
+  const articleId = route.query.article;
+  if (articleId) {
+    const id = Number(articleId);
+    if (!isNaN(id)) {
+      searchForm.article = id;
+      currentArticle.value = { id };
+      // 获取文章信息（可选）
+      fetchArticleInfo(id);
+    }
+  }
+};
+
+// 获取文章信息
+const fetchArticleInfo = async (articleId: number) => {
+  try {
+    const response = await cmsStore.fetchArticleDetail(articleId);
+    if (response && cmsStore.currentArticle) {
+      currentArticle.value = {
+        id: articleId,
+        title: cmsStore.currentArticle.title
+      };
+    }
+  } catch (error) {
+    logger.warn("获取文章信息失败", error);
+  }
+};
+
+// 返回文章详情页
+const backToArticle = () => {
+  if (currentArticle.value) {
+    const routeUrl = router.resolve({
+      path: `/preview/article/${currentArticle.value.id}`
+    });
+    window.open(routeUrl.href, '_blank');
+  }
+};
+
+// 清除文章筛选
+const clearArticleFilter = () => {
+  searchForm.article = undefined;
+  currentArticle.value = null;
+  // 移除URL参数
+  router.replace({ query: {} });
+  fetchComments();
+};
+
 // 页面加载时获取数据
 onMounted(() => {
   if (checkPermission()) {
+    // 先初始化URL参数
+    initFromUrlParams();
+    // 然后获取评论列表
     fetchComments();
   }
 });
@@ -375,6 +467,48 @@ onMounted(() => {
         {{ t("cms.comment.commentManagement") }}
       </h2>
     </div>
+
+    <!-- 文章信息提示 -->
+    <el-alert
+      v-if="currentArticle"
+      type="info"
+      :closable="false"
+      class="article-filter-alert"
+    >
+      <template #title>
+        <div class="article-filter-content">
+          <div class="article-info-text">
+            <el-icon :size="18"><Document /></el-icon>
+            <span v-if="currentArticle.title">
+              正在查看文章《<strong>{{ currentArticle.title }}</strong>》的评论
+            </span>
+            <span v-else>
+              正在查看文章 ID: <strong>{{ currentArticle.id }}</strong> 的评论
+            </span>
+          </div>
+          <div class="article-filter-actions">
+            <el-button
+              size="small"
+              type="primary"
+              :icon="View"
+              @click="backToArticle"
+              link
+            >
+              查看文章
+            </el-button>
+            <el-button
+              size="small"
+              type="info"
+              :icon="Close"
+              @click="clearArticleFilter"
+              link
+            >
+              清除筛选
+            </el-button>
+          </div>
+        </div>
+      </template>
+    </el-alert>
 
     <!-- 搜索和筛选 -->
     <el-card class="search-card">
@@ -398,6 +532,18 @@ onMounted(() => {
               <el-select v-model="searchForm.status" clearable class="w-full">
                 <el-option
                   v-for="option in statusOptions"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="评论类型">
+              <el-select v-model="searchForm.has_parent" clearable class="w-full">
+                <el-option
+                  v-for="option in parentFilterOptions"
                   :key="option.value"
                   :label="option.label"
                   :value="option.value"
@@ -457,7 +603,7 @@ onMounted(() => {
         <el-button
           type="success"
           :disabled="multipleSelection.length === 0"
-          @click="handleBatchAction('approved')"
+          @click="handleBatchAction('approve')"
         >
           {{ t("cms.comment.batchApprove") }}
         </el-button>
@@ -471,7 +617,7 @@ onMounted(() => {
         <el-button
           type="info"
           :disabled="multipleSelection.length === 0"
-          @click="handleBatchAction('trash')"
+          @click="handleBatchAction('reject')"
         >
           {{ t("cms.comment.batchReject") }}
         </el-button>
@@ -505,23 +651,22 @@ onMounted(() => {
                 {{ getContentPreview(row.content) }}
               </div>
               <div class="comment-meta">
-                <template v-if="row.user_info">
-                  {{
-                    t("cms.comment.byUser", { user: row.user_info.username })
-                  }}
-                </template>
-                <template v-else-if="row.guest_name">
-                  {{ t("cms.comment.byGuest", { name: row.guest_name }) }}
-                </template>
-                <template v-else>
-                  {{ t("cms.comment.anonymous") }}
-                </template>
+                {{ getAuthorName(row) }}
               </div>
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('cms.comment.article')" width="150">
+        <el-table-column label="作者类型" width="100">
+          <template #default="{ row }">
+            <el-tag v-if="row.author_type" :type="formatAuthorType(row).type" size="small">
+              {{ formatAuthorType(row).label }}
+            </el-tag>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column :label="t('cms.comment.article')" width="100">
           <template #default="{ row }">
             <el-link
               type="primary"
@@ -535,7 +680,7 @@ onMounted(() => {
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('cms.comment.status')" width="120">
+        <el-table-column :label="t('cms.comment.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="formatStatus(row.status).type" size="small">
               {{ formatStatus(row.status).label }}
@@ -543,7 +688,19 @@ onMounted(() => {
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('cms.comment.createTime')" width="180">
+        <el-table-column label="点赞" width="60" align="center">
+          <template #default="{ row }">
+            {{ row.likes_count || 0 }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="回复" width="60" align="center">
+          <template #default="{ row }">
+            {{ row.replies_count || 0 }}
+          </template>
+        </el-table-column>
+
+        <el-table-column :label="t('cms.comment.createTime')" width="160">
           <template #default="{ row }">
             {{ formatDate(row.created_at) }}
           </template>
@@ -741,5 +898,29 @@ onMounted(() => {
 
 .w-full {
   width: 100%;
+}
+
+/* 文章筛选提示样式 */
+.article-filter-alert {
+  margin-bottom: 20px;
+}
+
+.article-filter-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.article-info-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.article-filter-actions {
+  display: flex;
+  gap: 8px;
 }
 </style>

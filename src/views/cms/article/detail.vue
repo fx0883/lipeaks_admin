@@ -9,7 +9,12 @@ import {
   Upload,
   Download,
   Archive,
-  Document
+  Document,
+  ChatLineRound,
+  View,
+  Star,
+  ChatDotRound,
+  InfoFilled
 } from "@element-plus/icons-vue";
 import { useCmsStoreHook } from "@/store/modules/cms";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -238,6 +243,17 @@ const formatContentType = (contentType: string) => {
 // 查看版本历史
 const viewVersionHistory = () => {
   router.push(`/cms/article/version/${articleId.value}`);
+};
+
+// 查看评论管理
+const handleViewComments = () => {
+  // 生成评论管理页路由URL，传递文章ID作为查询参数
+  const routeUrl = router.resolve({
+    path: '/cms/comment',
+    query: { article: articleId.value }
+  });
+  // 在新标签页打开
+  window.open(routeUrl.href, '_blank');
 };
 
 // 页面加载时获取数据
@@ -485,14 +501,25 @@ onMounted(() => {
           </el-col>
 
           <el-col :span="6">
-            <el-statistic
-              :title="t('cms.article.commentCount')"
-              :value="currentArticle.comment_count || 0"
-            >
-              <template #suffix>
-                <el-icon><ChatLineRound /></el-icon>
-              </template>
-            </el-statistic>
+            <div class="statistic-with-link">
+              <el-statistic
+                :title="t('cms.article.commentCount')"
+                :value="currentArticle.comment_count || 0"
+              >
+                <template #suffix>
+                  <el-icon><ChatLineRound /></el-icon>
+                </template>
+              </el-statistic>
+              <el-link
+                type="primary"
+                :underline="false"
+                @click="handleViewComments"
+                class="statistic-link"
+              >
+                <el-icon><ChatDotRound /></el-icon>
+                管理评论
+              </el-link>
+            </div>
           </el-col>
 
           <el-col :span="6">
@@ -517,6 +544,44 @@ onMounted(() => {
             </el-statistic>
           </el-col>
         </el-row>
+      </el-card>
+
+      <!-- 评论管理区块 -->
+      <el-card class="article-comments-card" v-if="currentArticle">
+        <template #header>
+          <div class="article-comments-header">
+            <span>
+              <el-icon><ChatDotRound /></el-icon>
+              评论管理
+            </span>
+          </div>
+        </template>
+
+        <div class="comments-summary">
+          <div class="comments-info">
+            <el-icon :size="24" color="#409EFF"><ChatLineRound /></el-icon>
+            <span class="comments-text">
+              当前文章有 
+              <el-tag type="primary" size="large">{{ currentArticle.comment_count || 0 }}</el-tag> 
+              条评论
+            </span>
+          </div>
+          <el-button
+            type="primary"
+            :icon="ChatDotRound"
+            @click="handleViewComments"
+            size="large"
+          >
+            查看并管理评论
+          </el-button>
+        </div>
+
+        <el-divider />
+
+        <div class="comments-tips">
+          <el-icon><InfoFilled /></el-icon>
+          <span>点击按钮可以在新标签页中管理该文章的所有评论，包括审核、回复、删除等操作。</span>
+        </div>
       </el-card>
     </template>
 
@@ -557,6 +622,7 @@ onMounted(() => {
 .article-info-card,
 .article-content-card,
 .article-stats-card,
+.article-comments-card,
 .article-edit-content {
   margin-bottom: 20px;
 }
@@ -600,5 +666,70 @@ onMounted(() => {
 
 .markdown-content {
   font-family: "Courier New", Courier, monospace;
+}
+
+/* 统计数据链接样式 */
+.statistic-with-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statistic-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.statistic-link:hover {
+  transform: translateY(-1px);
+}
+
+/* 评论管理区块样式 */
+.article-comments-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.comments-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.comments-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.comments-text {
+  font-size: 16px;
+  color: #606266;
+}
+
+.comments-tips {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #f0f9ff;
+  border-left: 3px solid #409EFF;
+  border-radius: 4px;
+  color: #606266;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.comments-tips .el-icon {
+  color: #409EFF;
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 </style>

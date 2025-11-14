@@ -37,7 +37,6 @@ import {
   deleteArticle,
   getCommentList,
   getCommentDetail,
-  updateCommentStatus,
   getCategoryList,
   getCategoryTree,
   getCategoryDetail,
@@ -560,21 +559,40 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await cmsApi.getCommentList(params);
         if (response.success) {
-          // 处理分页数据结构适配
+          // 处理分页数据结构适配 - 支持新旧两种格式
           if (
             response.data &&
             typeof response.data === "object" &&
-            "results" in response.data &&
-            "count" in response.data
+            "results" in response.data
           ) {
-            this.comments = {
-              total: (response.data.count as number) || 0,
-              page: params.page || 1,
-              limit: params.page_size || 10,
-              data: Array.isArray(response.data.results)
+            // 新格式：data.pagination + data.results
+            if ("pagination" in response.data && response.data.pagination) {
+              const pagination = response.data.pagination as any;
+              this.comments = {
+                total: pagination.count || 0,
+                page: pagination.current_page || params.page || 1,
+                limit: pagination.page_size || params.page_size || 10,
+                data: Array.isArray(response.data.results)
+                  ? response.data.results
+                  : []
+              };
+            }
+            // 旧格式：data.count + data.results
+            else if ("count" in response.data) {
+              this.comments = {
+                total: (response.data.count as number) || 0,
+                page: params.page || 1,
+                limit: params.page_size || 10,
+                data: Array.isArray(response.data.results)
+                  ? response.data.results
+                  : []
+              };
+            } else {
+              logger.warn("评论列表数据结构不符合预期", response.data);
+              this.comments.data = Array.isArray(response.data.results)
                 ? response.data.results
-                : []
-            };
+                : [];
+            }
           } else {
             logger.warn("评论列表数据结构不符合预期", response.data);
             this.comments.data = Array.isArray(response.data)
@@ -685,7 +703,7 @@ export const useCmsStore = defineStore("cms", {
     async approveComment(id: number) {
       this.loading.commentModerate = true;
       try {
-        const response = await cmsApi.moderateComments([id], "approved");
+        const response = await cmsApi.approveComment(id);
         if (response.success) {
           return response;
         } else {
@@ -706,7 +724,7 @@ export const useCmsStore = defineStore("cms", {
     async rejectComment(id: number) {
       this.loading.commentModerate = true;
       try {
-        const response = await cmsApi.moderateComments([id], "trash");
+        const response = await cmsApi.rejectComment(id);
         if (response.success) {
           return response;
         } else {
@@ -727,7 +745,7 @@ export const useCmsStore = defineStore("cms", {
     async markCommentAsSpam(id: number) {
       this.loading.commentModerate = true;
       try {
-        const response = await cmsApi.moderateComments([id], "spam");
+        const response = await cmsApi.markCommentAsSpam(id);
         if (response.success) {
           return response;
         } else {
@@ -743,7 +761,7 @@ export const useCmsStore = defineStore("cms", {
     },
 
     /**
-     * 批量处理评论
+     * 批量处理评论（旧API，保留兼容）
      */
     async batchProcessComments(commentIds: number[], action: CommentStatus) {
       this.loading.commentModerate = true;
@@ -757,6 +775,27 @@ export const useCmsStore = defineStore("cms", {
         }
       } catch (error) {
         logger.error("批量操作失败", error);
+        throw error;
+      } finally {
+        this.loading.commentModerate = false;
+      }
+    },
+
+    /**
+     * 批量操作评论（新API）
+     */
+    async batchComments(comment_ids: number[], action: string) {
+      this.loading.commentModerate = true;
+      try {
+        const response = await cmsApi.batchComments(comment_ids, action);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "批量操作评论失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("批量操作评论失败", error);
         throw error;
       } finally {
         this.loading.commentModerate = false;
@@ -893,7 +932,7 @@ export const useCmsStore = defineStore("cms", {
 
         if (response && response.data) {
           console.log("[CmsStore] fetchCategoryDetail - 分类详情数据:", response.data);
-          
+
           // 确保translations字段存在
           if (!response.data.translations) {
             console.log("[CmsStore] fetchCategoryDetail - 响应中没有translations字段，创建默认结构");
@@ -906,7 +945,7 @@ export const useCmsStore = defineStore("cms", {
               }
             };
           }
-          
+
           this.categoryDetail = response.data;
           this.currentCategory = response.data;
           return response.data;
