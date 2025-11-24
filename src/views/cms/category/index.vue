@@ -834,7 +834,6 @@ const formatDateTime = (dateTimeString: string) => {
 
 <style scoped>
 .category-list-container {
-  padding: 20px;
 }
 
 .category-list-header {
@@ -854,6 +853,10 @@ const formatDateTime = (dateTimeString: string) => {
   margin-bottom: 20px;
 }
 
+.search-card :deep(.el-card__body) {
+  padding: 12px !important;
+}
+
 .search-buttons {
   display: flex;
   justify-content: center;
@@ -862,6 +865,10 @@ const formatDateTime = (dateTimeString: string) => {
 
 .table-card {
   margin-bottom: 20px;
+}
+
+.table-card :deep(.el-card__body) {
+  padding: 12px !important;
 }
 
 .custom-tree-node {
@@ -984,5 +991,13 @@ const formatDateTime = (dateTimeString: string) => {
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+}
+</style>
+
+<style>
+/* Chrome兼容：使用全局样式强制覆盖Element Plus默认padding */
+.search-card .el-card__body,
+.table-card .el-card__body {
+  padding: 12px !important;
 }
 </style>

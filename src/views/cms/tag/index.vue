@@ -371,7 +371,6 @@ onMounted(() => {
 
 <style scoped>
 .tag-list-container {
-  padding: 20px;
 }
 
 .tag-list-header {
@@ -391,6 +390,10 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.search-card :deep(.el-card__body) {
+  padding: 12px !important;
+}
+
 .search-buttons {
   display: flex;
   justify-content: center;
@@ -399,6 +402,10 @@ onMounted(() => {
 
 .table-card {
   margin-bottom: 20px;
+}
+
+.table-card :deep(.el-card__body) {
+  padding: 12px !important;
 }
 
 .pagination-container {
@@ -423,5 +430,13 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+</style>
+
+<style>
+/* Chrome兼容：使用全局样式强制覆盖Element Plus默认padding */
+.search-card .el-card__body,
+.table-card .el-card__body {
+  padding: 12px !important;
 }
 </style>

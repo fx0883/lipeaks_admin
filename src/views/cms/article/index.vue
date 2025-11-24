@@ -983,7 +983,6 @@ onMounted(() => {
 
 <style scoped>
 .article-list-container {
-  padding: 20px;
 }
 
 .article-list-header {
@@ -1008,6 +1007,10 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.search-card :deep(.el-card__body) {
+  padding: 12px !important;
+}
+
 .search-buttons {
   display: flex;
   justify-content: center;
@@ -1016,6 +1019,10 @@ onMounted(() => {
 
 .table-card {
   margin-bottom: 20px;
+}
+
+.table-card :deep(.el-card__body) {
+  padding: 12px !important;
 }
 
 .article-title {
@@ -1084,5 +1091,13 @@ onMounted(() => {
 
 .no-parent {
   color: var(--el-text-color-placeholder);
+}
+</style>
+
+<style>
+/* Chrome兼容：使用全局样式强制覆盖Element Plus默认padding */
+.search-card .el-card__body,
+.table-card .el-card__body {
+  padding: 12px !important;
 }
 </style>

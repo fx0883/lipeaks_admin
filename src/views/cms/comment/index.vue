@@ -826,7 +826,6 @@ onMounted(() => {
 
 <style scoped>
 .comment-list-container {
-  padding: 20px;
 }
 
 .comment-list-header {
@@ -846,8 +845,16 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.search-card :deep(.el-card__body) {
+  padding: 12px !important;
+}
+
 .action-card {
   margin-bottom: 20px;
+}
+
+.action-card :deep(.el-card__body) {
+  padding: 12px !important;
 }
 
 .batch-actions {
@@ -863,6 +870,10 @@ onMounted(() => {
 
 .table-card {
   margin-bottom: 20px;
+}
+
+.table-card :deep(.el-card__body) {
+  padding: 12px !important;
 }
 
 .comment-content {
@@ -922,5 +933,14 @@ onMounted(() => {
 .article-filter-actions {
   display: flex;
   gap: 8px;
+}
+</style>
+
+<style>
+/* Chrome兼容：使用全局样式强制覆盖Element Plus默认padding */
+.search-card .el-card__body,
+.action-card .el-card__body,
+.table-card .el-card__body {
+  padding: 12px !important;
 }
 </style>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>清除路由缓存</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>清除 LipeaksAdmin 路由缓存</h2>
+    <button onclick="clearCache()">清除缓存并重新加载</button>
+    <pre id="output"></pre>
+
+    <script>
+        function clearCache() {
+            const output = document.getElementById('output');
+            output.textContent = '正在清除缓存...\n';
+            
+            // 清除所有 responsive- 开头的 localStorage 项
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('responsive-')) {
+                    keysToRemove.push(key);
+                }
+            }
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+                output.textContent += `已清除: ${key}\n`;
+            });
+            
+            output.textContent += '\n缓存已清除！3秒后将跳转到登录页面...\n';
+            
+            setTimeout(() => {
+                window.location.href = 'http://localhost:8848/#/login';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

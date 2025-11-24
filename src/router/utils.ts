@@ -360,10 +360,6 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
       // 支持两种Layout组件标识：完整路径 或 "Layout1" 字符串
       logger.debug(`[处理异步路由] 使用Layout作为组件: ${v.path}`);
       v.component = Layout;
-    } else if (!v.component && v?.children && v.children.length > 0) {
-      // 如果是父路由（有children）且没有指定component，自动使用Layout
-      logger.debug(`[处理异步路由] 父路由未指定component，自动使用Layout: ${v.path}`);
-      v.component = Layout;
     } else {
       // 对后端传component组件路径和不传做兼容（如果后端传component组件路径，那么path可以随便写，如果不传，component组件路径会跟path保持一致）
       const searchKey = v?.component || v.path;
