@@ -331,6 +331,23 @@ onMounted(() => {
           </div>
         </template>
 
+        <!-- 封面图展示 -->
+        <div v-if="currentArticle.cover_image" class="article-cover-section">
+          <el-image
+            :src="currentArticle.cover_image"
+            :preview-src-list="[currentArticle.cover_image]"
+            fit="cover"
+            class="article-cover-image"
+          >
+            <template #error>
+              <div class="image-error">
+                <el-icon><el-icon-picture /></el-icon>
+                <span>{{ t("cms.article.imageLoadFailed") }}</span>
+              </div>
+            </template>
+          </el-image>
+        </div>
+
         <el-descriptions :column="3" border>
           <el-descriptions-item :label="t('cms.article.title')" :span="3">
             <div class="article-title">
@@ -625,6 +642,45 @@ onMounted(() => {
 .article-comments-card,
 .article-edit-content {
   margin-bottom: 20px;
+}
+
+.article-cover-section {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.article-cover-image {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.article-cover-image:hover {
+  transform: scale(1.02);
+}
+
+.image-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200px;
+  color: #909399;
+  font-size: 14px;
+  gap: 8px;
+}
+
+.image-error .el-icon {
+  font-size: 48px;
 }
 
 .article-title {

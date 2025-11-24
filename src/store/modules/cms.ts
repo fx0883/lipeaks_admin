@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import * as cmsApi from "@/api/modules/cms";
-import { uploadFile } from "@/api/modules/common";
+import { uploadFile, uploadImageWithThumbnail } from "@/api/modules/common";
 import type {
   Article,
   ArticleListParams,
@@ -1141,6 +1141,160 @@ export const useCmsStore = defineStore("cms", {
       }
     },
 
+    // 标签组相关操作
+    // --------------------------------------------
+
+    /**
+     * 获取标签组列表
+     */
+    async fetchTagGroupList(params?: TagGroupListParams) {
+      console.log("[CmsStore] fetchTagGroupList - 开始获取标签组列表, 参数:", params);
+      this.loading.tagGroupList = true;
+      try {
+        const response = await cmsApi.getTagGroupList(params);
+        console.log("[CmsStore] fetchTagGroupList - 标签组列表API响应:", response);
+
+        // 处理API响应
+        if (response && response.data) {
+          console.log("[CmsStore] fetchTagGroupList - 响应数据:", response.data);
+          // 如果有分页结构
+          if (response.data.results && Array.isArray(response.data.results)) {
+            console.log("[CmsStore] fetchTagGroupList - 标签组列表数据长度:", response.data.results.length);
+            this.tagGroups.data = response.data.results;
+            this.tagGroups.total = response.data.count || response.data.results.length;
+            this.tagGroups.page = params?.page || 1;
+            this.tagGroups.limit = params?.page_size || 10;
+          } else if (Array.isArray(response.data)) {
+            // 如果直接是数组
+            console.log("[CmsStore] fetchTagGroupList - 标签组列表是数组，长度:", response.data.length);
+            this.tagGroups.data = response.data;
+            this.tagGroups.total = response.data.length;
+          } else {
+            console.error("[CmsStore] fetchTagGroupList - 标签组列表API响应格式异常:", response.data);
+            this.tagGroups.data = [];
+            this.tagGroups.total = 0;
+          }
+        } else {
+          console.error("[CmsStore] fetchTagGroupList - 标签组列表API响应异常:", response);
+          this.tagGroups.data = [];
+          this.tagGroups.total = 0;
+        }
+
+        return response;
+      } catch (error) {
+        console.error("[CmsStore] fetchTagGroupList - 获取标签组列表失败:", error);
+        throw error;
+      } finally {
+        this.loading.tagGroupList = false;
+      }
+    },
+
+    /**
+     * 获取标签组详情
+     */
+    async fetchTagGroupDetail(id: number) {
+      this.loading.tagGroupDetail = true;
+      try {
+        const response = await cmsApi.getTagGroupDetail(id);
+        if (response.success) {
+          this.currentTagGroup = response.data;
+        }
+        return response;
+      } catch (error) {
+        logger.error("获取标签组详情失败", error);
+        throw error;
+      } finally {
+        this.loading.tagGroupDetail = false;
+      }
+    },
+
+    /**
+     * 创建标签组
+     */
+    async createTagGroup(data: TagGroupCreateParams) {
+      this.loading.tagGroupCreate = true;
+      try {
+        const response = await cmsApi.createTagGroup(data);
+        if (response.success) {
+          logger.info("创建标签组成功");
+        }
+        return response;
+      } catch (error) {
+        logger.error("创建标签组失败", error);
+        throw error;
+      } finally {
+        this.loading.tagGroupCreate = false;
+      }
+    },
+
+    /**
+     * 更新标签组
+     */
+    async updateTagGroup(id: number, data: TagGroupUpdateParams) {
+      this.loading.tagGroupUpdate = true;
+      try {
+        const response = await cmsApi.updateTagGroup(id, data);
+        if (response.success) {
+          logger.info("更新标签组成功");
+          // 如果当前选中的标签组是被更新的，则更新状态
+          if (this.currentTagGroup && this.currentTagGroup.id === id) {
+            this.currentTagGroup = response.data;
+          }
+        }
+        return response;
+      } catch (error) {
+        logger.error("更新标签组失败", error);
+        throw error;
+      } finally {
+        this.loading.tagGroupUpdate = false;
+      }
+    },
+
+    /**
+     * 删除标签组
+     */
+    async deleteTagGroup(id: number) {
+      this.loading.tagGroupDelete = true;
+      try {
+        const response = await cmsApi.deleteTagGroup(id);
+        if (response.success) {
+          logger.info("删除标签组成功");
+          // 如果当前选中的标签组是被删除的，则清空状态
+          if (this.currentTagGroup && this.currentTagGroup.id === id) {
+            this.currentTagGroup = null;
+          }
+          // 从列表中移除
+          this.tagGroups.data = this.tagGroups.data.filter(item => item.id !== id);
+          this.tagGroups.total = Math.max(0, this.tagGroups.total - 1);
+        }
+        return response;
+      } catch (error) {
+        logger.error("删除标签组失败", error);
+        throw error;
+      } finally {
+        this.loading.tagGroupDelete = false;
+      }
+    },
+
+    /**
+     * 获取标签组下的标签
+     */
+    async fetchTagsByGroup(id: number) {
+      this.loading.tagsByGroup = true;
+      try {
+        const response = await cmsApi.getTagsByGroup(id);
+        if (response.success) {
+          this.tagsByGroup = response.data;
+        }
+        return response;
+      } catch (error) {
+        logger.error("获取标签组下的标签失败", error);
+        throw error;
+      } finally {
+        this.loading.tagsByGroup = false;
+      }
+    },
+
     /**
      * 上传文章封面图片
      */
@@ -1158,6 +1312,44 @@ export const useCmsStore = defineStore("cms", {
           return {
             ...response.data,
             url: imageUrl
+          };
+        } else {
+          logger.error(response.message || "图片上传失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("上传图片失败", error);
+        throw error;
+      } finally {
+        this.loading.uploadCoverImage = false;
+      }
+    },
+
+    /**
+     * 上传文章封面图片并生成缩略图
+     */
+    async uploadCoverImageWithThumbnail(file: File, folder: string = "article_covers") {
+      this.loading.uploadCoverImage = true;
+      try {
+        const response = await uploadImageWithThumbnail(file, folder);
+        if (response.success) {
+          // 处理相对路径，确保返回完整的 URL
+          let imageUrl = response.data.url;
+          let thumbnailUrl = response.data.thumbnail_url;
+
+          const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '') || 'http://localhost:8000';
+
+          if (imageUrl && imageUrl.startsWith('/media/')) {
+            imageUrl = baseURL + imageUrl;
+          }
+          if (thumbnailUrl && thumbnailUrl.startsWith('/media/')) {
+            thumbnailUrl = baseURL + thumbnailUrl;
+          }
+
+          return {
+            ...response.data,
+            url: imageUrl,
+            thumbnail_url: thumbnailUrl
           };
         } else {
           logger.error(response.message || "图片上传失败");

@@ -42,18 +42,18 @@ export type ArticleStatus = 'draft' | 'pending' | 'published' | 'archived';
 export type ArticleVisibility = 'public' | 'private' | 'password';
 
 // 内容类型枚举
-export type ContentType = 
-  | 'markdown' 
-  | 'html' 
-  | 'image' 
-  | 'image_upload' 
-  | 'video' 
-  | 'audio' 
-  | 'file' 
-  | 'link' 
-  | 'quote' 
-  | 'code' 
-  | 'table' 
+export type ContentType =
+  | 'markdown'
+  | 'html'
+  | 'image'
+  | 'image_upload'
+  | 'video'
+  | 'audio'
+  | 'file'
+  | 'link'
+  | 'quote'
+  | 'code'
+  | 'table'
   | 'list';
 
 // 简化的分类信息
@@ -272,7 +272,7 @@ export interface Category {
   updated_at: string;
   article_count?: number;
   children?: Category[];
-  
+
   // 多语言翻译对象
   translations?: CategoryTranslations;
   // SEO字段
@@ -302,7 +302,7 @@ export interface CategoryCreateParams {
   is_active?: boolean;
   is_pinned?: boolean;
   sort_order?: number;
-  
+
   // 多语言翻译对象
   translations?: CategoryTranslations;
   // SEO字段
@@ -321,7 +321,7 @@ export interface CategoryUpdateParams {
   is_active?: boolean;
   is_pinned?: boolean;
   sort_order?: number;
-  
+
   // 多语言翻译对象
   translations?: CategoryTranslations;
   // SEO字段
@@ -348,11 +348,14 @@ export interface Tag {
   name: string;
   slug: string;
   description?: string;
+  group?: number | null;  // 所属标签组ID
+  group_name?: string;    // 标签组名称
   color?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
   article_count?: number;
+  tenant?: number;
 }
 
 // 标签列表查询参数
@@ -368,6 +371,7 @@ export interface TagCreateParams {
   name: string;
   slug?: string;
   description?: string;
+  group?: number | null;  // 所属标签组ID
   color?: string;
   is_active?: boolean;
 }
@@ -377,6 +381,7 @@ export interface TagUpdateParams {
   name?: string;
   slug?: string;
   description?: string;
+  group?: number | null;  // 所属标签组ID
   color?: string;
   is_active?: boolean;
 }

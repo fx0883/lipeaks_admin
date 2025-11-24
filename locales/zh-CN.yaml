@@ -2500,3 +2500,104 @@ feedback:
     statusChangeReason: 请输入状态变更原因
     reasonRequired: 变更原因不能为空
     notFound: 反馈不存在
+
+# 应用管理
+application:
+  title: 应用管理
+  list: 应用列表
+  create: 创建应用
+  edit: 编辑应用
+  detail: 应用详情
+  delete: 删除应用
+  deleteConfirm: 确定要删除应用 {name} 吗？
+  deleteSuccess: 应用删除成功
+  deleteFailed: 应用删除失败
+  createSuccess: 应用创建成功
+  createFailed: 应用创建失败
+  updateSuccess: 应用更新成功
+  updateFailed: 应用更新失败
+  
+  menu:
+    applicationmanage: 应用管理
+    applicationList: 应用列表
+    ApplicationCreate: 创建应用
+    applicationedit: 编辑应用
+    applicationdetail: 应用详情
+  
+  fields:
+    id: ID
+    name: 应用名称
+    code: 应用代码
+    description: 应用描述
+    logo: Logo
+    website: 官方网站
+    contactEmail: 联系邮箱
+    currentVersion: 当前版本
+    owner: 负责人
+    team: 开发团队
+    status: 状态
+    isActive: 是否启用
+    tags: 标签
+    metadata: 元数据
+    createdAt: 创建时间
+    updatedAt: 更新时间
+  
+  status:
+    development: 开发中
+    testing: 测试中
+    active: 已发布
+    inactive: 已下线
+    deprecated: 已废弃
+  
+  statistics:
+    title: 统计信息
+    licenses: 许可证
+    licenseTotal: 许可证总数
+    licenseActive: 已激活许可证
+    feedbacks: 反馈
+    feedbackTotal: 反馈总数
+    feedbackOpen: 未关闭反馈
+    articles: 文章
+    articleTotal: 关联文章总数
+  
+  actions:
+    create: 创建应用
+    edit: 编辑
+    delete: 删除
+    view: 查看详情
+    refresh: 刷新
+    search: 搜索
+    reset: 重置
+    uploadLogo: 上传Logo
+    removeLogo: 移除Logo
+  
+  search:
+    placeholder: 搜索应用名称或代码
+    statusFilter: 状态筛选
+    allStatus: 全部状态
+  
+  formTips:
+    nameRequired: 请输入应用名称
+    nameLength: 应用名称长度不能超过100个字符
+    codeRequired: 请输入应用代码
+    codeLength: 应用代码长度不能超过50个字符
+    codeUnique: 应用代码在租户内必须唯一
+    emailFormat: 请输入有效的邮箱地址
+    websiteFormat: 请输入有效的网站地址
+    versionFormat: 版本号格式：如 1.0.0
+    logoFormat: 仅支持 JPG、PNG 格式的图片
+    logoSize: 图片大小不能超过 {size}MB
+    uploadLogoSuccess: Logo上传成功
+    uploadLogoFailed: Logo上传失败
+    descriptionOptional: 请输入应用描述（可选）
+    ownerOptional: 请输入负责人（可选）
+    teamOptional: 请输入开发团队（可选）
+    websiteOptional: 请输入官网地址（可选）
+    emailOptional: 请输入联系邮箱（可选）
+    statusRequired: 请选择状态
+  
+  loadDetailFailed: 加载应用详情失败
+  
+  relatedData:
+    articles: 关联文章
+    noArticles: 暂无关联文章

@@ -1,0 +1,52 @@
+{
+  "path": "/application",
+  "name": "Application",
+  "component": "/src/layout/index.vue",
+  "redirect": "/application/index",
+  "meta": {
+    "icon": "ri:apps-line",
+    "title": "应用管理",
+    "rank": 8,
+    "showLink": true
+  },
+  "children": [
+    {
+      "path": "/application/index",
+      "name": "ApplicationList",
+      "component": "/src/views/application/index.vue",
+      "meta": {
+        "title": "应用列表",
+        "showLink": true
+      }
+    },
+    {
+      "path": "/application/create",
+      "name": "ApplicationCreate",
+      "component": "/src/views/application/create.vue",
+      "meta": {
+        "title": "创建应用",
+        "showLink": false
+      }
+    },
+    {
+      "path": "/application/edit/:id",
+      "name": "ApplicationEdit",
+      "component": "/src/views/application/edit.vue",
+      "meta": {
+        "title": "编辑应用",
+        "showLink": false,
+        "activeMenu": "/application/index"
+      }
+    },
+    {
+      "path": "/application/detail/:id",
+      "name": "ApplicationDetail",
+      "component": "/src/views/application/detail.vue",
+      "meta": {
+        "title": "应用详情",
+        "showLink": false,
+        "activeMenu": "/application/index"
+      }
+    }
+  ]
+}

@@ -77,6 +77,18 @@
           min-width="180"
         />
         <el-table-column
+          prop="group_name"
+          :label="$t('cms.tag.tagGroup')"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            <el-tag v-if="row.group_name" type="info" size="small">
+              {{ row.group_name }}
+            </el-tag>
+            <span v-else class="text-gray-400">{{ $t('cms.tag.noGroup') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="description"
           :label="$t('cms.tag.description')"
           min-width="200"

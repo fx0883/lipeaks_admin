@@ -14,6 +14,7 @@ import type {
 import { slugify } from "@/utils/string";
 import logger from "@/utils/logger";
 import ImageUpload from "./ImageUpload.vue";
+import ImageUploadWithThumbnail from "./ImageUploadWithThumbnail.vue";
 import ParentArticleSelector from "./ParentArticleSelector.vue";
 
 const { t } = useI18n();
@@ -72,6 +73,7 @@ const formData = reactive<ArticleCreateParams | ArticleUpdateParams>({
   password: "",
   parent: null,
   cover_image: "",
+  cover_image_small: "",
   categories: [],
   tags: []
 });
@@ -333,8 +335,9 @@ onMounted(() => {
 
     <!-- 封面图片上传 -->
     <el-form-item :label="t('cms.article.coverImage')" prop="cover_image">
-      <ImageUpload
-        v-model="formData.cover_image"
+      <ImageUploadWithThumbnail
+        v-model:cover-image="formData.cover_image"
+        v-model:cover-image-small="formData.cover_image_small"
         :disabled="loading"
         :folder="'article_covers'"
         :uploadText="t('cms.article.uploadCover')"
