@@ -12,7 +12,7 @@
     <el-card class="search-card">
       <el-form @keyup.enter="handleSearch">
         <el-row :gutter="20">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="关键词">
               <el-input
                 v-model="searchKeyword"
@@ -21,7 +21,25 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
+            <el-form-item label="应用过滤">
+              <el-select
+                v-model="filterApplication"
+                placeholder="选择应用"
+                clearable
+                filterable
+                @change="handleFilterChange"
+              >
+                <el-option
+                  v-for="app in applicationList"
+                  :key="app.id"
+                  :label="app.name"
+                  :value="app.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="显示方式">
               <el-switch
                 v-model="showTree"
@@ -31,7 +49,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3">
             <el-form-item label="启用">
               <el-tooltip content="只显示启用的分类">
                 <el-switch
@@ -41,7 +59,7 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3">
             <el-form-item label="置顶">
               <el-tooltip content="只显示置顶分类">
                 <el-switch
@@ -119,6 +137,13 @@
                     />
                     <el-icon v-else><Folder /></el-icon>
                     <span class="ml-1">{{ node.label }}</span>
+                    <el-tag
+                      v-if="data.application_name"
+                      size="small"
+                      type="primary"
+                      class="ml-2"
+                      >{{ data.application_name }}</el-tag
+                    >
                     <el-tag
                       v-if="data.is_pinned"
                       size="small"
@@ -218,6 +243,14 @@
             <el-table-column prop="parent" label="父级分类" min-width="100">
               <template #default="{ row }">
                 {{ row.parent ? getCategoryNameById(row.parent) : "顶级分类" }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="application_name" label="关联应用" min-width="120">
+              <template #default="{ row }">
+                <el-tag v-if="row.application_name" type="primary" size="small">
+                  {{ row.application_name }}
+                </el-tag>
+                <span v-else class="text-gray-400 text-xs">通用</span>
               </template>
             </el-table-column>
             <el-table-column prop="sort_order" label="排序" width="80" />
@@ -347,13 +380,16 @@ import {
   Warning
 } from "@element-plus/icons-vue";
 import { useCmsStore } from "@/store/modules/cms";
+import { useApplicationStoreHook } from "@/store/modules/application";
 import type { Category, CategoryOrderParams, SupportedLanguage } from "@/types/cms";
+import type { Application } from "@/types/application";
 import CategoryForm from "@/components/Cms/Category/CategoryForm.vue";
 import ConfirmDialog from "@/components/Cms/Category/ConfirmDialog.vue";
 import { IconifyIconOnline } from "@/components/ReIcon";
 import { SUPPORTED_LANGUAGES } from "@/config/languages";
 
 const cmsStore = useCmsStore();
+const applicationStore = useApplicationStoreHook();
 const treeRef = ref();
 
 // 加载状态
@@ -366,6 +402,10 @@ const searchKeyword = ref("");
 const onlyActive = ref(false);
 // 仅显示置顶分类
 const onlyPinned = ref(false);
+// 应用过滤
+const filterApplication = ref<number | undefined>(undefined);
+// 应用列表
+const applicationList = ref<Application[]>([]);
 
 // 调试相关
 const debugMode = ref(false);
@@ -396,17 +436,24 @@ const confirmDialog = reactive({
 const fetchCategoryData = async () => {
   loading.value = true;
   try {
-    // 获取分类列表
-    await cmsStore.fetchCategoryList();
-    // 构建树形结构
-    await cmsStore.fetchCategoryTree();
+    // 构建查询参数
+    const params: any = {};
+    if (filterApplication.value) {
+      params.application = filterApplication.value;
+    }
+    
+    // 获取分类列表（带过滤参数）
+    await cmsStore.fetchCategoryList(params);
+    // 构建树形结构（同样带过滤参数）
+    await cmsStore.fetchCategoryTree(params);
 
     // 调试信息
     if (debugMode.value) {
       debugInfo.value = JSON.stringify(
         {
           categoryTree: cmsStore.categoryTree,
-          categoryList: cmsStore.categoryList
+          categoryList: cmsStore.categoryList,
+          filterParams: params
         },
         null,
         2
@@ -416,6 +463,32 @@ const fetchCategoryData = async () => {
     console.error("获取分类数据失败", error);
   } finally {
     loading.value = false;
+  }
+};
+
+// 获取应用列表
+const fetchApplicationList = async () => {
+  try {
+    console.log("[分类列表] 开始获取应用列表");
+    const result = await applicationStore.fetchApplicationList({ page_size: 100, is_active: true });
+    console.log("[分类列表] 获取到的应用列表:", result);
+    
+    // 处理分页响应
+    if (result && result.data && result.data.results && Array.isArray(result.data.results)) {
+      applicationList.value = result.data.results;
+    } else if (result && result.data && Array.isArray(result.data)) {
+      applicationList.value = result.data;
+    } else if (result && Array.isArray(result)) {
+      applicationList.value = result;
+    } else {
+      console.warn("[分类列表] 应用列表格式异常:", result);
+      applicationList.value = [];
+    }
+    
+    console.log("[分类列表] 应用列表设置成功, 数量:", applicationList.value.length);
+  } catch (error) {
+    console.error("[分类列表] 获取应用列表失败:", error);
+    applicationList.value = [];
   }
 };
 
@@ -614,7 +687,8 @@ const handleSearch = () => {
 
 // 处理过滤条件变更
 const handleFilterChange = () => {
-  handleSearch();
+  // 无论是树形模式还是列表模式，都重新获取数据
+  fetchCategoryData();
 };
 
 // 新增顶级分类
@@ -777,6 +851,9 @@ const handleDragEnd = async (
 
 // 组件挂载后获取数据
 onMounted(() => {
+  // 获取应用列表
+  fetchApplicationList();
+  
   fetchCategoryData().then(() => {
     // 添加详细日志记录
     console.log("组件挂载后 - 分类树数据:", cmsStore.categoryTree);

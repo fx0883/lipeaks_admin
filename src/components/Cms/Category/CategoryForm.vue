@@ -139,6 +139,26 @@
       </div>
     </el-form-item>
 
+    <el-form-item label="关联应用" prop="application">
+      <el-select
+        v-model="form.application"
+        placeholder="请选择关联的应用（可选）"
+        clearable
+        filterable
+        :loading="applicationsLoading"
+      >
+        <el-option
+          v-for="app in applicationList"
+          :key="app.id"
+          :label="app.name"
+          :value="app.id"
+        />
+      </el-select>
+      <div class="text-gray-400 text-xs mt-1">
+        将分类关联到特定应用，不选择则为通用分类
+      </div>
+    </el-form-item>
+
     <el-form-item label="图标" prop="icon">
       <el-input v-model="form.icon" placeholder="请输入图标名称">
         <template #prepend v-if="form.icon">
@@ -219,6 +239,7 @@ import { ref, reactive, computed, watch, onMounted, nextTick } from "vue";
 import { ElMessage, ElButton, ElSelect, ElOption, ElInput } from "element-plus";
 import { RefreshRight, CircleCheckFilled, QuestionFilled, DocumentCopy } from "@element-plus/icons-vue";
 import { useCmsStore } from "@/store/modules/cms";
+import { useApplicationStoreHook } from "@/store/modules/application";
 import type {
   Category,
   CategoryCreateParams,
@@ -226,6 +247,7 @@ import type {
   SupportedLanguage,
   CategoryTranslation
 } from "@/types/cms";
+import type { Application } from "@/types/application";
 import IconSelector from "@/components/Cms/Category/IconSelector.vue";
 import ImageUpload from "@/components/Cms/Article/ImageUpload.vue";
 import { IconifyIconOnline } from "@/components/ReIcon";
@@ -252,9 +274,11 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(["submit", "cancel"]);
 
 const cmsStore = useCmsStore();
+const applicationStore = useApplicationStoreHook();
 const formRef = ref();
 const loading = ref(props.loading);
 const categoriesLoading = ref(false);
+const applicationsLoading = ref(false);
 
 // 图标选择器引用
 const iconSelectorRef = ref();
@@ -272,6 +296,9 @@ const categoryTree = ref<Category[]>([]);
 // 分类列表数据
 const categoryList = ref<Category[]>([]);
 
+// 应用列表数据
+const applicationList = ref<Application[]>([]);
+
 // 表单数据
 const form = reactive<CategoryCreateParams>({
   slug: "",
@@ -281,6 +308,8 @@ const form = reactive<CategoryCreateParams>({
   is_active: true,
   is_pinned: false,
   sort_order: 0,
+  
+  application: null,
   
   // 多语言翻译对象
   translations: {
@@ -400,6 +429,10 @@ const initFormData = () => {
       props.categoryData.sort_order !== undefined
         ? props.categoryData.sort_order
         : 0;
+    form.application =
+      props.categoryData.application !== undefined
+        ? props.categoryData.application
+        : null;
 
     // 处理多语言翻译数据
     if (props.categoryData.translations) {
@@ -579,6 +612,35 @@ const fetchCategoryTree = async () => {
   }
 };
 
+// 获取应用列表
+const fetchApplicationList = async () => {
+  try {
+    console.log("[CategoryForm] 开始获取应用列表");
+    applicationsLoading.value = true;
+    const result = await applicationStore.fetchApplicationList({ page_size: 100, is_active: true });
+    console.log("[CategoryForm] 获取到的应用列表:", result);
+    
+    // 处理分页响应
+    if (result && result.data && result.data.results && Array.isArray(result.data.results)) {
+      applicationList.value = result.data.results;
+    } else if (result && result.data && Array.isArray(result.data)) {
+      applicationList.value = result.data;
+    } else if (result && Array.isArray(result)) {
+      applicationList.value = result;
+    } else {
+      console.warn("[CategoryForm] 应用列表格式异常:", result);
+      applicationList.value = [];
+    }
+    
+    console.log("[CategoryForm] 应用列表设置成功, 数量:", applicationList.value.length);
+  } catch (error) {
+    console.error("[CategoryForm] 获取应用列表失败:", error);
+    applicationList.value = [];
+  } finally {
+    applicationsLoading.value = false;
+  }
+};
+
 // 生成别名
 const generateSlug = () => {
   if (!form.name) {
@@ -653,6 +715,9 @@ onMounted(() => {
   // 获取分类数据
   fetchCategoryTree();
   fetchCategoryList();
+  
+  // 获取应用列表
+  fetchApplicationList();
 });
 </script>
 

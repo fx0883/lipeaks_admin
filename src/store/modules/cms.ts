@@ -877,12 +877,13 @@ export const useCmsStore = defineStore("cms", {
 
     /**
      * 获取分类树
+     * @param params 可选的过滤参数（如 application）
      */
-    async fetchCategoryTree() {
+    async fetchCategoryTree(params?: Record<string, any>) {
       this.categoryLoading = true;
       try {
-        // 首先获取分类列表
-        await this.fetchCategoryList();
+        // 首先获取分类列表，传递过滤参数
+        await this.fetchCategoryList(params);
 
         // 从分类列表构建树形结构
         const buildTree = () => {
@@ -1305,10 +1306,37 @@ export const useCmsStore = defineStore("cms", {
         if (response.success) {
           // 处理相对路径，确保返回完整的 URL
           let imageUrl = response.data.url;
-          if (imageUrl && imageUrl.startsWith('/media/')) {
-            const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '') || 'http://localhost:8000';
-            imageUrl = baseURL + imageUrl;
+          logger.debug("上传图片返回的原始URL:", imageUrl);
+
+          // 获取后端基础URL
+          const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '').replace(/\/$/, '') || 'http://localhost:8000';
+
+          // 处理各种可能的URL格式
+          if (imageUrl) {
+            // 如果已经是完整的URL（以http://或https://开头），直接使用
+            if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+              // 已经是完整URL，不需要处理
+            }
+            // 如果是以/media/开头的相对路径
+            else if (imageUrl.startsWith('/media/')) {
+              imageUrl = baseURL + imageUrl;
+            }
+            // 如果是以media/开头（无前导斜杠）
+            else if (imageUrl.startsWith('media/')) {
+              imageUrl = baseURL + '/' + imageUrl;
+            }
+            // 如果是以/开头的其他相对路径
+            else if (imageUrl.startsWith('/')) {
+              imageUrl = baseURL + imageUrl;
+            }
+            // 其他情况（纯文件名或相对路径）
+            else {
+              imageUrl = baseURL + '/media/' + imageUrl;
+            }
           }
+
+          logger.debug("处理后的图片URL:", imageUrl);
+
           return {
             ...response.data,
             url: imageUrl
@@ -1337,14 +1365,35 @@ export const useCmsStore = defineStore("cms", {
           let imageUrl = response.data.url;
           let thumbnailUrl = response.data.thumbnail_url;
 
-          const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '') || 'http://localhost:8000';
+          // 获取后端基础URL
+          const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '').replace(/\/$/, '') || 'http://localhost:8000';
 
-          if (imageUrl && imageUrl.startsWith('/media/')) {
-            imageUrl = baseURL + imageUrl;
-          }
-          if (thumbnailUrl && thumbnailUrl.startsWith('/media/')) {
-            thumbnailUrl = baseURL + thumbnailUrl;
-          }
+          // 辅助函数：处理URL格式
+          const normalizeUrl = (url: string | undefined): string | undefined => {
+            if (!url) return url;
+
+            // 如果已经是完整的URL，直接返回
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+              return url;
+            }
+            // 以/media/开头
+            if (url.startsWith('/media/')) {
+              return baseURL + url;
+            }
+            // 以media/开头（无前导斜杠）
+            if (url.startsWith('media/')) {
+              return baseURL + '/' + url;
+            }
+            // 以/开头的其他相对路径
+            if (url.startsWith('/')) {
+              return baseURL + url;
+            }
+            // 其他情况
+            return baseURL + '/media/' + url;
+          };
+
+          imageUrl = normalizeUrl(imageUrl);
+          thumbnailUrl = normalizeUrl(thumbnailUrl);
 
           return {
             ...response.data,

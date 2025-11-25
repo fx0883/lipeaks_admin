@@ -273,6 +273,10 @@ export interface Category {
   article_count?: number;
   children?: Category[];
 
+  // 应用关联
+  application?: number | null;
+  application_name?: string;
+
   // 多语言翻译对象
   translations?: CategoryTranslations;
   // SEO字段
@@ -286,6 +290,7 @@ export interface CategoryListParams {
   parent?: number | null;
   is_active?: boolean | string;
   is_pinned?: boolean | string;
+  application?: number;
   ordering?: string;
   page?: number;
   page_size?: number;
@@ -302,6 +307,7 @@ export interface CategoryCreateParams {
   is_active?: boolean;
   is_pinned?: boolean;
   sort_order?: number;
+  application?: number | null;
 
   // 多语言翻译对象
   translations?: CategoryTranslations;
@@ -321,6 +327,7 @@ export interface CategoryUpdateParams {
   is_active?: boolean;
   is_pinned?: boolean;
   sort_order?: number;
+  application?: number | null;
 
   // 多语言翻译对象
   translations?: CategoryTranslations;
