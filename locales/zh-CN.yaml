@@ -2433,6 +2433,8 @@ feedback:
   
   # 筛选器
   filters:
+    application: 应用
+    allApplications: 全部应用
     category: 分类
     allCategories: 全部分类
     type: 类型
@@ -2447,14 +2449,9 @@ feedback:
     
   # 表单
   form:
-    category: 软件分类
-    selectCategory: 请选择软件分类
-    categoryRequired: 请选择软件分类
-    software: 软件产品
-    selectSoftware: 请选择软件产品
-    softwareRequired: 请选择软件产品
-    version: 软件版本
-    selectVersion: 请选择版本（可选）
+    application: 应用
+    selectApplication: 请选择应用
+    applicationRequired: 请选择应用
     type: 反馈类型
     typeRequired: 请选择反馈类型
     priority: 优先级
@@ -2478,7 +2475,7 @@ feedback:
   # 详情页
   detail:
     submitter: 提交人
-    software: 软件
+    application: 应用
     createdAt: 创建时间
     resolvedAt: 解决时间
     description: 详细描述

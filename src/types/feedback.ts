@@ -1,162 +1,12 @@
 /**
  * Feedback System 类型定义
+ * 
+ * 注意：反馈系统现在使用 Application 管理模块
+ * Application 相关类型定义在 @/types/application.ts
  */
 
 import type { ApiResponse, DRFPaginationResponse } from "./api";
-
-// ==================== 软件管理相关类型 ====================
-
-/**
- * 软件分类
- */
-export interface SoftwareCategory {
-  id: number;
-  name: string;
-  code: string;
-  description?: string;
-  icon?: string;
-  sort_order: number;
-  is_active: boolean;
-  software_count?: number;
-  created_at: string;
-  updated_at: string;
-}
-
-/**
- * 软件分类列表查询参数
- */
-export interface SoftwareCategoryListParams {
-  is_active?: boolean;
-  search?: string;
-  ordering?: string;
-}
-
-/**
- * 软件分类创建参数
- */
-export interface SoftwareCategoryCreateParams {
-  name: string;
-  code: string;
-  description?: string;
-  icon?: string;
-  sort_order?: number;
-  is_active?: boolean;
-}
-
-/**
- * 软件分类更新参数
- */
-export interface SoftwareCategoryUpdateParams extends Partial<SoftwareCategoryCreateParams> {}
-
-/**
- * 软件版本
- */
-export interface SoftwareVersion {
-  id: number;
-  software: number;
-  software_name?: string;
-  version: string;
-  version_code: number;
-  release_date?: string;
-  release_notes?: string;
-  is_stable: boolean;
-  is_active: boolean;
-  download_url?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-/**
- * 软件产品
- */
-export interface Software {
-  id: number;
-  name: string;
-  code: string;
-  description?: string;
-  category?: number;
-  category_id?: number;
-  category_name?: string;
-  logo?: string;
-  website?: string;
-  owner?: string;
-  team?: string;
-  contact_email?: string;
-  tags?: string[];
-  current_version?: string;
-  status: "development" | "testing" | "released" | "maintenance" | "deprecated";
-  is_active: boolean;
-  total_feedbacks?: number;
-  open_feedbacks?: number;
-  version_count?: number;
-  versions?: SoftwareVersion[];
-  metadata?: Record<string, any>;
-  created_at: string;
-  updated_at: string;
-}
-
-/**
- * 软件列表查询参数
- */
-export interface SoftwareListParams {
-  category?: number;
-  status?: Software["status"];
-  is_active?: boolean;
-  search?: string;
-  ordering?: string;
-  page?: number;
-  page_size?: number;
-}
-
-/**
- * 软件创建参数
- */
-export interface SoftwareCreateParams {
-  name: string;
-  code: string;
-  description?: string;
-  category_id: number;
-  website?: string;
-  owner?: string;
-  team?: string;
-  contact_email?: string;
-  tags?: string[];
-  status?: Software["status"];
-  is_active?: boolean;
-}
-
-/**
- * 软件更新参数
- */
-export interface SoftwareUpdateParams extends Partial<SoftwareCreateParams> {}
-
-/**
- * 软件版本列表查询参数
- */
-export interface SoftwareVersionListParams {
-  software?: number;
-  is_stable?: boolean;
-  is_active?: boolean;
-  ordering?: string;
-}
-
-/**
- * 软件版本创建参数
- */
-export interface SoftwareVersionCreateParams {
-  version: string;
-  version_code: number;
-  release_date?: string;
-  release_notes?: string;
-  is_stable?: boolean;
-  is_active?: boolean;
-  download_url?: string;
-}
-
-/**
- * 软件版本更新参数
- */
-export interface SoftwareVersionUpdateParams extends Partial<SoftwareVersionCreateParams> {}
+import type { Application } from "./application";
 
 // ==================== 反馈管理相关类型 ====================
 
@@ -173,14 +23,14 @@ export type FeedbackPriority = "critical" | "high" | "medium" | "low";
 /**
  * 反馈状态
  */
-export type FeedbackStatus = 
-  | "submitted" 
-  | "reviewing" 
-  | "confirmed" 
-  | "in_progress" 
-  | "resolved" 
-  | "closed" 
-  | "rejected" 
+export type FeedbackStatus =
+  | "submitted"
+  | "reviewing"
+  | "confirmed"
+  | "in_progress"
+  | "resolved"
+  | "closed"
+  | "rejected"
   | "duplicate";
 
 /**
@@ -244,10 +94,8 @@ export interface Feedback {
   priority_display: string;
   status: FeedbackStatus;
   status_display: string;
-  software: number;
-  software_name?: string;
-  software_version?: number;
-  version_number?: string;
+  application: number;
+  application_name?: string;
   submitter?: FeedbackUser;
   contact_email?: string;
   contact_name?: string;
@@ -264,8 +112,7 @@ export interface Feedback {
  * 反馈详情
  */
 export interface FeedbackDetail extends Feedback {
-  software_detail?: Software;
-  version_detail?: SoftwareVersion;
+  application_detail?: Application;
   user_info?: FeedbackUser;
   environment_info?: Record<string, any>;
   email_notification_enabled: boolean;
@@ -279,8 +126,7 @@ export interface FeedbackDetail extends Feedback {
  * 反馈列表查询参数
  */
 export interface FeedbackListParams {
-  software?: number;
-  software_version?: number;
+  application?: number; // 可选，用于按应用过滤
   feedback_type?: FeedbackType;
   status?: FeedbackStatus;
   priority?: FeedbackPriority;
@@ -300,8 +146,7 @@ export interface FeedbackCreateParams {
   description: string;
   feedback_type: FeedbackType;
   priority?: FeedbackPriority;
-  software: number;
-  software_version?: number;
+  application: number;
   contact_email?: string;
   contact_name?: string;
   environment_info?: Record<string, any>;
@@ -309,8 +154,17 @@ export interface FeedbackCreateParams {
 
 /**
  * 反馈更新参数
+ * 注意：更新时不能修改 application
  */
-export interface FeedbackUpdateParams extends Partial<FeedbackCreateParams> {}
+export interface FeedbackUpdateParams {
+  title?: string;
+  description?: string;
+  priority?: FeedbackPriority;
+  status?: FeedbackStatus;
+  assigned_to?: number;
+  resolution_notes?: string;
+  email_notification_enabled?: boolean;
+}
 
 /**
  * 反馈状态修改参数
@@ -408,7 +262,7 @@ export interface EmailTemplateCreateParams {
 /**
  * 邮件模板更新参数
  */
-export interface EmailTemplateUpdateParams extends Partial<EmailTemplateCreateParams> {}
+export interface EmailTemplateUpdateParams extends Partial<EmailTemplateCreateParams> { }
 
 /**
  * 邮件日志状态
@@ -518,15 +372,6 @@ export interface CustomPaginationResponse<T = any> {
 }
 
 // ==================== API 响应类型 ====================
-
-export type SoftwareCategoryResponse = ApiResponse<SoftwareCategory>;
-export type SoftwareCategoryListResponse = ApiResponse<SoftwareCategory[] | CustomPaginationResponse<SoftwareCategory>>;
-
-export type SoftwareResponse = ApiResponse<Software>;
-export type SoftwareListResponse = ApiResponse<Software[] | CustomPaginationResponse<Software>>;
-
-export type SoftwareVersionResponse = ApiResponse<SoftwareVersion>;
-export type SoftwareVersionListResponse = ApiResponse<SoftwareVersion[] | CustomPaginationResponse<SoftwareVersion>>;
 
 export type FeedbackResponse = ApiResponse<FeedbackDetail>;
 export type FeedbackListResponse = ApiResponse<CustomPaginationResponse<Feedback>>;

@@ -40,12 +40,9 @@
           </span>
         </div>
         <div class="info-row">
-          <span class="info-label">{{ t("feedback.detail.software") }}:</span>
+          <span class="info-label">{{ t("feedback.detail.application") }}:</span>
           <span class="info-value">
-            {{ feedback.software_detail?.name || feedback.software_name }}
-            <span v-if="feedback.version_detail?.version" class="version-tag">
-              {{ feedback.version_detail.version }}
-            </span>
+            {{ feedback.application_detail?.name || feedback.application_name }}
           </span>
         </div>
         <div class="info-row">

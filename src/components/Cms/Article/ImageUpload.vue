@@ -6,6 +6,7 @@ import type { UploadProps, UploadInstance } from "element-plus";
 import { useCmsStoreHook } from "@/store/modules/cms";
 import { Plus, Delete } from "@element-plus/icons-vue";
 import logger from "@/utils/logger";
+import { getMediaUrl } from "@/utils/media";
 
 const { t } = useI18n();
 const cmsStore = useCmsStoreHook();
@@ -131,6 +132,11 @@ const displayUploadText = computed(() => {
 const displayTipText = computed(() => {
   return props.tipText || t("cms.article.coverImageTip");
 });
+
+// 计算展示用的图片 URL（将相对路径转换为完整 URL）
+const displayImageUrl = computed(() => {
+  return getMediaUrl(props.modelValue);
+});
 </script>
 
 <template>
@@ -158,10 +164,10 @@ const displayTipText = computed(() => {
 
     <div v-else class="image-preview" :style="containerStyle">
       <el-image
-        :src="modelValue"
+        :src="displayImageUrl"
         class="preview-image"
         fit="contain"
-        :preview-src-list="[modelValue]"
+        :preview-src-list="[displayImageUrl]"
       >
         <template #error>
           <div class="image-error">

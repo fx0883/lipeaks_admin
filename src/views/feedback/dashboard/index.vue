@@ -193,7 +193,7 @@
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useSoftwareCategories } from "@/composables/useSoftware";
+// Application 管理已移至 @/composables/useApplication
 import { getFeedbackStatistics } from "@/api/modules/feedback";
 import type { FeedbackStatistics } from "@/types/feedback";
 import { Plus } from "@element-plus/icons-vue";
@@ -211,8 +211,7 @@ const Search = "ep:search";
 const { t } = useI18n();
 const router = useRouter();
 
-// 获取分类列表用于筛选
-const { categories } = useSoftwareCategories(true);
+// 筛选器状态（应用选择已移至 Application 管理模块）
 
 // 数据状态
 const statistics = ref<FeedbackStatistics | null>(null);

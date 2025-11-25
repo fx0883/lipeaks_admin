@@ -1298,44 +1298,16 @@ export const useCmsStore = defineStore("cms", {
 
     /**
      * 上传文章封面图片
+     * 返回相对路径，展示时由组件使用 getMediaUrl 拼接完整 URL
      */
     async uploadCoverImage(file: File, folder: string = "article_covers") {
       this.loading.uploadCoverImage = true;
       try {
         const response = await uploadFile(file, folder);
         if (response.success) {
-          // 处理相对路径，确保返回完整的 URL
-          let imageUrl = response.data.url;
-          logger.debug("上传图片返回的原始URL:", imageUrl);
-
-          // 获取后端基础URL
-          const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '').replace(/\/$/, '') || 'http://localhost:8000';
-
-          // 处理各种可能的URL格式
-          if (imageUrl) {
-            // 如果已经是完整的URL（以http://或https://开头），直接使用
-            if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-              // 已经是完整URL，不需要处理
-            }
-            // 如果是以/media/开头的相对路径
-            else if (imageUrl.startsWith('/media/')) {
-              imageUrl = baseURL + imageUrl;
-            }
-            // 如果是以media/开头（无前导斜杠）
-            else if (imageUrl.startsWith('media/')) {
-              imageUrl = baseURL + '/' + imageUrl;
-            }
-            // 如果是以/开头的其他相对路径
-            else if (imageUrl.startsWith('/')) {
-              imageUrl = baseURL + imageUrl;
-            }
-            // 其他情况（纯文件名或相对路径）
-            else {
-              imageUrl = baseURL + '/media/' + imageUrl;
-            }
-          }
-
-          logger.debug("处理后的图片URL:", imageUrl);
+          // 直接返回 API 返回的相对路径，不进行 URL 拼接
+          const imageUrl = response.data.url;
+          logger.debug("上传图片返回的URL（相对路径）:", imageUrl);
 
           return {
             ...response.data,
@@ -1355,45 +1327,19 @@ export const useCmsStore = defineStore("cms", {
 
     /**
      * 上传文章封面图片并生成缩略图
+     * 返回相对路径，展示时由组件使用 getMediaUrl 拼接完整 URL
      */
     async uploadCoverImageWithThumbnail(file: File, folder: string = "article_covers") {
       this.loading.uploadCoverImage = true;
       try {
         const response = await uploadImageWithThumbnail(file, folder);
         if (response.success) {
-          // 处理相对路径，确保返回完整的 URL
-          let imageUrl = response.data.url;
-          let thumbnailUrl = response.data.thumbnail_url;
+          // 直接返回 API 返回的相对路径，不进行 URL 拼接
+          const imageUrl = response.data.url;
+          const thumbnailUrl = response.data.thumbnail_url;
 
-          // 获取后端基础URL
-          const baseURL = import.meta.env.VITE_BASE_API?.replace('/api/v1/', '').replace(/\/$/, '') || 'http://localhost:8000';
-
-          // 辅助函数：处理URL格式
-          const normalizeUrl = (url: string | undefined): string | undefined => {
-            if (!url) return url;
-
-            // 如果已经是完整的URL，直接返回
-            if (url.startsWith('http://') || url.startsWith('https://')) {
-              return url;
-            }
-            // 以/media/开头
-            if (url.startsWith('/media/')) {
-              return baseURL + url;
-            }
-            // 以media/开头（无前导斜杠）
-            if (url.startsWith('media/')) {
-              return baseURL + '/' + url;
-            }
-            // 以/开头的其他相对路径
-            if (url.startsWith('/')) {
-              return baseURL + url;
-            }
-            // 其他情况
-            return baseURL + '/media/' + url;
-          };
-
-          imageUrl = normalizeUrl(imageUrl);
-          thumbnailUrl = normalizeUrl(thumbnailUrl);
+          logger.debug("上传图片返回的URL（相对路径）:", imageUrl);
+          logger.debug("上传缩略图返回的URL（相对路径）:", thumbnailUrl);
 
           return {
             ...response.data,

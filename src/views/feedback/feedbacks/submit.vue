@@ -12,55 +12,19 @@
         label-width="120px"
         label-position="right"
       >
-        <!-- 软件分类选择 -->
-        <el-form-item :label="t('feedback.form.category')" prop="categoryId">
+        <!-- 应用选择 -->
+        <el-form-item :label="t('feedback.form.application')" prop="application">
           <el-select
-            v-model="formData.categoryId"
-            :placeholder="t('feedback.form.selectCategory')"
+            v-model="formData.application"
+            :placeholder="t('feedback.form.selectApplication')"
             :loading="loading"
-            @change="handleCategoryChange"
+            filterable
           >
             <el-option
-              v-for="category in categories"
-              :key="category.id"
-              :label="category.name"
-              :value="category.id"
-            />
-          </el-select>
-        </el-form-item>
-
-        <!-- 软件产品选择 -->
-        <el-form-item :label="t('feedback.form.software')" prop="software">
-          <el-select
-            v-model="formData.software"
-            :placeholder="t('feedback.form.selectSoftware')"
-            :loading="loading"
-            :disabled="!formData.categoryId"
-            @change="handleSoftwareChange"
-          >
-            <el-option
-              v-for="software in softwareList"
-              :key="software.id"
-              :label="`${software.name} (${software.current_version || 'N/A'})`"
-              :value="software.id"
-            />
-          </el-select>
-        </el-form-item>
-
-        <!-- 软件版本选择（可选） -->
-        <el-form-item :label="t('feedback.form.version')">
-          <el-select
-            v-model="formData.software_version"
-            :placeholder="t('feedback.form.selectVersion')"
-            :loading="loading"
-            :disabled="!formData.software"
-            clearable
-          >
-            <el-option
-              v-for="version in versions"
-              :key="version.id"
-              :label="version.version"
-              :value="version.id"
+              v-for="app in applications"
+              :key="app.id"
+              :label="`${app.name} (${app.current_version || 'N/A'})`"
+              :value="app.id"
             />
           </el-select>
         </el-form-item>
@@ -152,7 +116,7 @@
 import { ref, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useSoftwareSelector } from "@/composables/useSoftware";
+import { useApplicationSelector } from "@/composables/useApplication";
 import { useFeedbackActions } from "@/composables/useFeedback";
 import type { FormInstance, FormRules } from "element-plus";
 import type { FeedbackCreateParams } from "@/types/feedback";
@@ -160,19 +124,11 @@ import type { FeedbackCreateParams } from "@/types/feedback";
 const { t } = useI18n();
 const router = useRouter();
 
-// 软件选择器
+// 应用选择器
 const {
-  categories,
-  softwareList,
-  versions,
-  loading,
-  selectedCategoryId,
-  selectedSoftwareId,
-  selectedVersionId,
-  selectCategory,
-  selectSoftware,
-  selectVersion
-} = useSoftwareSelector();
+  applications,
+  loading
+} = useApplicationSelector();
 
 // 反馈操作
 const { create } = useFeedbackActions();
@@ -182,9 +138,7 @@ const formRef = ref<FormInstance>();
 
 // 表单数据
 const formData = reactive<{
-  categoryId: number | null;
-  software: number | null;
-  software_version: number | null;
+  application: number | null;
   feedback_type: string;
   priority: string;
   title: string;
@@ -192,9 +146,7 @@ const formData = reactive<{
   contact_email: string;
   contact_name: string;
 }>({
-  categoryId: null,
-  software: null,
-  software_version: null,
+  application: null,
   feedback_type: "bug",
   priority: "medium",
   title: "",
@@ -208,17 +160,10 @@ const submitting = ref(false);
 
 // 表单验证规则
 const rules = reactive<FormRules>({
-  categoryId: [
+  application: [
     {
       required: true,
-      message: t("feedback.form.categoryRequired"),
-      trigger: "change"
-    }
-  ],
-  software: [
-    {
-      required: true,
-      message: t("feedback.form.softwareRequired"),
+      message: t("feedback.form.applicationRequired"),
       trigger: "change"
     }
   ],
@@ -263,23 +208,6 @@ const rules = reactive<FormRules>({
 });
 
 /**
- * 处理分类变化
- */
-const handleCategoryChange = (categoryId: number) => {
-  selectCategory(categoryId);
-  formData.software = null;
-  formData.software_version = null;
-};
-
-/**
- * 处理软件变化
- */
-const handleSoftwareChange = (softwareId: number) => {
-  selectSoftware(softwareId);
-  formData.software_version = null;
-};
-
-/**
  * 提交表单
  */
 const handleSubmit = async () => {
@@ -304,8 +232,7 @@ const handleSubmit = async () => {
       description: formData.description,
       feedback_type: formData.feedback_type as any,
       priority: formData.priority as any,
-      software: formData.software!,
-      software_version: formData.software_version || undefined,
+      application: formData.application!,
       contact_email: formData.contact_email || undefined,
       contact_name: formData.contact_name || undefined,
       environment_info
@@ -327,9 +254,7 @@ const handleSubmit = async () => {
  */
 const handleReset = () => {
   formRef.value?.resetFields();
-  formData.categoryId = null;
-  formData.software = null;
-  formData.software_version = null;
+  formData.application = null;
 };
 
 /**

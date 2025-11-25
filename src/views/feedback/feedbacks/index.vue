@@ -11,11 +11,31 @@
     <!-- 筛选器 -->
     <el-card class="filter-card" shadow="never">
       <el-form :inline="true" :model="params">
+        <!-- 应用筛选（可选） -->
+        <el-form-item :label="t('feedback.filters.application')">
+          <el-select
+            v-model="params.application"
+            :placeholder="t('feedback.filters.allApplications')"
+            clearable
+            filterable
+            :loading="loadingApplications"
+            @change="handleFilterChange"
+          >
+            <el-option
+              v-for="app in applications"
+              :key="app.id"
+              :label="app.name"
+              :value="app.id"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item :label="t('feedback.filters.type')">
           <el-select
             v-model="params.feedback_type"
             :placeholder="t('feedback.filters.allTypes')"
             clearable
+            style="width: 130px"
             @change="handleFilterChange"
           >
             <el-option label="Bug报告" value="bug" />
@@ -31,6 +51,7 @@
             v-model="params.status"
             :placeholder="t('feedback.filters.allStatuses')"
             clearable
+            style="width: 130px"
             @change="handleFilterChange"
           >
             <el-option label="已提交" value="submitted" />
@@ -49,6 +70,7 @@
             v-model="params.priority"
             :placeholder="t('feedback.filters.allPriorities')"
             clearable
+            style="width: 110px"
             @change="handleFilterChange"
           >
             <el-option label="紧急" value="critical" />
@@ -59,7 +81,7 @@
         </el-form-item>
 
         <el-form-item :label="t('feedback.filters.ordering')">
-          <el-select v-model="params.ordering" @change="handleFilterChange">
+          <el-select v-model="params.ordering" style="width: 130px" @change="handleFilterChange">
             <el-option label="最新发布" value="-created_at" />
             <el-option label="最多投票" value="-vote_count" />
             <el-option label="最多回复" value="-reply_count" />
@@ -121,11 +143,7 @@
             </span>
             <span class="meta-item">
               <IconifyIconOffline :icon="Folder" />
-              {{ feedback.software_name }}
-            </span>
-            <span v-if="feedback.version_number" class="meta-item">
-              <IconifyIconOffline :icon="DocumentCopy" />
-              {{ feedback.version_number }}
+              {{ feedback.application_name }}
             </span>
             <span class="meta-item">
               <IconifyIconOffline :icon="Clock" />
@@ -178,52 +196,18 @@
         :rules="submitRules"
         label-width="120px"
       >
-        <!-- 软件分类选择 -->
-        <el-form-item :label="t('feedback.form.category')" prop="categoryId">
+        <!-- 应用选择 -->
+        <el-form-item :label="t('feedback.form.application')" prop="application">
           <el-select
-            v-model="submitFormData.categoryId"
-            :placeholder="t('feedback.form.selectCategory')"
-            @change="handleCategoryChange"
+            v-model="submitFormData.application"
+            :placeholder="t('feedback.form.selectApplication')"
+            filterable
           >
             <el-option
-              v-for="category in categories"
-              :key="category.id"
-              :label="category.name"
-              :value="category.id"
-            />
-          </el-select>
-        </el-form-item>
-
-        <!-- 软件产品选择 -->
-        <el-form-item :label="t('feedback.form.software')" prop="software">
-          <el-select
-            v-model="submitFormData.software"
-            :placeholder="t('feedback.form.selectSoftware')"
-            :disabled="!submitFormData.categoryId"
-            @change="handleSoftwareChange"
-          >
-            <el-option
-              v-for="software in softwareList"
-              :key="software.id"
-              :label="software.name"
-              :value="software.id"
-            />
-          </el-select>
-        </el-form-item>
-
-        <!-- 软件版本选择（可选） -->
-        <el-form-item :label="t('feedback.form.version')">
-          <el-select
-            v-model="submitFormData.software_version"
-            :placeholder="t('feedback.form.selectVersion')"
-            :disabled="!submitFormData.software"
-            clearable
-          >
-            <el-option
-              v-for="version in versions"
-              :key="version.id"
-              :label="version.version"
-              :value="version.id"
+              v-for="app in applications"
+              :key="app.id"
+              :label="app.name"
+              :value="app.id"
             />
           </el-select>
         </el-form-item>
@@ -311,7 +295,7 @@ import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useFeedbackList } from "@/composables/useFeedback";
-import { useSoftwareSelector } from "@/composables/useSoftware";
+import { useApplicationSelector } from "@/composables/useApplication";
 import { createFeedback } from "@/api/modules/feedback";
 import { ElMessageBox } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
@@ -325,7 +309,6 @@ import dayjs from "dayjs";
 const Search = "ep:search";
 const User = "ep:user";
 const Folder = "ep:folder";
-const DocumentCopy = "ep:document-copy";
 const Clock = "ep:clock";
 const ThumbsUp = "ep:thumb-up";
 const ChatDotRound = "ep:chat-dot-round";
@@ -345,18 +328,11 @@ const {
   changePage
 } = useFeedbackList();
 
-// 软件选择器
+// 应用选择器
 const {
-  categories,
-  softwareList,
-  versions,
-  selectedCategoryId,
-  selectedSoftwareId,
-  selectedVersionId,
-  selectCategory,
-  selectSoftware,
-  selectVersion
-} = useSoftwareSelector();
+  applications,
+  loading: loadingApplications
+} = useApplicationSelector();
 
 // 搜索文本（用于防抖）
 const searchText = ref("");
@@ -368,9 +344,7 @@ const submittingFeedback = ref(false);
 
 // 提交表单数据
 const submitFormData = reactive<{
-  categoryId: number | null;
-  software: number | null;
-  software_version: number | null;
+  application: number | null;
   feedback_type: string;
   priority: string;
   title: string;
@@ -378,9 +352,7 @@ const submitFormData = reactive<{
   contact_email: string;
   contact_name: string;
 }>({
-  categoryId: null,
-  software: null,
-  software_version: null,
+  application: null,
   feedback_type: "bug",
   priority: "medium",
   title: "",
@@ -391,17 +363,10 @@ const submitFormData = reactive<{
 
 // 提交表单验证规则
 const submitRules = reactive<FormRules>({
-  categoryId: [
+  application: [
     {
       required: true,
-      message: t("feedback.form.categoryRequired"),
-      trigger: "change"
-    }
-  ],
-  software: [
-    {
-      required: true,
-      message: t("feedback.form.softwareRequired"),
+      message: t("feedback.form.applicationRequired"),
       trigger: "change"
     }
   ],
@@ -486,23 +451,6 @@ const handleCreate = () => {
 };
 
 /**
- * 处理分类变化
- */
-const handleCategoryChange = (categoryId: number) => {
-  selectCategory(categoryId);
-  submitFormData.software = null;
-  submitFormData.software_version = null;
-};
-
-/**
- * 处理软件变化
- */
-const handleSoftwareChange = (softwareId: number) => {
-  selectSoftware(softwareId);
-  submitFormData.software_version = null;
-};
-
-/**
  * 提交反馈
  */
 const handleSubmitFeedback = async () => {
@@ -519,8 +467,7 @@ const handleSubmitFeedback = async () => {
         description: submitFormData.description,
         feedback_type: submitFormData.feedback_type as any,
         priority: submitFormData.priority as any,
-        software: submitFormData.software!,
-        software_version: submitFormData.software_version || undefined,
+        application: submitFormData.application!,
         contact_email: submitFormData.contact_email || undefined,
         contact_name: submitFormData.contact_name || undefined
       };
@@ -553,9 +500,7 @@ const handleSubmitDialogClose = () => {
  * 重置提交表单
  */
 const resetSubmitForm = () => {
-  submitFormData.categoryId = null;
-  submitFormData.software = null;
-  submitFormData.software_version = null;
+  submitFormData.application = null;
   submitFormData.feedback_type = "bug";
   submitFormData.priority = "medium";
   submitFormData.title = "";

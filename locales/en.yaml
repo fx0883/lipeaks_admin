@@ -2507,6 +2507,8 @@ feedback:
   
   # Filters
   filters:
+    application: Application
+    allApplications: All Applications
     category: Category
     allCategories: All Categories
     type: Type
@@ -2521,14 +2523,9 @@ feedback:
     
   # Form
   form:
-    category: Software Category
-    selectCategory: Select software category
-    categoryRequired: Please select software category
-    software: Software Product
-    selectSoftware: Select software product
-    softwareRequired: Please select software product
-    version: Software Version
-    selectVersion: Select version (optional)
+    application: Application
+    selectApplication: Select application
+    applicationRequired: Please select application
     type: Feedback Type
     typeRequired: Please select feedback type
     priority: Priority
@@ -2552,7 +2549,7 @@ feedback:
   # Detail Page
   detail:
     submitter: Submitter
-    software: Software
+    application: Application
     createdAt: Created At
     resolvedAt: Resolved At
     description: Detailed Description
