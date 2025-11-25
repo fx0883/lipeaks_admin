@@ -1,10 +1,6 @@
 import { http } from "@/utils/http";
 import type { ApiResponse, DRFPaginationResponse } from "@/types/api";
 import type {
-  SoftwareProduct,
-  ProductListParams,
-  ProductCreateParams,
-  ProductUpdateParams,
   LicensePlan,
   PlanListParams,
   PlanCreateParams,
@@ -31,110 +27,6 @@ import type {
   ExportResult
 } from "@/types/license";
 import logger from "@/utils/logger";
-
-// ============================
-// 软件产品管理 API
-// ============================
-
-/**
- * 获取产品列表
- */
-export function getProductList(params: ProductListParams = {}) {
-  logger.debug("API请求: 获取产品列表", params);
-
-  return http.request<DRFDRFPaginationResponse<SoftwareProduct>>(
-    "get",
-    "/licenses/admin/products/",
-    { params }
-  );
-}
-
-/**
- * 获取产品详情
- */
-export function getProductDetail(id: number) {
-  logger.debug("API请求: 获取产品详情", { id });
-
-  return http.request<ApiResponse<SoftwareProduct>>(
-    "get",
-    `/licenses/admin/products/${id}/`
-  );
-}
-
-/**
- * 创建产品
- */
-export function createProduct(data: ProductCreateParams) {
-  logger.debug("API请求: 创建产品", data);
-
-  return http.request<ApiResponse<SoftwareProduct>>(
-    "post",
-    "/licenses/admin/products/",
-    { data }
-  );
-}
-
-/**
- * 更新产品
- */
-export function updateProduct(id: number, data: ProductUpdateParams) {
-  logger.debug("API请求: 更新产品", { id, data });
-
-  return http.request<ApiResponse<SoftwareProduct>>(
-    "put",
-    `/licenses/admin/products/${id}/`,
-    { data }
-  );
-}
-
-/**
- * 部分更新产品
- */
-export function patchProduct(id: number, data: Partial<ProductUpdateParams>) {
-  logger.debug("API请求: 部分更新产品", { id, data });
-
-  return http.request<ApiResponse<SoftwareProduct>>(
-    "patch",
-    `/licenses/admin/products/${id}/`,
-    { data }
-  );
-}
-
-/**
- * 删除产品
- */
-export function deleteProduct(id: number) {
-  logger.debug("API请求: 删除产品", { id });
-
-  return http.request<ApiResponse<void>>(
-    "delete",
-    `/licenses/admin/products/${id}/`
-  );
-}
-
-/**
- * 重新生成产品密钥对
- */
-export function regenerateProductKeypair(id: number) {
-  logger.debug("API请求: 重新生成产品密钥对", { id });
-
-  return http.request<ApiResponse<{ public_key: string; private_key: string }>>(
-    "post",
-    `/licenses/admin/products/${id}/regenerate_keypair/`
-  );
-}
-
-/**
- * 获取产品统计信息
- */
-export function getProductStatistics(id: number) {
-  logger.debug("API请求: 获取产品统计信息", { id });
-
-  return http.request<ApiResponse<any>>(
-    "get",
-    `/licenses/admin/products/${id}/statistics/`
-  );
-}
 
 // ============================
 // 许可证计划管理 API

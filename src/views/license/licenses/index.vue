@@ -17,6 +17,7 @@ import {
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";
 import { useUserStoreHook } from "@/store/modules/user";
+import { getApplicationList } from "@/api/modules/application";
 import type {
   License,
   LicenseListParams,
@@ -56,7 +57,7 @@ const pagination = reactive({
 // 搜索表单
 const searchForm = reactive<LicenseListParams>({
   search: "",
-  product: undefined,
+  application: undefined,
   plan: undefined,
   status: undefined,
   page: 1,
@@ -74,8 +75,8 @@ const statusOptions = [
   { value: "expired", label: t("license.licenses.statusExpired") }
 ];
 
-// 产品选项
-const productOptions = ref([]);
+// 应用选项
+const applicationOptions = ref([]);
 // 计划选项
 const planOptions = ref([]);
 
@@ -101,20 +102,22 @@ const fetchLicenses = async () => {
   }
 };
 
-// 获取产品选项
-const fetchProductOptions = async () => {
+// 获取应用选项
+const fetchApplicationOptions = async () => {
   try {
-    await licenseStore.fetchProductList({
+    const response = await getApplicationList({
       page: 1,
       page_size: 100,
       is_active: true
     });
-    productOptions.value = licenseStore.products.data.map(product => ({
-      value: product.id,
-      label: `${product.name} v${product.version}`
-    }));
+    if (response.success && response.data?.results) {
+      applicationOptions.value = response.data.results.map(app => ({
+        value: app.id,
+        label: app.name
+      }));
+    }
   } catch (error) {
-    logger.error("获取产品选项失败", error);
+    logger.error("获取应用选项失败", error);
   }
 };
 
@@ -145,7 +148,7 @@ const handleSearch = () => {
 const handleResetSearch = () => {
   Object.assign(searchForm, {
     search: "",
-    product: undefined,
+    application: undefined,
     plan: undefined,
     status: undefined,
     page: 1,
@@ -678,7 +681,7 @@ const handleBatchDelete = async () => {
 
 // 页面加载时获取数据
 onMounted(() => {
-  fetchProductOptions();
+  fetchApplicationOptions();
   fetchPlanOptions();
   fetchLicenses();
 });
@@ -698,16 +701,16 @@ onMounted(() => {
           />
         </el-form-item>
 
-        <el-form-item :label="t('license.licenses.product')">
+        <el-form-item :label="t('license.licenses.application')">
           <el-select
-            v-model="searchForm.product"
-            :placeholder="t('license.licenses.productPlaceholder')"
+            v-model="searchForm.application"
+            :placeholder="t('license.licenses.applicationPlaceholder')"
             class="filter-select"
             clearable
             @change="handleSearch"
           >
             <el-option
-              v-for="option in productOptions"
+              v-for="option in applicationOptions"
               :key="option.value"
               :label="option.label"
               :value="option.value"
@@ -851,13 +854,13 @@ onMounted(() => {
         </el-table-column>
 
         <el-table-column
-          prop="product_name"
-          :label="t('license.licenses.product')"
+          prop="application_name"
+          :label="t('license.licenses.application')"
           min-width="150"
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            <span v-if="row.product_name">{{ row.product_name }}</span>
+            <span v-if="row.application_name">{{ row.application_name }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>

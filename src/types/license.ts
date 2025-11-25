@@ -3,58 +3,6 @@
  * 基于licenses_doc中的系统分析，定义所有相关的TypeScript类型
  */
 
-// 软件产品相关类型
-export interface SoftwareProduct {
-  id: number;
-  name: string;
-  version: string;
-  description: string;
-  code: string;
-  status: string;
-  is_active: boolean;
-  max_activations: number;
-  offline_days: number;
-  license_plans_count: number;
-  total_licenses: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ProductListParams {
-  search?: string;
-  is_active?: boolean;
-  page?: number;
-  page_size?: number;
-}
-
-export interface ProductCreateParams {
-  name: string;
-  code: string;
-  version: string;
-  description: string;
-  is_active?: boolean;
-}
-
-export interface ProductUpdateParams extends Partial<ProductCreateParams> { }
-
-// 产品编辑表单数据类型
-export interface ProductEditFormData {
-  name: string;
-  code: string;
-  version: string;
-  description: string;
-  is_active: boolean;
-}
-
-// 产品创建表单数据类型
-export interface ProductCreateData {
-  name: string;
-  code: string;
-  version: string;
-  description: string;
-  is_active: boolean;
-}
-
 // 许可证计划相关类型
 export type PlanType =
   | "trial"
@@ -66,8 +14,8 @@ export type PlanStatus = "active" | "inactive" | "deprecated";
 
 export interface LicensePlan {
   id: number;
-  product: number;
-  product_name?: string; // 只读字段
+  application: number;
+  application_name?: string; // 只读字段
   name: string;
   code: string;
   plan_type: PlanType;
@@ -90,7 +38,7 @@ export interface LegacyLicensePlan extends LicensePlan {
 
 export interface PlanListParams {
   search?: string;
-  product?: number; // API中的字段名是product，不是product_id
+  application?: number; // 按应用过滤
   plan_type?: PlanType;
   status?: "active" | "inactive"; // API中用status，不是is_active
   page?: number;
@@ -99,7 +47,7 @@ export interface PlanListParams {
 }
 
 export interface PlanCreateParams {
-  product: number;
+  application: number; // 必选：所属应用ID
   name: string;
   code: string;
   plan_type: PlanType;
@@ -131,8 +79,8 @@ export type LicenseStatus =
 
 export interface License {
   id: number;
-  product: number;
-  product_name?: string;
+  application: number;
+  application_name?: string;
   plan: number;
   plan_name?: string;
   license_key: string;
@@ -160,7 +108,7 @@ export interface License {
 
 export interface LicenseListParams {
   search?: string;
-  product?: number;
+  application?: number; // 按应用过滤（可选）
   plan?: number;
   status?: LicenseStatus;
   page?: number;
@@ -169,7 +117,7 @@ export interface LicenseListParams {
 }
 
 export interface LicenseCreateParams {
-  product?: number;
+  application: number; // 必选：所属应用ID
   plan: number;
   customer_info: CustomerInfo;
   max_activations?: number;
@@ -178,7 +126,7 @@ export interface LicenseCreateParams {
 }
 
 export interface LicenseUpdateParams {
-  product?: number;
+  application?: number; // 所属应用ID
   plan?: number;
   customer_name?: string;
   customer_email?: string;

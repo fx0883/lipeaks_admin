@@ -45,17 +45,21 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.product')">
-                <div class="product-display">
-                  <span v-if="form.productId && getSelectedProduct()">
-                    {{ getSelectedProduct()?.name }} v{{
-                      getSelectedProduct()?.version
-                    }}
-                  </span>
-                  <span v-else class="placeholder-text">
-                    {{ $t("license.licenses.selectPlanFirst") }}
-                  </span>
-                </div>
+              <el-form-item :label="$t('license.licenses.application')" prop="applicationId">
+                <el-select
+                  v-model="form.applicationId"
+                  :placeholder="$t('license.licenses.selectApplication')"
+                  style="width: 100%"
+                  filterable
+                  @change="onApplicationChange"
+                >
+                  <el-option
+                    v-for="app in availableApplications"
+                    :key="app.id"
+                    :label="app.name"
+                    :value="app.id"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -86,17 +90,17 @@
                       <span>{{ plan.name }}</span>
                       <div style="font-size: 12px; color: #999">
                         <span>¥{{ plan.price }}</span>
-                        <span v-if="plan.product_name" style="margin-left: 8px">
-                          {{ plan.product_name }}
+                        <span v-if="plan.application_name" style="margin-left: 8px">
+                          {{ plan.application_name }}
                         </span>
                       </div>
                     </div>
                   </el-option>
                 </el-select>
                 <!-- 显示方案数量提示，帮助用户理解级联选择 -->
-                <div v-if="form.productId" class="form-tip">
+                <div v-if="form.applicationId" class="form-tip">
                   {{
-                    $t("license.licenses.plansFilteredByProduct", {
+                    $t("license.licenses.plansFilteredByApplication", {
                       count: availablePlans.length,
                       total: allPlans.length
                     })
@@ -200,12 +204,10 @@ import {
   type FormRules
 } from "element-plus";
 import { useI18n } from "vue-i18n";
-import {
-  getProductList,
-  getPlanList,
-  createLicense
-} from "@/api/modules/license";
-import type { SoftwareProduct, LicensePlan } from "@/types/license";
+import { getPlanList, createLicense } from "@/api/modules/license";
+import { getApplicationList } from "@/api/modules/application";
+import type { LicensePlan } from "@/types/license";
+import type { Application } from "@/types/application";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -216,7 +218,7 @@ const formRef = ref<FormInstance>();
 
 interface LicenseForm {
   licenseKey: string;
-  productId: number | null;
+  applicationId: number | null;
   planId: number | null;
   customerInfo: {
     name: string;
@@ -227,13 +229,9 @@ interface LicenseForm {
   notes: string;
 }
 
-// 使用真实的API类型
-type Product = SoftwareProduct;
-type Plan = LicensePlan;
-
 const form = reactive<LicenseForm>({
   licenseKey: "",
-  productId: null,
+  applicationId: null,
   planId: null,
   customerInfo: {
     name: "",
@@ -244,12 +242,20 @@ const form = reactive<LicenseForm>({
   notes: ""
 });
 
-const availableProducts = ref<Product[]>([]);
-const availablePlans = ref<Plan[]>([]);
-const allPlans = ref<Plan[]>([]); // 存储所有方案，用于过滤
+const availableApplications = ref<Application[]>([]);
+const availablePlans = ref<LicensePlan[]>([]);
+const allPlans = ref<LicensePlan[]>([]); // 存储所有方案，用于过滤
 
 const rules = reactive<FormRules<LicenseForm>>({
-  // 根据API文档：plan是必填字段，product可由plan自动设置
+  // application是必填字段
+  applicationId: [
+    {
+      required: true,
+      message: t("license.licenses.applicationRequired"),
+      trigger: "change"
+    }
+  ],
+  // plan是必填字段
   planId: [
     {
       required: true,
@@ -298,20 +304,20 @@ const rules = reactive<FormRules<LicenseForm>>({
   ]
 });
 
-// 加载产品列表
-const loadAvailableProducts = async () => {
+// 加载应用列表
+const loadAvailableApplications = async () => {
   try {
-    const result = await getProductList({ page_size: 100 });
+    const result = await getApplicationList({ page_size: 100, is_active: true });
     if (result.success && result.data?.results) {
-      availableProducts.value = result.data.results;
+      availableApplications.value = result.data.results;
     } else {
-      availableProducts.value = [];
-      ElMessage.warning(t("license.licenses.noProductsAvailable"));
+      availableApplications.value = [];
+      ElMessage.warning(t("license.licenses.noApplicationsAvailable"));
     }
   } catch (error) {
-    console.error("Load products failed:", error);
-    ElMessage.error(t("license.licenses.loadProductsFailed"));
-    availableProducts.value = [];
+    console.error("Load applications failed:", error);
+    ElMessage.error(t("license.licenses.loadApplicationsFailed"));
+    availableApplications.value = [];
   }
 };
 
@@ -336,52 +342,72 @@ const loadAllPlans = async () => {
   }
 };
 
-// 获取选中的产品信息
-const getSelectedProduct = () => {
-  if (!form.productId) return null;
-  return availableProducts.value.find(product => product.id === form.productId);
+// 获取选中的应用信息
+const getSelectedApplication = () => {
+  if (!form.applicationId) return null;
+  return availableApplications.value.find(app => app.id === form.applicationId);
+};
+
+// 应用变化时的处理逻辑（级联选择）
+const onApplicationChange = (applicationId: number | null) => {
+  // 清空已选择的方案
+  form.planId = null;
+  
+  if (applicationId) {
+    // 根据应用过滤方案
+    availablePlans.value = allPlans.value.filter(
+      plan => plan.application === applicationId
+    );
+    if (availablePlans.value.length === 0) {
+      ElMessage.info(t("license.licenses.noPlansForApplication"));
+    }
+  } else {
+    // 未选择应用时，显示所有方案
+    availablePlans.value = [...allPlans.value];
+  }
 };
 
 
-// 方案变化时的处理逻辑（级联选择）
+// 方案变化时的处理逻辑
 const onPlanChange = (planId: number | null) => {
   if (planId) {
     const selectedPlan = allPlans.value.find(plan => plan.id === planId);
     if (selectedPlan) {
-      // 当用户选择方案时，自动设置对应的产品
-      if (form.productId !== selectedPlan.product) {
-        form.productId = selectedPlan.product;
+      // 如果尚未选择应用，自动设置对应的应用
+      if (!form.applicationId && selectedPlan.application) {
+        form.applicationId = selectedPlan.application;
         ElMessage.success(
-          t("license.licenses.productAutoSelectedByPlan", {
-            product: selectedPlan.product_name
+          t("license.licenses.applicationAutoSelectedByPlan", {
+            application: selectedPlan.application_name
           })
+        );
+        // 更新可用方案列表
+        availablePlans.value = allPlans.value.filter(
+          plan => plan.application === selectedPlan.application
         );
       }
     }
-  } else {
-    // 清空方案选择时，显示所有方案
-    availablePlans.value = [...allPlans.value];
   }
 
-  validateProductPlanConsistency();
+  validateApplicationPlanConsistency();
 };
 
-// 验证产品-方案一致性（实时验证提示 - 方案C）
-const validateProductPlanConsistency = () => {
-  if (form.productId && form.planId) {
+// 验证应用-方案一致性
+const validateApplicationPlanConsistency = () => {
+  if (form.applicationId && form.planId) {
     const selectedPlan = allPlans.value.find(plan => plan.id === form.planId);
     if (!selectedPlan) {
       ElMessage.error(t("license.licenses.invalidPlanSelection"));
       return false;
     }
 
-    if (selectedPlan.product !== form.productId) {
+    if (selectedPlan.application !== form.applicationId) {
       ElMessage.error(
-        t("license.licenses.productPlanMismatchDetailed", {
+        t("license.licenses.applicationPlanMismatchDetailed", {
           planName: selectedPlan.name,
-          planProduct: selectedPlan.product_name,
-          selectedProduct: availableProducts.value.find(
-            p => p.id === form.productId
+          planApplication: selectedPlan.application_name,
+          selectedApplication: availableApplications.value.find(
+            app => app.id === form.applicationId
           )?.name
         })
       );
@@ -409,17 +435,16 @@ const handleSubmit = async () => {
     // 表单验证
     await formRef.value.validate();
 
-    // 产品-方案一致性验证
-    if (!validateProductPlanConsistency()) {
+    // 应用-方案一致性验证
+    if (!validateApplicationPlanConsistency()) {
       return;
     }
 
     submitting.value = true;
 
-    // 根据API文档推荐做法：只提供plan参数，让系统自动设置product
-    // max_activations和validity_days由系统从plan中自动获取
-    // 租户信息将由后端从管理员token中获取
+    // 提交数据：application和plan都是必选参数
     const submitData = {
+      application: form.applicationId!,
       plan: form.planId!,
       customer_info: {
         name: form.customerInfo.name,
@@ -518,7 +543,7 @@ const handleCancel = () => {
 };
 
 onMounted(() => {
-  Promise.all([loadAvailableProducts(), loadAllPlans()]);
+  Promise.all([loadAvailableApplications(), loadAllPlans()]);
   generateLicenseKey();
 });
 </script>

@@ -25,18 +25,19 @@
         >
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item :label="$t('license.plans.product')" prop="product">
+              <el-form-item :label="$t('license.plans.application')" prop="application">
                 <el-select
-                  v-model="form.product"
-                  :placeholder="$t('license.plans.productPlaceholder')"
+                  v-model="form.application"
+                  :placeholder="$t('license.plans.applicationPlaceholder')"
                   clearable
+                  filterable
                   style="width: 100%"
                 >
                   <el-option
-                    v-for="product in productOptions"
-                    :key="product.value"
-                    :label="product.label"
-                    :value="product.value"
+                    v-for="app in applicationOptions"
+                    :key="app.value"
+                    :label="app.label"
+                    :value="app.value"
                   />
                 </el-select>
               </el-form-item>
@@ -188,6 +189,7 @@ import {
 } from "element-plus";
 import { useI18n } from "vue-i18n";
 import { useLicenseStoreHook } from "@/store/modules/license";
+import { getApplicationList } from "@/api/modules/application";
 import type { PlanCreateParams } from "@/types/license";
 
 const { t } = useI18n();
@@ -198,11 +200,11 @@ const loading = ref(false);
 const submitting = ref(false);
 const formRef = ref<FormInstance>();
 
-// 产品选项
-const productOptions = ref<Array<{ value: number; label: string }>>([]);
+// 应用选项
+const applicationOptions = ref<Array<{ value: number; label: string }>>([]);
 
 interface PlanForm {
-  product: number | null;
+  application: number | null;
   name: string;
   code: string;
   plan_type: string;
@@ -215,7 +217,7 @@ interface PlanForm {
 }
 
 const form = reactive<PlanForm>({
-  product: null,
+  application: null,
   name: "",
   code: "",
   plan_type: "",
@@ -228,10 +230,10 @@ const form = reactive<PlanForm>({
 });
 
 const rules = reactive<FormRules<PlanForm>>({
-  product: [
+  application: [
     {
       required: true,
-      message: t("license.plans.productRequired"),
+      message: t("license.plans.applicationRequired"),
       trigger: "change"
     }
   ],
@@ -318,7 +320,7 @@ const handleSubmit = async () => {
     }
 
     const createData: PlanCreateParams = {
-      product: form.product!,
+      application: form.application!,
       name: form.name,
       code: form.code,
       plan_type: form.plan_type as any,
@@ -359,25 +361,27 @@ const handleCancel = () => {
     });
 };
 
-// 获取产品选项
-const fetchProductOptions = async () => {
+// 获取应用选项
+const fetchApplicationOptions = async () => {
   try {
-    await licenseStore.fetchProductList({
+    const response = await getApplicationList({
       page: 1,
       page_size: 100,
       is_active: true
     });
-    productOptions.value = licenseStore.products.data.map(product => ({
-      value: product.id,
-      label: `${product.name} v${product.version}`
-    }));
+    if (response.success && response.data?.results) {
+      applicationOptions.value = response.data.results.map(app => ({
+        value: app.id,
+        label: app.name
+      }));
+    }
   } catch (error) {
-    console.error("获取产品选项失败", error);
+    console.error("获取应用选项失败", error);
   }
 };
 
 onMounted(() => {
-  fetchProductOptions();
+  fetchApplicationOptions();
 });
 </script>
 

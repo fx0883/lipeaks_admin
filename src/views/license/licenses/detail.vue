@@ -92,8 +92,8 @@
                     </el-button>
                   </div>
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.licenses.product')">
-                  {{ licenseData.product_name || "-" }}
+                <el-descriptions-item :label="$t('license.licenses.application')">
+                  {{ licenseData.application_name || "-" }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.licenses.plan')">
                   {{ licenseData.plan_name || "-" }}
@@ -295,8 +295,8 @@ const loading = ref(false);
 interface LicenseData {
   id: number;
   license_key: string;
-  product: number;
-  product_name?: string;
+  application: number;
+  application_name?: string;
   plan: number;
   plan_name?: string;
   tenant: number; // API响应包含此字段，但前端不显示
@@ -341,8 +341,8 @@ interface Activity {
 const licenseData = reactive<LicenseData>({
   id: 0,
   license_key: "",
-  product: 0,
-  product_name: "",
+  application: 0,
+  application_name: "",
   plan: 0,
   plan_name: "",
   tenant: 0,

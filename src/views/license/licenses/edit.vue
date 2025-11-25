@@ -216,16 +216,16 @@
           </div>
         </div>
         
-        <!-- 产品方案区域 - 只读信息 -->
+        <!-- 应用方案区域 - 只读信息 -->
         <div class="form-section">
-          <h3>{{ $t("license.licenses.productPlan") || "产品方案" }}</h3>
+          <h3>{{ $t("license.licenses.applicationPlan") || "应用方案" }}</h3>
           
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item :label="$t('license.licenses.product')">
+              <el-form-item :label="$t('license.licenses.application')">
                 <el-input
-                  :value="productInfo?.name || 'Leaks_compress'"
-                  :placeholder="$t('license.licenses.product')"
+                  :value="applicationInfo?.name || ''"
+                  :placeholder="$t('license.licenses.application')"
                   readonly
                   class="readonly-field"
                 >
@@ -234,7 +234,7 @@
                   </template>
                 </el-input>
                 <div class="field-help">
-                  {{ $t("license.licenses.productReadonly") || "产品信息不可修改" }}
+                  {{ $t("license.licenses.applicationReadonly") || "应用信息不可修改" }}
                 </div>
               </el-form-item>
             </el-col>
@@ -242,7 +242,7 @@
             <el-col :span="12">
               <el-form-item :label="$t('license.licenses.plan')">
                 <el-input
-                  :value="planInfo?.name || 'Trial'"
+                  :value="planInfo?.name || ''"
                   :placeholder="$t('license.licenses.plan')"
                   readonly
                   class="readonly-field"
@@ -369,8 +369,6 @@ import {
   Document
 } from "@element-plus/icons-vue";
 import {
-  getProductList,
-  getPlanList,
   getLicenseDetail,
   updateLicense
 } from "@/api/modules/license";
@@ -390,7 +388,7 @@ const isDirty = ref(false);
 const isFormValid = ref(false);
 const originalData = ref<any>(null);
 const tenantLocked = ref(false);
-const productLocked = ref(false);
+const applicationLocked = ref(false);
 
 // 自动保存和草稿
 const autoSaveTimer = ref<NodeJS.Timeout | null>(null);
@@ -406,7 +404,7 @@ const performanceMonitor = ref({
 interface LicenseForm {
   id?: number;
   license_key: string;
-  product: number | null;
+  application: number | null;
   plan: number | null;
   tenant: number | null;
   customer_name: string;
@@ -419,18 +417,12 @@ interface LicenseForm {
   metadata?: Record<string, any>;
 }
 
-interface Product {
-  id: number;
-  name: string;
-  version: string;
-}
-
 interface Plan {
   id: number;
   name: string;
-  product: number;
+  application: number;
   price: string;
-  product_name: string;
+  application_name: string;
 }
 
 interface Tenant {
@@ -445,7 +437,7 @@ interface MetadataItem {
 
 const form = reactive<LicenseForm>({
   license_key: "",
-  product: null,
+  application: null,
   plan: null,
   tenant: null,
   customer_name: "",
@@ -460,7 +452,7 @@ const form = reactive<LicenseForm>({
 
 // 只读信息数据
 const tenantInfo = ref<{ id: number; name: string } | null>(null);
-const productInfo = ref<{ id: number; name: string } | null>(null);
+const applicationInfo = ref<{ id: number; name: string } | null>(null);
 const planInfo = ref<{ id: number; name: string } | null>(null);
 // 移除可编辑的产品方案状态，改为只读显示
 
@@ -690,7 +682,7 @@ const loadLicenseData = async () => {
       Object.assign(form, {
         id: licenseData.id,
         license_key: licenseData.license_key,
-        product: licenseData.product,
+        application: licenseData.application,
         plan: licenseData.plan,
         tenant: licenseData.tenant,
         customer_name: licenseData.customer_name,
@@ -709,16 +701,16 @@ const loadLicenseData = async () => {
         name: licenseData.tenant_name || `租户 ${licenseData.tenant}`
       };
       
-      // 设置产品信息（只读）
-      productInfo.value = {
-        id: licenseData.product,
-        name: licenseData.product_name || 'Leaks_compress'
+      // 设置应用信息（只读）
+      applicationInfo.value = {
+        id: licenseData.application,
+        name: licenseData.application_name || ''
       };
       
       // 设置方案信息（只读）
       planInfo.value = {
         id: licenseData.plan,
-        name: licenseData.plan_name || 'Trial'
+        name: licenseData.plan_name || ''
       };
       
       // 填充元数据
@@ -918,7 +910,7 @@ const handleSubmit = async () => {
     const submitData: any = {
       // 必填字段
       tenant: form.tenant, // 后端要求必填，虽然不允许修改但需要包含原值
-      product: form.product, // 后端要求必填，虽然不允许修改但需要包含原值
+      application: form.application, // 后端要求必填，虽然不允许修改但需要包含原值
       plan: form.plan, // 后端要求必填，虽然不允许修改但需要包含原值
       
       // 用户可修改字段
@@ -943,13 +935,13 @@ const handleSubmit = async () => {
     }
 
     // 验证必填字段
-    if (!submitData.tenant || !submitData.product || !submitData.plan) {
+    if (!submitData.tenant || !submitData.application || !submitData.plan) {
       logger.error("[LicenseEdit] 缺少必填字段", {
         tenant: submitData.tenant,
-        product: submitData.product,
+        application: submitData.application,
         plan: submitData.plan
       });
-      throw new Error("缺少必填字段：租户、产品或方案信息");
+      throw new Error("缺少必填字段：租户、应用或方案信息");
     }
 
     // 调用更新许可证API
@@ -958,7 +950,7 @@ const handleSubmit = async () => {
       data: submitData,
       requiredFields: {
         tenant: submitData.tenant,
-        product: submitData.product,
+        application: submitData.application,
         plan: submitData.plan
       }
     });

@@ -98,10 +98,11 @@ const fetchActivations = async () => {
 // 获取许可证选项
 const fetchLicenseOptions = async () => {
   try {
-    await licenseStore.fetchLicenseList({ page: 1, page_size: 100, status: "active" });
+    // 许可证状态: generated, activated, suspended, revoked, expired
+    await licenseStore.fetchLicenseList({ page: 1, page_size: 100, status: "activated" });
     licenseOptions.value = licenseStore.licenses.data.map(license => ({
       value: license.id,
-      label: `${license.license_key.substring(0, 8)}...${license.license_key.slice(-4)} (${license.product?.name || 'N/A'})`
+      label: `${license.license_key.substring(0, 8)}...${license.license_key.slice(-4)} (${license.application_name || 'N/A'})`
     }));
   } catch (error) {
     logger.error("获取许可证选项失败", error);
@@ -423,7 +424,7 @@ onMounted(() => {
               <code class="license-key">
                 {{ row.license.license_key.substring(0, 8) }}...{{ row.license.license_key.slice(-4) }}
               </code>
-              <div class="product-name">{{ row.license.product?.name || 'N/A' }}</div>
+              <div class="application-name">{{ row.license.application_name || 'N/A' }}</div>
             </div>
             <span v-else>-</span>
           </template>
@@ -615,7 +616,7 @@ onMounted(() => {
   color: #409eff;
 }
 
-.product-name {
+.application-name {
   font-size: 12px;
   color: #909399;
 }

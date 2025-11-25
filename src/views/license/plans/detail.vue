@@ -61,8 +61,8 @@
                 <el-descriptions-item :label="$t('license.plans.code')">
                   {{ planData.code }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('license.plans.product')">
-                  {{ planData.product_name || "-" }}
+                <el-descriptions-item :label="$t('license.plans.application')">
+                  {{ planData.application_name || "-" }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('license.plans.type')">
                   {{
@@ -187,8 +187,8 @@ const loading = ref(false);
 
 interface PlanData {
   id: number;
-  product: number;
-  product_name?: string;
+  application: number;
+  application_name?: string;
   name: string;
   code: string;
   plan_type: string;
@@ -212,8 +212,8 @@ interface Statistics {
 
 const planData = reactive<PlanData>({
   id: 0,
-  product: 0,
-  product_name: "",
+  application: 0,
+  application_name: "",
   name: "",
   code: "",
   plan_type: "",
@@ -250,8 +250,8 @@ const loadPlanData = async () => {
       const plan = response.data;
       Object.assign(planData, {
         id: plan.id,
-        product: plan.product,
-        product_name: plan.product_name,
+        application: plan.application,
+        application_name: plan.application_name,
         name: plan.name,
         code: plan.code,
         plan_type: plan.plan_type,

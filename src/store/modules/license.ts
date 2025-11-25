@@ -1,10 +1,6 @@
 import { defineStore } from "pinia";
 import * as licenseApi from "@/api/modules/license";
 import type {
-  SoftwareProduct,
-  ProductListParams,
-  ProductCreateParams,
-  ProductUpdateParams,
   LicensePlan,
   PlanListParams,
   PlanCreateParams,
@@ -16,6 +12,7 @@ import type {
   MachineBindingListParams,
   MachineBindingBlockParams,
   LicenseActivation,
+  ActivationListParams,
   AuditLog,
   LicenseStatistics,
   ActivationTrend,
@@ -30,7 +27,6 @@ import { store } from "../index";
  */
 interface LicenseState {
   // 数据状态
-  products: PaginationData<SoftwareProduct>;
   plans: PaginationData<LicensePlan>;
   licenses: PaginationData<License>;
   machineBindings: PaginationData<MachineBinding>;
@@ -38,7 +34,6 @@ interface LicenseState {
   auditLogs: PaginationData<AuditLog>;
 
   // 当前选中项
-  currentProduct: SoftwareProduct | null;
   currentPlan: LicensePlan | null;
   currentLicense: License | null;
   currentMachineBinding: MachineBinding | null;
@@ -51,13 +46,6 @@ interface LicenseState {
 
   // 加载状态
   loading: {
-    // 产品相关
-    productList: boolean;
-    productDetail: boolean;
-    productCreate: boolean;
-    productUpdate: boolean;
-    productDelete: boolean;
-
     // 计划相关
     planList: boolean;
     planDetail: boolean;
@@ -106,7 +94,6 @@ interface LicenseState {
 export const useLicenseStore = defineStore("license", {
   state: (): LicenseState => ({
     // 数据初始化
-    products: { data: [], total: 0, page: 1, limit: 10 },
     plans: { data: [], total: 0, page: 1, limit: 10 },
     licenses: { data: [], total: 0, page: 1, limit: 10 },
     machineBindings: { data: [], total: 0, page: 1, limit: 10 },
@@ -114,7 +101,6 @@ export const useLicenseStore = defineStore("license", {
     auditLogs: { data: [], total: 0, page: 1, limit: 10 },
 
     // 当前选中项初始化
-    currentProduct: null,
     currentPlan: null,
     currentLicense: null,
     currentMachineBinding: null,
@@ -127,12 +113,6 @@ export const useLicenseStore = defineStore("license", {
 
     // 加载状态初始化
     loading: {
-      productList: false,
-      productDetail: false,
-      productCreate: false,
-      productUpdate: false,
-      productDelete: false,
-
       planList: false,
       planDetail: false,
       planCreate: false,
@@ -169,129 +149,6 @@ export const useLicenseStore = defineStore("license", {
   }),
 
   actions: {
-    // ============================
-    // 软件产品管理 Actions
-    // ============================
-
-    /**
-     * 获取产品列表
-     */
-    async fetchProductList(params: ProductListParams = {}) {
-      this.loading.productList = true;
-      try {
-        const response = (await licenseApi.getProductList(params)) as any;
-        if (response.success) {
-          // 正确解构Django REST Framework返回的数据结构
-          this.products = {
-            data: response.data.results || [],
-            total: response.data.count || 0,
-            page: params.page || 1,
-            limit: params.page_size || 10
-          };
-          return response;
-        } else {
-          logger.error(response.message || "获取产品列表失败");
-          return Promise.reject(new Error(response.message));
-        }
-      } catch (error) {
-        logger.error("获取产品列表失败", error);
-        throw error;
-      } finally {
-        this.loading.productList = false;
-      }
-    },
-
-    /**
-     * 获取产品详情
-     */
-    async fetchProductDetail(id: number) {
-      this.loading.productDetail = true;
-      try {
-        const response = await licenseApi.getProductDetail(id);
-        if (response.success) {
-          this.currentProduct = response.data;
-          return response;
-        } else {
-          logger.error(response.message || "获取产品详情失败");
-          return Promise.reject(new Error(response.message));
-        }
-      } catch (error) {
-        logger.error("获取产品详情失败", error);
-        throw error;
-      } finally {
-        this.loading.productDetail = false;
-      }
-    },
-
-    /**
-     * 创建产品
-     */
-    async createProduct(data: ProductCreateParams) {
-      this.loading.productCreate = true;
-      try {
-        const response = await licenseApi.createProduct(data);
-        if (response.success) {
-          return response;
-        } else {
-          logger.error(response.message || "创建产品失败");
-          return Promise.reject(new Error(response.message));
-        }
-      } catch (error) {
-        logger.error("创建产品失败", error);
-        throw error;
-      } finally {
-        this.loading.productCreate = false;
-      }
-    },
-
-    /**
-     * 更新产品
-     */
-    async updateProduct(id: number, data: ProductUpdateParams) {
-      this.loading.productUpdate = true;
-      try {
-        const response = await licenseApi.updateProduct(id, data);
-        if (response.success) {
-          if (this.currentProduct && this.currentProduct.id === id) {
-            this.currentProduct = response.data;
-          }
-          return response;
-        } else {
-          logger.error(response.message || "更新产品失败");
-          return Promise.reject(new Error(response.message));
-        }
-      } catch (error) {
-        logger.error("更新产品失败", error);
-        throw error;
-      } finally {
-        this.loading.productUpdate = false;
-      }
-    },
-
-    /**
-     * 删除产品
-     */
-    async deleteProduct(id: number) {
-      this.loading.productDelete = true;
-      try {
-        const response = await licenseApi.deleteProduct(id);
-        if (response.success) {
-          if (this.currentProduct && this.currentProduct.id === id) {
-            this.currentProduct = null;
-          }
-          return response;
-        } else {
-          logger.error(response.message || "删除产品失败");
-          return Promise.reject(new Error(response.message));
-        }
-      } catch (error) {
-        logger.error("删除产品失败", error);
-        throw error;
-      } finally {
-        this.loading.productDelete = false;
-      }
-    },
-
     // ============================
     // 许可证计划管理 Actions
     // ============================
@@ -606,13 +463,13 @@ export const useLicenseStore = defineStore("license", {
         // API返回的是原始blob数据，不是标准的{success, data}格式
         const blob = await licenseApi.downloadLicense(id, format);
         console.log("API 调用完成", { blob, blobType: typeof blob });
-        
+
         // 确保获得的是Blob对象
         if (!(blob instanceof Blob)) {
           console.error("响应不是Blob", { blob, type: typeof blob });
           throw new Error("响应数据不是有效的文件格式");
         }
-        
+
         console.log("开始创建下载链接");
         // 创建下载链接
         const url = window.URL.createObjectURL(blob);
@@ -624,7 +481,7 @@ export const useLicenseStore = defineStore("license", {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         console.log("下载链接已触发");
-        
+
         return { success: true };
       } catch (error) {
         console.error("Store downloadLicense 错误", error);
@@ -728,51 +585,126 @@ export const useLicenseStore = defineStore("license", {
       }
     },
 
+    // ============================
+    // 激活记录管理 Actions
+    // ============================
+
     /**
-     * 获取产品统计信息
+     * 获取激活记录列表
      */
-    async fetchProductStatistics(id: number) {
-      this.loading.statistics = true;
+    async fetchActivationList(params: ActivationListParams = {}) {
+      this.loading.activationList = true;
       try {
-        const response = await licenseApi.getProductStatistics(id);
+        const response = (await licenseApi.getActivationList(params)) as any;
         if (response.success) {
+          this.activations = {
+            data: response.data.results || [],
+            total: response.data.count || 0,
+            page: params.page || 1,
+            limit: params.page_size || 10
+          };
           return response;
         } else {
-          logger.error(response.message || "获取产品统计信息失败");
+          logger.error(response.message || "获取激活记录列表失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
-        logger.error("获取产品统计信息失败", error);
+        logger.error("获取激活记录列表失败", error);
         throw error;
       } finally {
-        this.loading.statistics = false;
+        this.loading.activationList = false;
       }
     },
 
     /**
-     * 重新生成产品密钥对
+     * 获取激活记录详情
      */
-    async regenerateProductKeypair(id: number) {
-      this.loading.productUpdate = true;
+    async fetchActivationDetail(id: number) {
+      this.loading.activationDetail = true;
       try {
-        const response = await licenseApi.regenerateProductKeypair(id);
+        const response = await licenseApi.getActivationDetail(id);
         if (response.success) {
-          // 更新当前产品信息
-          if (this.currentProduct && this.currentProduct.id === id) {
-            // 重新获取产品详情以获取最新信息
-            await this.fetchProductDetail(id);
-          }
+          this.currentActivation = response.data;
           return response;
         } else {
-          logger.error(response.message || "重新生成密钥对失败");
+          logger.error(response.message || "获取激活记录详情失败");
           return Promise.reject(new Error(response.message));
         }
       } catch (error) {
-        logger.error("重新生成密钥对失败", error);
+        logger.error("获取激活记录详情失败", error);
         throw error;
       } finally {
-        this.loading.productUpdate = false;
+        this.loading.activationDetail = false;
       }
+    },
+
+    /**
+     * 撤销激活 (停用激活)
+     */
+    async revokeActivation(id: number, reason?: string) {
+      this.loading.activationDeactivate = true;
+      try {
+        const response = await licenseApi.deactivateActivation(id, reason);
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "撤销激活失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("撤销激活失败", error);
+        throw error;
+      } finally {
+        this.loading.activationDeactivate = false;
+      }
+    },
+
+    /**
+     * 删除激活记录
+     */
+    async deleteActivation(id: number) {
+      this.loading.activationDeactivate = true;
+      try {
+        // 注意：如果后端没有删除激活记录的API，这里使用停用API
+        const response = await licenseApi.deactivateActivation(id, "Deleted by admin");
+        if (response.success) {
+          return response;
+        } else {
+          logger.error(response.message || "删除激活记录失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("删除激活记录失败", error);
+        throw error;
+      } finally {
+        this.loading.activationDeactivate = false;
+      }
+    },
+
+    /**
+     * 批量撤销激活
+     */
+    async batchRevokeActivations(activationIds: number[]) {
+      this.loading.activationDeactivate = true;
+      try {
+        // 逐个撤销激活
+        const results = await Promise.all(
+          activationIds.map(id => licenseApi.deactivateActivation(id, "Batch revoked by admin"))
+        );
+        return { success: true, data: results };
+      } catch (error) {
+        logger.error("批量撤销激活失败", error);
+        throw error;
+      } finally {
+        this.loading.activationDeactivate = false;
+      }
+    },
+
+    /**
+     * 获取机器列表（用于激活记录过滤）
+     */
+    async fetchMachineList(params: MachineBindingListParams = {}) {
+      return this.fetchMachineBindingList(params);
     },
 
     // ============================
