@@ -134,20 +134,20 @@ order:
   serviceTimeRange: 服务时间范围
   selectServiceTime: 选择服务时间
   historyVersions: 有 {count} 个历史版本
-  
+
   # 菜单相关
   menu:
     pureOrder: 订单管理
     pureOrde: 订单管理
     orderList: 订单列表
     statisticsTitle: 订单统计
-  
+
   # 客户信息相关
   customer_type: 客户类型
   delivery_address: 收件地址
   order_address: 订单地址
   follow_up_record: 回访记录
-  
+
   # 订单历史相关翻译
   historyRecords: 历史记录
   changeLog: 变更日志
@@ -176,13 +176,13 @@ order:
   restoreVersion: 恢复版本
   restoreVersionSuccess: 恢复版本成功
   restoreVersionFailed: 恢复版本失败
-  
+
   # 客户/联系人订单关联
   customerOrders: 客户订单
   memberOrders: 联系人订单
   customerOrdersLoadFailed: 加载客户订单失败
   memberOrdersLoadFailed: 加载联系人订单失败
-  
+
   # 批量更新相关
   batchUpdate: 批量更新
   batchUpdateTitle: 批量更新订单
@@ -196,17 +196,17 @@ order:
   updateAgain: 再次更新
   noFieldsSelected: 未选择任何字段
   orderId: 订单ID
-  
+
   # 批量导出相关
   exportSelected: 导出选中
   exportAllSuccess: 导出所有订单成功
   exportSelectedSuccess: 导出选中的 {count} 个订单成功
   exportFailed: 导出失败
-  
+
   # 批量删除相关
   batchDeletePartial: 部分删除成功，成功 {success} 个，失败 {failed} 个
   batchDeleteFailed: 批量删除失败
-  
+
   # 图表和统计相关
   orderTrendChart: 订单趋势分析
   orderStatusDistribution: 订单支付状态分布
@@ -303,7 +303,7 @@ order:
   orderAddress: 订单地址
   remarks: 备注
   followUpRecord: 回访记录
-  
+
   # 表单分组
   formBasicInfo: 基本信息
   formPriceInfo: 价格信息
@@ -593,7 +593,7 @@ cms:
     deleteFailed: 删除标签失败
     formDataError: 获取表单数据失败
     idNotFound: 标签ID不存在
-  
+
   comment:
     createComment: 创建评论
     editComment: 编辑评论
@@ -652,7 +652,7 @@ cms:
     batchDeleteSuccess: 批量删除成功
     batchDeleteFailed: 批量删除失败
     fetchListFailed: 获取评论列表失败
-  
+
   article:
     title: 标题
     titleRequired: 请输入文章标题
@@ -1086,6 +1086,15 @@ adminUser:
   editAdminUser: 编辑管理员用户
   viewAdminUser: 查看管理员用户
   selectTenantTitle: 选择租户
+  resetPassword: 重置密码
+  confirmResetPassword: 确认重置密码
+  confirmResetPasswordMessage: 确定要重置 {username} 的密码吗？
+  resetPasswordSuccess: 重置密码成功
+  resetPasswordFailed: 重置密码失败
+  newPassword: 新密码
+  newPasswordPlaceholder: 请输入新密码
+  confirmNewPassword: 确认新密码
+  confirmNewPasswordPlaceholder: 请再次输入新密码
 
 buttons:
   pureClickCollapse: 点击折叠
@@ -1147,7 +1156,7 @@ panel:
 
 license:
   dashboard: 仪表板
-  
+
   menu:
     title: 许可证管理
     dashboard: 仪表板
@@ -1220,7 +1229,7 @@ license:
     deleteSuccess: 产品删除成功
     deleteError: 产品删除失败
     deleteConfirm: 确认删除产品 "{name}" 吗？
-    
+
     id: ID
     name: 产品名称
     namePlaceholder: 请输入产品名称
@@ -1249,7 +1258,7 @@ license:
     noMetadata: 暂无元数据配置
     createdAt: 创建时间
     updatedAt: 更新时间
-    
+
     basicInfo: 基本信息
     statistics: 统计信息
     plansCount: 计划数量
@@ -1289,7 +1298,7 @@ license:
     deleteConfirm: 确认删除计划 "{name}" 吗？
     deleteSuccess: 计划删除成功
     deleteError: 计划删除失败
-    
+
     id: ID
     name: 计划名称
     namePlaceholder: 请输入计划名称
@@ -1343,7 +1352,7 @@ license:
     defaultValidityDays: 默认有效天数
     defaultValidityDaysPlaceholder: 请输入默认有效天数
     defaultValidityDaysRequired: 默认有效天数为必填项
-    
+
     # 向后兼容字段名
     maxMachines: 最大机器数
     maxMachinesRequired: 最大机器数为必填项
@@ -1404,7 +1413,7 @@ license:
     downloadError: 许可证文件下载失败
     copySuccess: 许可证密钥复制成功
     copyError: 许可证密钥复制失败
-    
+
     id: ID
     licenseKey: 许可证密钥
     licenseKeyRequired: 许可证密钥必填
@@ -1460,7 +1469,7 @@ license:
     featureCloudStorage: 云存储
     featureMultiUser: 多用户支持
     featureCustomIntegration: 自定义集成
-    
+
     # 许可证创建页面字段
     customerCompany: 公司
     customerCompanyPlaceholder: 请输入公司名称
@@ -1476,17 +1485,17 @@ license:
     validityDaysOptionalTip: 留空使用计划默认值 ({default} 天)，或输入自定义值
     notesPlaceholder: 请输入备注信息
     plansFilteredByProduct: 已为所选产品过滤出 {count} 个计划（共 {total} 个）
-    
+
     # 验证消息
     customerCompanyMaxLength: 公司名称不能超过 {max} 个字符
     maxActivationsMinValue: 最大激活数必须大于 0
     validityDaysMinValue: 有效天数必须大于 0
     notesMaxLength: 备注不能超过 {max} 个字符
-    
+
     # 成功消息
     productAutoSelectedByPlan: 已自动选择产品：{product}
     createSuccess: 许可证创建成功！计划：{planName}
-    
+
     # 错误消息
     noProductsAvailable: 暂无可用产品
     loadProductsFailed: 加载产品失败
@@ -1497,12 +1506,12 @@ license:
     createFailed: 许可证创建失败
     planValidationError: 计划验证错误：{message}
     customerInfoError: 客户信息错误：{message}
-    
+
     # 新增的缺失键值
     statusGenerated: 已生成
     statusActivated: 已激活
     extend: 延期
-    
+
     # 详情页面新增键值
     limitations: 限制条件
     maxActivations: 最大激活数
@@ -1525,13 +1534,13 @@ license:
     licenseKeyCopied: 许可证密钥已复制
     invalidId: 无效的许可证ID
     loadFailed: 加载许可证详情失败
-    
+
     # 操作按钮
     activate: 激活
     suspend: 暂停
     renew: 续费
     exportLicense: 导出许可证
-    
+
     # 批量操作
     batchOperation: 批量操作
     batchExtend: 批量延期
@@ -1540,7 +1549,7 @@ license:
     batchActivate: 批量激活
     batchDelete: 批量删除
     pleaseSelectLicenses: 请先选择许可证
-    
+
     # 批量延期
     extendDays: 延期天数
     batchExtendConfirm: 确认要为选中的 {count} 个许可证延期吗？
@@ -1548,7 +1557,7 @@ license:
     batchExtendSuccess: 批量延期成功（{count}个）
     batchExtendFailed: 批量延期失败
     batchExtendError: 批量延期操作失败
-    
+
     # 批量撤销
     revokeReason: 撤销原因
     batchRevokeConfirm: 确认要撤销选中的 {count} 个许可证吗？此操作不可逆！
@@ -1556,7 +1565,7 @@ license:
     batchRevokeSuccess: 批量撤销成功（{count}个）
     batchRevokeFailed: 批量撤销失败
     batchRevokeError: 批量撤销操作失败
-    
+
     # 批量暂停
     suspendReason: 暂停原因
     batchSuspendConfirm: 确认要暂停选中的 {count} 个许可证吗？
@@ -1564,7 +1573,7 @@ license:
     batchSuspendSuccess: 批量暂停成功（{count}个）
     batchSuspendFailed: 批量暂停失败
     batchSuspendError: 批量暂停操作失败
-    
+
     # 批量激活
     activateReason: 激活原因
     batchActivateConfirm: 确认要激活选中的 {count} 个许可证吗？
@@ -1572,14 +1581,14 @@ license:
     batchActivateSuccess: 批量激活成功（{count}个）
     batchActivateFailed: 批量激活失败
     batchActivateError: 批量激活操作失败
-    
+
     # 批量删除
     batchDeleteConfirm: 确认要删除选中的 {count} 个许可证吗？此操作不可逆！
     batchDeleting: 正在批量删除...
     batchDeleteSuccess: 批量删除成功（成功{success}个，共{total}个）
     batchDeleteFailed: 批量删除失败
     batchDeleteError: 批量删除操作失败
-    
+
     # 通用
     reasonPlaceholder: 请输入操作原因（可选）
 
@@ -1617,7 +1626,7 @@ license:
     deleteError: 机器绑定记录删除失败
     activate: 激活
     reset: 重置
-    
+
     # 基本字段
     id: ID
     machineId: 机器ID
@@ -1638,7 +1647,7 @@ license:
     hoursAgo: "{hours}小时前"
     daysAgo: "{days}天前"
     lastSeenDaysAgo: "{days}天前活跃"
-    
+
     # 详情页面
     basicInfo: 基本信息
     systemInfo: 系统信息
@@ -1649,13 +1658,13 @@ license:
     recentActivity: 最近活动
     timeline: 时间线
     activeLicensesList: 激活许可证列表
-    
+
     # 状态相关
     online: 在线
     offline: 离线
     uptime: 运行时间
     licenseId: 许可证ID
-    
+
     # 操作结果
     invalidId: 无效的机器绑定ID
     loadFailed: 加载机器绑定详情失败
@@ -1698,7 +1707,7 @@ license:
     deleteConfirm: 确认删除激活记录 {id} 吗？
     deleteSuccess: 激活记录删除成功
     deleteError: 激活记录删除失败
-    
+
     id: ID
     activatedAt: 激活时间
     lastHeartbeat: 最后心跳
@@ -2048,7 +2057,7 @@ customer:
   basicInfo: 基本信息
   contactInfo: 联系信息
   additionalInfo: 附加信息
-  
+
   # 客户-联系人关系
   memberRelation:
     title: 联系人关系
@@ -2077,7 +2086,7 @@ customer:
     setPrimaryFailed: 设置主要联系人失败
     confirmDelete: 确认删除
     confirmDeleteMessage: 确定要删除联系人 {name} 吗？
-  
+
   # 客户-租户关系
   tenantRelation:
     title: 租户关系
@@ -2109,7 +2118,7 @@ customer:
     setPrimaryFailed: 设置主要关系失败
     confirmDelete: 确认删除
     confirmDeleteMessage: 确定要删除与租户 {name} 的关系吗？
-  
+
   # 批量操作
   bulk:
     title: 批量操作
@@ -2285,7 +2294,7 @@ member:
 feedback:
   feedbackManagement: 反馈管理
   dashboard: 反馈仪表板
-  
+
   # 软件管理
   softwareManagement: 软件管理
   software:
@@ -2362,7 +2371,7 @@ feedback:
     downloadUrlPlaceholder: 请输入下载链接
     selectDate: 选择日期
     deleteVersionConfirm: 确定要删除版本 {version} 吗？
-    
+
   # 反馈管理
   feedbacks:
     list: 反馈列表
@@ -2374,7 +2383,7 @@ feedback:
     votes: 投票数
     createdAt: 创建时间
     noData: 暂无反馈
-    
+
   # 邮件系统
   emailManagement: 邮件管理
   email:
@@ -2404,7 +2413,7 @@ feedback:
     sentAt: 发送时间
     retryCount: 重试次数
     logDetail: 日志详情
-    
+
   # 统计分析
   statistics: 统计分析
   stats:
@@ -2424,7 +2433,7 @@ feedback:
     recentFeedbacks: 最新反馈
     startDate: 开始日期
     endDate: 结束日期
-    
+
   # 系统健康
   systemHealth: 系统健康
   health:
@@ -2442,10 +2451,10 @@ feedback:
     type: 类型
     fallback: 降级支持
     recommendations: 系统建议
-    
+
   # 通用
   anonymous: 匿名用户
-  
+
   # 筛选器
   filters:
     application: 应用
@@ -2461,7 +2470,7 @@ feedback:
     ordering: 排序
     search: 搜索反馈...
     all: 全部
-    
+
   # 表单
   form:
     application: 应用
@@ -2486,7 +2495,7 @@ feedback:
     contactName: 联系人姓名
     namePlaceholder: 请输入您的姓名
     submit: 提交反馈
-    
+
   # 详情页
   detail:
     submitter: 提交人
@@ -2528,14 +2537,14 @@ application:
   createFailed: 应用创建失败
   updateSuccess: 应用更新成功
   updateFailed: 应用更新失败
-  
+
   menu:
     applicationmanage: 应用管理
     applicationList: 应用列表
     ApplicationCreate: 创建应用
     applicationedit: 编辑应用
     applicationdetail: 应用详情
-  
+
   fields:
     id: ID
     name: 应用名称
@@ -2553,14 +2562,14 @@ application:
     metadata: 元数据
     createdAt: 创建时间
     updatedAt: 更新时间
-  
+
   status:
     development: 开发中
     testing: 测试中
     active: 已发布
     inactive: 已下线
     deprecated: 已废弃
-  
+
   statistics:
     title: 统计信息
     licenses: 许可证
@@ -2571,7 +2580,7 @@ application:
     feedbackOpen: 未关闭反馈
     articles: 文章
     articleTotal: 关联文章总数
-  
+
   actions:
     create: 创建应用
     edit: 编辑
@@ -2582,12 +2591,12 @@ application:
     reset: 重置
     uploadLogo: 上传Logo
     removeLogo: 移除Logo
-  
+
   search:
     placeholder: 搜索应用名称或代码
     statusFilter: 状态筛选
     allStatus: 全部状态
-  
+
   formTips:
     nameRequired: 请输入应用名称
     nameLength: 应用名称长度不能超过100个字符
@@ -2607,9 +2616,9 @@ application:
     websiteOptional: 请输入官网地址（可选）
     emailOptional: 请输入联系邮箱（可选）
     statusRequired: 请选择状态
-  
+
   loadDetailFailed: 加载应用详情失败
-  
+
   relatedData:
     articles: 关联文章
     noArticles: 暂无关联文章

@@ -11,6 +11,7 @@ import AdminUserForm from "@/components/AdminUserManagement/AdminUserForm.vue";
 import TenantSelectDialog from "@/components/AdminUserManagement/TenantSelectDialog.vue";
 import MenuSettingButton from "@/components/AdminUserManagement/MenuSettingButton.vue";
 import MenuSettingDialog from "@/components/AdminUserManagement/MenuSettingDialog.vue";
+import ResetPasswordDialog from "@/components/AdminUserManagement/ResetPasswordDialog.vue";
 import type {
   AdminUser,
   AdminUserListParams,
@@ -87,9 +88,13 @@ watch(
 
 // 监视confirmDialog.visible的变化
 watch(
-  () => confirmDialog.visible,
+  () => confirmDialog.value.visible,
   newVal => {
-    logger.debug("confirmDialog.visible 变化为:", newVal, confirmDialog.title);
+    logger.debug(
+      "confirmDialog.visible 变化为:",
+      newVal,
+      confirmDialog.value.title
+    );
   }
 );
 
@@ -154,6 +159,10 @@ const userToRevoke = ref<AdminUser | null>(null);
 const menuSettingDialogVisible = ref(false);
 const userForMenuSetting = ref<AdminUser | null>(null);
 
+// 添加重置密码相关状态
+const resetPasswordDialogVisible = ref(false);
+const userForResetPassword = ref<AdminUser | null>(null);
+
 // 表单引用
 const createFormRef = ref();
 const createSuperAdminFormRef = ref();
@@ -204,12 +213,12 @@ const handleDelete = (row: AdminUser) => {
     userId: row.id,
     username: row.username
   });
-  confirmDialog.title = t("adminUser.confirmDelete");
-  confirmDialog.content = t("adminUser.confirmDeleteMessage", {
+  confirmDialog.value.title = t("adminUser.confirmDelete");
+  confirmDialog.value.content = t("adminUser.confirmDeleteMessage", {
     username: row.username
   });
-  confirmDialog.type = "warning";
-  confirmDialog.confirmAction = async () => {
+  confirmDialog.value.type = "warning";
+  confirmDialog.value.confirmAction = async () => {
     try {
       logger.debug("确认删除管理员用户", { userId: row.id });
       await adminUserStore.removeAdminUser(row.id);
@@ -220,17 +229,17 @@ const handleDelete = (row: AdminUser) => {
       ElMessage.error(t("adminUser.deleteFailed"));
     }
   };
-  confirmDialog.visible = true;
+  confirmDialog.value.visible = true;
 };
 
 // 处理授予超级管理员权限
 const handleGrantSuperAdmin = (row: AdminUser) => {
-  confirmDialog.title = t("adminUser.confirmGrantSuperAdmin");
-  confirmDialog.content = t("adminUser.confirmGrantSuperAdminMessage", {
+  confirmDialog.value.title = t("adminUser.confirmGrantSuperAdmin");
+  confirmDialog.value.content = t("adminUser.confirmGrantSuperAdminMessage", {
     username: row.username
   });
-  confirmDialog.type = "warning";
-  confirmDialog.confirmAction = async () => {
+  confirmDialog.value.type = "warning";
+  confirmDialog.value.confirmAction = async () => {
     try {
       await adminUserStore.grantSuperAdminAction(row.id);
       ElMessage.success(t("adminUser.grantSuccess"));
@@ -240,7 +249,7 @@ const handleGrantSuperAdmin = (row: AdminUser) => {
       ElMessage.error(t("adminUser.grantFailed"));
     }
   };
-  confirmDialog.visible = true;
+  confirmDialog.value.visible = true;
 };
 
 // 处理撤销超级管理员权限
@@ -281,14 +290,14 @@ const handleTenantSelectConfirm = async (tenantId: number) => {
     tenantId
   });
 
-  confirmDialog.title = t("adminUser.confirmRevokeSuperAdmin");
-  confirmDialog.content = t("adminUser.confirmRevokeSuperAdminMessage", {
+  confirmDialog.value.title = t("adminUser.confirmRevokeSuperAdmin");
+  confirmDialog.value.content = t("adminUser.confirmRevokeSuperAdminMessage", {
     username
   });
-  confirmDialog.type = "warning";
+  confirmDialog.value.type = "warning";
 
   // 使用闭包保存当前的userId和tenantId
-  confirmDialog.confirmAction = async () => {
+  confirmDialog.value.confirmAction = async () => {
     try {
       logger.debug("确认撤销超级管理员权限", {
         userId, // 使用闭包中保存的userId
@@ -308,11 +317,11 @@ const handleTenantSelectConfirm = async (tenantId: number) => {
     }
   };
 
-  confirmDialog.visible = true;
+  confirmDialog.value.visible = true;
   logger.debug(
     "设置确认对话框显示",
-    confirmDialog.visible,
-    confirmDialog.title
+    confirmDialog.value.visible,
+    confirmDialog.value.title
   );
 };
 
@@ -324,12 +333,12 @@ const handleTenantSelectCancel = () => {
 
 // 处理激活账号
 const handleActivate = (row: AdminUser) => {
-  confirmDialog.title = t("adminUser.confirmActivate");
-  confirmDialog.content = t("adminUser.confirmActivateMessage", {
+  confirmDialog.value.title = t("adminUser.confirmActivate");
+  confirmDialog.value.content = t("adminUser.confirmActivateMessage", {
     username: row.username
   });
-  confirmDialog.type = "warning";
-  confirmDialog.confirmAction = async () => {
+  confirmDialog.value.type = "warning";
+  confirmDialog.value.confirmAction = async () => {
     try {
       await adminUserStore.activateAdminUserAction(row.id);
       ElMessage.success(t("adminUser.activateSuccess"));
@@ -339,7 +348,7 @@ const handleActivate = (row: AdminUser) => {
       ElMessage.error(t("adminUser.activateFailed"));
     }
   };
-  confirmDialog.visible = true;
+  confirmDialog.value.visible = true;
 };
 
 // 处理停用账号
@@ -348,12 +357,12 @@ const handleDeactivate = (row: AdminUser) => {
     userId: row.id,
     username: row.username
   });
-  confirmDialog.title = t("adminUser.confirmDeactivate");
-  confirmDialog.content = t("adminUser.confirmDeactivateMessage", {
+  confirmDialog.value.title = t("adminUser.confirmDeactivate");
+  confirmDialog.value.content = t("adminUser.confirmDeactivateMessage", {
     username: row.username
   });
-  confirmDialog.type = "warning";
-  confirmDialog.confirmAction = async () => {
+  confirmDialog.value.type = "warning";
+  confirmDialog.value.confirmAction = async () => {
     try {
       logger.debug("确认停用管理员账号", { userId: row.id });
       await adminUserStore.deactivateAdminUserAction(row.id);
@@ -364,21 +373,21 @@ const handleDeactivate = (row: AdminUser) => {
       ElMessage.error(t("adminUser.deactivateFailed"));
     }
   };
-  confirmDialog.visible = true;
+  confirmDialog.value.visible = true;
 };
 
 // 确认对话框处理
 const handleConfirm = async () => {
   logger.debug("确认对话框确认按钮被点击", {
-    dialogTitle: confirmDialog.title,
-    hasConfirmAction: !!confirmDialog.confirmAction
+    dialogTitle: confirmDialog.value.title,
+    hasConfirmAction: !!confirmDialog.value.confirmAction
   });
   logger.debug("确认对话框确认按钮被点击", confirmDialog);
 
-  if (confirmDialog.confirmAction) {
+  if (confirmDialog.value.confirmAction) {
     logger.debug("执行确认操作");
     try {
-      await confirmDialog.confirmAction();
+      await confirmDialog.value.confirmAction();
       logger.debug("确认操作执行成功");
     } catch (error) {
       logger.error("确认操作执行失败", error);
@@ -567,6 +576,41 @@ const handleMenuSettingCancel = () => {
   logger.debug("菜单设置取消");
   menuSettingDialogVisible.value = false;
   userForMenuSetting.value = null;
+};
+
+// 处理重置密码
+const handleResetPassword = (row: AdminUser) => {
+  logger.debug("重置密码按钮被点击", {
+    userId: row.id,
+    username: row.username
+  });
+  userForResetPassword.value = row;
+  resetPasswordDialogVisible.value = true;
+};
+
+// 处理重置密码确认
+const handleResetPasswordConfirm = async (formData: any) => {
+  if (!userForResetPassword.value) return;
+
+  try {
+    await adminUserStore.resetAdminUserPasswordAction(
+      userForResetPassword.value.id,
+      formData
+    );
+    ElMessage.success(t("adminUser.resetPasswordSuccess"));
+    resetPasswordDialogVisible.value = false;
+    userForResetPassword.value = null;
+  } catch (error) {
+    logger.error("重置密码失败", error);
+    ElMessage.error(t("adminUser.resetPasswordFailed"));
+  }
+};
+
+// 处理重置密码取消
+const handleResetPasswordCancel = () => {
+  logger.debug("重置密码取消");
+  resetPasswordDialogVisible.value = false;
+  userForResetPassword.value = null;
 };
 
 // 初始化时输出操作权限信息
@@ -758,6 +802,9 @@ onMounted(() => {
                   >
                     {{ t("adminUser.deactivate") }}
                   </el-dropdown-item>
+                  <el-dropdown-item @click="handleResetPassword(scope.row)">
+                    {{ t("adminUser.resetPassword") }}
+                  </el-dropdown-item>
                   <el-dropdown-item
                     v-if="scope.row.id !== userStore.id"
                     @click="handleDelete(scope.row)"
@@ -879,6 +926,15 @@ onMounted(() => {
       :username="userForMenuSetting?.username || ''"
       @confirm="handleMenuSettingDone"
       @cancel="handleMenuSettingCancel"
+    />
+
+    <!-- 重置密码对话框 -->
+    <ResetPasswordDialog
+      v-model:visible="resetPasswordDialogVisible"
+      :username="userForResetPassword?.username || ''"
+      :loading="adminUserStore.loading.resetPassword"
+      @confirm="handleResetPasswordConfirm"
+      @cancel="handleResetPasswordCancel"
     />
   </div>
 </template>
