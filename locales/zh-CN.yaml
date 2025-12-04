@@ -763,6 +763,21 @@ cms:
     pinnedAll: 所有置顶状态
     pinnedTrue: 已置顶
     pinnedFalse: 未置顶
+    locked: 锁定
+    lockedTooltip: 锁定文章
+    lockedAll: 所有锁定状态
+    lockedTrue: 已锁定
+    lockedFalse: 未锁定
+    batchLock: 批量锁定
+    batchUnlock: 批量解锁
+    lockSuccess: 锁定成功
+    unlockSuccess: 解锁成功
+    lockFailed: 锁定失败
+    unlockFailed: 解锁失败
+    confirmBatchLock: 确认批量锁定
+    confirmBatchLockMessage: 确定要锁定选中的 {count} 篇文章吗？
+    confirmBatchUnlock: 确认批量解锁
+    confirmBatchUnlockMessage: 确定要解锁选中的 {count} 篇文章吗？
     articleManagement: 文章管理
     createArticle: 创建文章
     editArticle: 编辑文章

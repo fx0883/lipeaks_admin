@@ -33,7 +33,18 @@ import type {
   // 统计监控类型
   FeedbackStatisticsResponse,
   SystemHealthResponse,
-  RedisStatusResponse
+  RedisStatusResponse,
+  // 通知配置类型
+  NotificationConfigListParams,
+  NotificationConfigCreateParams,
+  NotificationConfigUpdateParams,
+  NotificationConfigResponse,
+  NotificationConfigListResponse,
+  RecipientCreateParams,
+  RecipientUpdateParams,
+  RecipientResponse,
+  RecipientListResponse,
+  TestNotificationParams
 } from "@/types/feedback";
 import type { ApiResponse } from "@/types/api";
 import logger from "@/utils/logger";
@@ -465,3 +476,164 @@ export function getRedisStatus() {
   return http.request<RedisStatusResponse>("get", "/feedbacks/health/redis/");
 }
 
+// ==================== 反馈通知配置 API ====================
+
+/**
+ * 获取通知配置列表
+ * @param params 查询参数
+ */
+export function getNotificationConfigList(params?: NotificationConfigListParams) {
+  logger.debug("API请求: 获取通知配置列表", params);
+  return http.request<NotificationConfigListResponse>(
+    "get",
+    "/feedbacks/notification-configs/",
+    { params }
+  );
+}
+
+/**
+ * 创建通知配置
+ * @param data 配置数据
+ */
+export function createNotificationConfig(data: NotificationConfigCreateParams) {
+  logger.debug("API请求: 创建通知配置", data);
+  return http.request<NotificationConfigResponse>(
+    "post",
+    "/feedbacks/notification-configs/",
+    { data }
+  );
+}
+
+/**
+ * 获取通知配置详情
+ * @param id 配置ID
+ */
+export function getNotificationConfigDetail(id: number) {
+  logger.debug("API请求: 获取通知配置详情", { id });
+  return http.request<NotificationConfigResponse>(
+    "get",
+    `/feedbacks/notification-configs/${id}/`
+  );
+}
+
+/**
+ * 更新通知配置
+ * @param id 配置ID
+ * @param data 更新数据
+ */
+export function updateNotificationConfig(
+  id: number,
+  data: NotificationConfigUpdateParams
+) {
+  logger.debug("API请求: 更新通知配置", { id, data });
+  return http.request<NotificationConfigResponse>(
+    "patch",
+    `/feedbacks/notification-configs/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 删除通知配置
+ * @param id 配置ID
+ */
+export function deleteNotificationConfig(id: number) {
+  logger.debug("API请求: 删除通知配置", { id });
+  return http.request<ApiResponse<null>>(
+    "delete",
+    `/feedbacks/notification-configs/${id}/`
+  );
+}
+
+/**
+ * 获取配置的接收者列表
+ * @param configId 配置ID
+ */
+export function getNotificationRecipients(configId: number) {
+  logger.debug("API请求: 获取接收者列表", { configId });
+  return http.request<RecipientListResponse>(
+    "get",
+    `/feedbacks/notification-configs/${configId}/recipients/`
+  );
+}
+
+/**
+ * 添加接收者
+ * @param configId 配置ID
+ * @param data 接收者数据
+ */
+export function addNotificationRecipient(
+  configId: number,
+  data: RecipientCreateParams
+) {
+  logger.debug("API请求: 添加接收者", { configId, data });
+  return http.request<RecipientResponse>(
+    "post",
+    `/feedbacks/notification-configs/${configId}/recipients/add/`,
+    { data }
+  );
+}
+
+/**
+ * 更新接收者
+ * @param configId 配置ID
+ * @param recipientId 接收者ID
+ * @param data 更新数据
+ */
+export function updateNotificationRecipient(
+  configId: number,
+  recipientId: number,
+  data: RecipientUpdateParams
+) {
+  logger.debug("API请求: 更新接收者", { configId, recipientId, data });
+  return http.request<RecipientResponse>(
+    "patch",
+    `/feedbacks/notification-configs/${configId}/recipients/${recipientId}/update/`,
+    { data }
+  );
+}
+
+/**
+ * 删除接收者
+ * @param configId 配置ID
+ * @param recipientId 接收者ID
+ */
+export function deleteNotificationRecipient(
+  configId: number,
+  recipientId: number
+) {
+  logger.debug("API请求: 删除接收者", { configId, recipientId });
+  return http.request<ApiResponse<null>>(
+    "delete",
+    `/feedbacks/notification-configs/${configId}/recipients/${recipientId}/`
+  );
+}
+
+/**
+ * 发送测试通知邮件
+ * @param configId 配置ID
+ * @param data 测试邮件数据
+ */
+export function sendTestNotification(
+  configId: number,
+  data: TestNotificationParams
+) {
+  logger.debug("API请求: 发送测试通知", { configId, data });
+  return http.request<ApiResponse<{ message: string }>>(
+    "post",
+    `/feedbacks/notification-configs/${configId}/test/`,
+    { data }
+  );
+}
+
+/**
+ * 根据应用ID获取通知配置
+ * @param applicationId 应用ID
+ */
+export function getNotificationConfigByApplication(applicationId: number) {
+  logger.debug("API请求: 根据应用获取通知配置", { applicationId });
+  return http.request<NotificationConfigResponse>(
+    "get",
+    `/feedbacks/notification-configs/by-application/${applicationId}/`
+  );
+}

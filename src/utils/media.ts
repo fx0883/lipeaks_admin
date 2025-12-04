@@ -64,3 +64,39 @@ export function isRelativePath(path: string | undefined | null): boolean {
   if (!path) return false;
   return !path.startsWith('http://') && !path.startsWith('https://');
 }
+
+/**
+ * 从完整 URL 中提取相对路径
+ * 用于保存数据时，将完整 URL 转换为相对路径存储
+ * 
+ * @param fullUrl 完整 URL（如 http://localhost:8000/media/xxx.jpg）
+ * @returns 相对路径（如 media/xxx.jpg，不带前导斜杠）
+ * 
+ * @example
+ * getRelativePath('http://localhost:8000/media/uploads/image.jpg')
+ * // => 'media/uploads/image.jpg'
+ * 
+ * getRelativePath('/media/uploads/image.jpg')
+ * // => 'media/uploads/image.jpg'
+ */
+export function getRelativePath(fullUrl: string | undefined | null): string {
+  // 空值处理
+  if (!fullUrl) {
+    return '';
+  }
+
+  let path = fullUrl;
+
+  // 如果是完整 URL，提取路径部分
+  if (!isRelativePath(fullUrl)) {
+    try {
+      const url = new URL(fullUrl);
+      path = url.pathname;
+    } catch {
+      // 解析失败，使用原值
+    }
+  }
+
+  // 移除前导斜杠
+  return path.replace(/^\/+/, '');
+}

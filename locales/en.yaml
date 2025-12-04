@@ -747,6 +747,21 @@ cms:
     pinnedAll: All Pinned Status
     pinnedTrue: Pinned
     pinnedFalse: Not Pinned
+    locked: Locked
+    lockedTooltip: Locked Article
+    lockedAll: All Lock Status
+    lockedTrue: Locked
+    lockedFalse: Unlocked
+    batchLock: Batch Lock
+    batchUnlock: Batch Unlock
+    lockSuccess: Lock successful
+    unlockSuccess: Unlock successful
+    lockFailed: Lock failed
+    unlockFailed: Unlock failed
+    confirmBatchLock: Confirm Batch Lock
+    confirmBatchLockMessage: Are you sure you want to lock the selected {count} articles?
+    confirmBatchUnlock: Confirm Batch Unlock
+    confirmBatchUnlockMessage: Are you sure you want to unlock the selected {count} articles?
     createArticle: Create Article
     editArticle: Edit Article
     deleteArticle: Delete Article

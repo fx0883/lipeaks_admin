@@ -392,3 +392,103 @@ export type FeedbackStatisticsResponse = ApiResponse<FeedbackStatistics>;
 export type SystemHealthResponse = ApiResponse<SystemHealth>;
 export type RedisStatusResponse = ApiResponse<RedisStatus>;
 
+// ==================== 反馈通知配置类型 ====================
+
+/**
+ * 通知接收者
+ */
+export interface NotificationRecipient {
+  id: number;
+  email: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+/**
+ * 反馈通知配置
+ */
+export interface FeedbackNotificationConfig {
+  id: number;
+  application: number;
+  application_name: string;
+  application_code: string;
+  is_enabled: boolean;
+  recipients: NotificationRecipient[];
+  recipient_count: number;
+  active_recipient_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * 通知配置列表查询参数
+ */
+export interface NotificationConfigListParams {
+  page?: number;
+  page_size?: number;
+  application?: number;
+  is_enabled?: boolean;
+}
+
+/**
+ * 创建通知配置参数
+ */
+export interface NotificationConfigCreateParams {
+  application: number;
+  is_enabled?: boolean;
+}
+
+/**
+ * 更新通知配置参数
+ */
+export interface NotificationConfigUpdateParams {
+  is_enabled?: boolean;
+}
+
+/**
+ * 创建接收者参数
+ */
+export interface RecipientCreateParams {
+  email: string;
+  name?: string;
+  is_active?: boolean;
+}
+
+/**
+ * 更新接收者参数
+ */
+export interface RecipientUpdateParams {
+  email?: string;
+  name?: string;
+  is_active?: boolean;
+}
+
+/**
+ * 测试邮件参数
+ */
+export interface TestNotificationParams {
+  email: string;
+}
+
+// 通知配置分页响应（支持多种后端格式）
+export interface NotificationConfigPaginationResponse {
+  results: FeedbackNotificationConfig[];
+  pagination?: {
+    count: number;
+    current_page: number;
+    page_size: number;
+    next?: string | null;
+    previous?: string | null;
+  };
+  // 兼容 DRF 格式
+  count?: number;
+  next?: string | null;
+  previous?: string | null;
+}
+
+// 通知配置 API 响应类型
+export type NotificationConfigResponse = ApiResponse<FeedbackNotificationConfig>;
+export type NotificationConfigListResponse = ApiResponse<NotificationConfigPaginationResponse>;
+export type RecipientResponse = ApiResponse<NotificationRecipient>;
+export type RecipientListResponse = ApiResponse<NotificationRecipient[]>;

@@ -365,6 +365,13 @@ onMounted(() => {
               >
                 {{ t("cms.article.pinned") }}
               </el-tag>
+              <el-tag
+                v-if="currentArticle.is_locked"
+                type="info"
+                size="small"
+              >
+                {{ t("cms.article.locked") }}
+              </el-tag>
               {{ currentArticle.title }}
             </div>
           </el-descriptions-item>
@@ -407,6 +414,14 @@ onMounted(() => {
             <el-tag :type="currentArticle.allow_comment ? 'success' : 'danger'">
               {{
                 currentArticle.allow_comment ? t("common.yes") : t("common.no")
+              }}
+            </el-tag>
+          </el-descriptions-item>
+
+          <el-descriptions-item :label="t('cms.article.locked')">
+            <el-tag :type="currentArticle.is_locked ? 'info' : 'success'">
+              {{
+                currentArticle.is_locked ? t("cms.article.lockedTrue") : t("cms.article.lockedFalse")
               }}
             </el-tag>
           </el-descriptions-item>

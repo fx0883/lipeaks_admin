@@ -29,6 +29,7 @@ import type {
 } from "@/types/cms";
 import type { PaginationData } from "@/types/api";
 import logger from "@/utils/logger";
+import { getRelativePath } from "@/utils/media";
 import {
   getArticleList,
   getArticleDetail,
@@ -1334,12 +1335,12 @@ export const useCmsStore = defineStore("cms", {
       try {
         const response = await uploadImageWithThumbnail(file, folder);
         if (response.success) {
-          // 直接返回 API 返回的相对路径，不进行 URL 拼接
-          const imageUrl = response.data.url;
-          const thumbnailUrl = response.data.thumbnail_url;
+          // 将完整 URL 转换为相对路径存储
+          const imageUrl = getRelativePath(response.data.url);
+          const thumbnailUrl = getRelativePath(response.data.thumbnail_url);
 
-          logger.debug("上传图片返回的URL（相对路径）:", imageUrl);
-          logger.debug("上传缩略图返回的URL（相对路径）:", thumbnailUrl);
+          logger.debug("上传图片返回的URL（转换为相对路径）:", imageUrl);
+          logger.debug("上传缩略图返回的URL（转换为相对路径）:", thumbnailUrl);
 
           return {
             ...response.data,

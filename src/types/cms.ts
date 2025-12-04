@@ -89,6 +89,7 @@ export interface Article {
   status: ArticleStatus;
   is_featured: boolean;
   is_pinned: boolean;
+  is_locked: boolean;
   allow_comment: boolean;
   visibility: ArticleVisibility;
   password?: string;
@@ -131,6 +132,7 @@ export interface ArticleListParams {
   has_parent?: boolean | string;
   is_featured?: boolean;
   is_pinned?: boolean;
+  is_locked?: boolean;
   date_from?: string;
   date_to?: string;
   sort_by?: string;
@@ -147,6 +149,7 @@ export interface ArticleCreateParams {
   status: ArticleStatus;
   is_featured?: boolean;
   is_pinned?: boolean;
+  is_locked?: boolean;
   allow_comment?: boolean;
   visibility: ArticleVisibility;
   password?: string;

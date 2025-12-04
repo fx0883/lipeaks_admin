@@ -23,7 +23,8 @@
 | tag_id | integer | 否 | - | 标签ID过滤 |
 | author_id | integer | 否 | - | 作者ID过滤 |
 | author_type | string | 否 | - | 作者类型：member/admin |
-| search | string | 否 | - | 搜索关键词（标题、内容） |
+| search | string | 否 | - | 搜索关键词 |
+| application | integer | 否 | - | 应用ID过滤（可选） |
 | ordering | string | 否 | -created_at | 排序字段，可选值见下方说明 |
 | is_featured | boolean | 否 | - | 是否特色文章 |
 | is_pinned | boolean | 否 | - | 是否置顶文章 |
@@ -40,6 +41,11 @@
 ```bash
 curl -X GET "http://localhost:8000/api/v1/cms/articles/?page=1&status=published&ordering=-published_at" \
   -H "Authorization: Bearer <TOKEN>"
+
+# 获取特定应用的文章
+curl -X GET "http://localhost:8000/api/v1/cms/admin/articles/?application=6" \
+  -H "Authorization: Bearer <TenantAdminTOKEN>" \
+  -H "X-Tenant-ID: 3"
 ```
 
 **响应参数**:
@@ -76,6 +82,7 @@ curl -X GET "http://localhost:8000/api/v1/cms/articles/?page=1&status=published&
 | status | string | 文章状态 |
 | is_featured | boolean | 是否特色文章 |
 | is_pinned | boolean | 是否置顶 |
+| is_locked | boolean | 是否锁定（锁定后不可编辑） |
 | cover_image | string | 封面图片URL |
 | published_at | string | 发布时间（ISO 8601格式） |
 | created_at | string | 创建时间 |
@@ -105,6 +112,7 @@ curl -X GET "http://localhost:8000/api/v1/cms/articles/?page=1&status=published&
 | status | string | 否 | draft | 状态：draft/pending/published/archived |
 | is_featured | boolean | 否 | false | 是否特色文章 |
 | is_pinned | boolean | 否 | false | 是否置顶 |
+| is_locked | boolean | 否 | false | 是否锁定（锁定后文章不可编辑） |
 | allow_comment | boolean | 否 | true | 是否允许评论 |
 | visibility | string | 否 | public | 可见性：public/private/password |
 | password | string | 否 | - | 访问密码（visibility=password时必填） |
@@ -188,6 +196,7 @@ curl -X GET "http://localhost:8000/api/v1/cms/articles/123/" \
 | status | string | 状态 |
 | is_featured | boolean | 是否特色 |
 | is_pinned | boolean | 是否置顶 |
+| is_locked | boolean | 是否锁定 |
 | allow_comment | boolean | 是否允许评论 |
 | visibility | string | 可见性 |
 | created_at | string | 创建时间 |

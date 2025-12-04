@@ -11,7 +11,9 @@ import {
   View,
   Upload,
   Download,
-  Archive
+  Archive,
+  Lock,
+  Unlock
 } from "@element-plus/icons-vue";
 import { useCmsStoreHook } from "@/store/modules/cms";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -64,6 +66,7 @@ const searchForm = reactive<ArticleListParams>({
   tag_id: undefined,
   is_featured: undefined,
   is_pinned: undefined,
+  is_locked: undefined,
   date_from: "",
   date_to: "",
   page: 1,
@@ -120,6 +123,13 @@ const pinnedOptions = [
   { value: "false", label: t("cms.article.pinnedFalse") }
 ];
 
+// 锁定选项
+const lockedOptions = [
+  { value: "", label: t("cms.article.lockedAll") },
+  { value: "true", label: t("cms.article.lockedTrue") },
+  { value: "false", label: t("cms.article.lockedFalse") }
+];
+
 // 内容类型选项
 const contentTypeOptions = [
   { value: "", label: t("cms.article.contentTypeAll") },
@@ -170,6 +180,8 @@ const fetchArticles = async () => {
     if (params.is_featured === "false") params.is_featured = false;
     if (params.is_pinned === "true") params.is_pinned = true;
     if (params.is_pinned === "false") params.is_pinned = false;
+    if (params.is_locked === "true") params.is_locked = true;
+    if (params.is_locked === "false") params.is_locked = false;
 
     // 记录请求参数，用于调试
     console.log("[ArticleIndex] 文章列表请求参数:", params);
@@ -293,6 +305,7 @@ const resetSearch = () => {
   searchForm.tag_id = undefined;
   searchForm.is_featured = undefined;
   searchForm.is_pinned = undefined;
+  searchForm.is_locked = undefined;
   searchForm.date_from = "";
   searchForm.date_to = "";
   pagination.currentPage = 1;
@@ -478,6 +491,94 @@ const handleBatchDelete = async (force = false) => {
         // 降级处理
         ElMessage.error(t("cms.article.batchDeleteFailed"));
       }
+    }
+  };
+  confirmDialog.visible = true;
+};
+
+// 批量锁定文章
+const handleBatchLock = async () => {
+  if (multipleSelection.value.length === 0) {
+    ElMessage.warning(t("cms.article.selectArticlesToDelete"));
+    return;
+  }
+
+  const articles = multipleSelection.value;
+  
+  confirmDialog.title = t("cms.article.confirmBatchLock");
+  confirmDialog.content = t("cms.article.confirmBatchLockMessage", {
+    count: articles.length
+  });
+  confirmDialog.type = "warning";
+  confirmDialog.confirmAction = async () => {
+    try {
+      let successCount = 0;
+      for (const article of articles) {
+        try {
+          await cmsStore.updateArticle(article.id, { is_locked: true });
+          successCount++;
+        } catch (e) {
+          logger.error(`锁定文章 ${article.id} 失败`, e);
+        }
+      }
+      
+      if (successCount === articles.length) {
+        ElMessage.success(t("cms.article.lockSuccess") + ` (${successCount}/${articles.length})`);
+      } else if (successCount > 0) {
+        ElMessage.warning(`部分锁定成功：${successCount}/${articles.length}`);
+      } else {
+        ElMessage.error(t("cms.article.lockFailed"));
+      }
+      
+      fetchArticles();
+      multipleSelection.value = [];
+    } catch (error) {
+      logger.error("批量锁定文章失败", error);
+      ElMessage.error(t("cms.article.lockFailed"));
+    }
+  };
+  confirmDialog.visible = true;
+};
+
+// 批量解锁文章
+const handleBatchUnlock = async () => {
+  if (multipleSelection.value.length === 0) {
+    ElMessage.warning(t("cms.article.selectArticlesToDelete"));
+    return;
+  }
+
+  const articles = multipleSelection.value;
+  
+  confirmDialog.title = t("cms.article.confirmBatchUnlock");
+  confirmDialog.content = t("cms.article.confirmBatchUnlockMessage", {
+    count: articles.length
+  });
+  confirmDialog.type = "warning";
+  confirmDialog.confirmAction = async () => {
+    try {
+      let successCount = 0;
+      for (const article of articles) {
+        try {
+          await cmsStore.updateArticle(article.id, { is_locked: false });
+          successCount++;
+        } catch (e) {
+          logger.error(`解锁文章 ${article.id} 失败`, e);
+        }
+      }
+      
+      if (successCount === articles.length) {
+        ElMessage.success(t("cms.article.unlockSuccess") + ` (${successCount}/${articles.length})`);
+      } else if (successCount > 0) {
+        ElMessage.warning(`部分解锁成功：${successCount}/${articles.length}`);
+      } else {
+        ElMessage.error(t("cms.article.unlockFailed"));
+      }
+      
+      fetchArticles();
+      multipleSelection.value = [];
+    } catch (error) {
+      logger.error("批量解锁文章失败", error);
+      ElMessage.error(t("cms.article.unlockFailed"));
     }
   };
   confirmDialog.visible = true;
@@ -733,6 +834,22 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-form-item :label="t('cms.article.locked')">
+              <el-select
+                v-model="searchForm.is_locked"
+                clearable
+                class="w-full"
+              >
+                <el-option
+                  v-for="option in lockedOptions"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-form-item class="search-buttons">
           <el-button type="primary" :icon="Search" @click="handleSearch">
@@ -755,6 +872,22 @@ onMounted(() => {
             @click="handleBatchDelete"
           >
             {{ t("cms.article.batchDelete") }}
+          </el-button>
+          <el-button
+            type="warning"
+            :icon="Lock"
+            :disabled="multipleSelection.length === 0"
+            @click="handleBatchLock"
+          >
+            {{ t("cms.article.batchLock") }}
+          </el-button>
+          <el-button
+            type="info"
+            :icon="Unlock"
+            :disabled="multipleSelection.length === 0"
+            @click="handleBatchUnlock"
+          >
+            {{ t("cms.article.batchUnlock") }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -816,6 +949,15 @@ onMounted(() => {
                   t("cms.article.pinned")
                 }}</el-tag>
               </el-tooltip>
+              <el-tooltip
+                v-if="row.is_locked"
+                :content="t('cms.article.lockedTooltip')"
+                placement="top"
+              >
+                <el-tag size="small" type="info" class="locked-tag">{{
+                  t("cms.article.locked")
+                }}</el-tag>
+              </el-tooltip>
               <span class="title-text">{{ row.title }}</span>
             </div>
           </template>
@@ -845,6 +987,15 @@ onMounted(() => {
                       : t("cms.article.statusArchived")
               }}
             </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column :label="t('cms.article.locked')" width="80">
+          <template #default="{ row }">
+            <el-icon v-if="row.is_locked" :size="18" color="#909399">
+              <Lock />
+            </el-icon>
+            <span v-else>-</span>
           </template>
         </el-table-column>
 

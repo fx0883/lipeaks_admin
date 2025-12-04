@@ -68,6 +68,7 @@ const formData = reactive<ArticleCreateParams | ArticleUpdateParams>({
   status: "draft",
   is_featured: false,
   is_pinned: false,
+  is_locked: false,
   allow_comment: true,
   visibility: "public",
   password: "",
@@ -195,8 +196,24 @@ const initFormData = () => {
     // 填充表单数据
     Object.keys(formData).forEach(key => {
       if (key in article) {
-        formData[key] = article[key];
-        console.log(`[ArticleForm] 设置字段 ${key}:`, article[key]);
+        // 特殊处理 categories 和 tags：如果是对象数组，提取 ID
+        if (key === "categories" || key === "tags") {
+          const items = article[key];
+          if (Array.isArray(items) && items.length > 0) {
+            // 如果是对象数组（如 [{id: 1, name: "xxx"}]），提取 ID
+            if (typeof items[0] === "object" && items[0] !== null && "id" in items[0]) {
+              formData[key] = items.map((item: { id: number }) => item.id);
+            } else {
+              // 已经是 ID 数组
+              formData[key] = items;
+            }
+          } else {
+            formData[key] = [];
+          }
+        } else {
+          formData[key] = article[key];
+        }
+        console.log(`[ArticleForm] 设置字段 ${key}:`, formData[key]);
       }
     });
 
@@ -438,6 +455,14 @@ onMounted(() => {
       <el-col :span="8">
         <el-form-item :label="t('cms.article.allowComment')">
           <el-switch v-model="formData.allow_comment" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
+      <el-col :span="8">
+        <el-form-item :label="t('cms.article.locked')">
+          <el-switch v-model="formData.is_locked" />
         </el-form-item>
       </el-col>
     </el-row>
