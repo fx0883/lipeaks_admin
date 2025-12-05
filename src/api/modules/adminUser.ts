@@ -157,7 +157,7 @@ export function resetAdminUserPassword(id: number, data: ResetPasswordParams) {
   
   return http.request<ApiResponse<{ success: boolean }>>(
     "post",
-    `/admin-users/${id}/reset-password/`,
+    `/api/v1/auth/${id}/change-password/`,
     { data }
   );
 }

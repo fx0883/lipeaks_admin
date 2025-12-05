@@ -23,15 +23,15 @@ const formRef = ref<FormInstance>();
 
 // 表单数据
 const formData = reactive<ResetPasswordParams>({
-  password: "",
-  password_confirm: ""
+  new_password: "",
+  confirm_password: ""
 });
 
 // 验证确认密码
 const validateConfirmPassword = (rule: any, value: any, callback: any) => {
   if (value === "") {
     callback(new Error(t("adminUser.confirmPasswordRequired")));
-  } else if (value !== formData.password) {
+  } else if (value !== formData.new_password) {
     callback(new Error(t("adminUser.passwordMismatch")));
   } else {
     callback();
@@ -40,7 +40,7 @@ const validateConfirmPassword = (rule: any, value: any, callback: any) => {
 
 // 表单验证规则
 const rules = reactive<FormRules>({
-  password: [
+  new_password: [
     {
       required: true,
       message: t("adminUser.passwordRequired"),
@@ -52,7 +52,7 @@ const rules = reactive<FormRules>({
       trigger: "blur"
     }
   ],
-  password_confirm: [
+  confirm_password: [
     {
       required: true,
       message: t("adminUser.confirmPasswordRequired"),
@@ -64,8 +64,8 @@ const rules = reactive<FormRules>({
 
 // 重置表单
 const resetForm = () => {
-  formData.password = "";
-  formData.password_confirm = "";
+  formData.new_password = "";
+  formData.confirm_password = "";
   if (formRef.value) {
     formRef.value.clearValidate();
   }
@@ -125,9 +125,9 @@ const handleClose = () => {
         <el-input :value="username" disabled />
       </el-form-item>
 
-      <el-form-item :label="t('adminUser.newPassword')" prop="password">
+      <el-form-item :label="t('adminUser.newPassword')" prop="new_password">
         <el-input
-          v-model="formData.password"
+          v-model="formData.new_password"
           type="password"
           :placeholder="t('adminUser.newPasswordPlaceholder')"
           show-password
@@ -136,10 +136,10 @@ const handleClose = () => {
 
       <el-form-item
         :label="t('adminUser.confirmNewPassword')"
-        prop="password_confirm"
+        prop="confirm_password"
       >
         <el-input
-          v-model="formData.password_confirm"
+          v-model="formData.confirm_password"
           type="password"
           :placeholder="t('adminUser.confirmNewPasswordPlaceholder')"
           show-password
