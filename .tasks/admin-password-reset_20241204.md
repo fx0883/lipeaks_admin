@@ -74,20 +74,21 @@
 ## 技术实现细节
 
 ### API接口
-- **端点**: `POST /admin-users/{id}/reset-password/`
+- **端点**: `POST /api/v1/auth/{user_id}/change-password/`
 - **函数**: `resetAdminUserPassword(id, data)` 在 `src/api/modules/adminUser.ts`
 - **参数类型**: `ResetPasswordParams`
   ```typescript
   interface ResetPasswordParams {
-    password: string;
-    password_confirm: string;
+    new_password: string;
+    confirm_password: string;
   }
   ```
+- **API文档**: `docs/api/reset_tenant_admin_password.md`
 
 ### 验证规则
 ```typescript
 const rules = reactive<FormRules>({
-  password: [
+  new_password: [
     {
       required: true,
       message: t("adminUser.passwordRequired"),
@@ -99,7 +100,7 @@ const rules = reactive<FormRules>({
       trigger: "blur"
     }
   ],
-  password_confirm: [
+  confirm_password: [
     {
       required: true,
       message: t("adminUser.confirmPasswordRequired"),
@@ -149,3 +150,24 @@ const rules = reactive<FormRules>({
 2. 密码最小长度为8个字符
 3. 重置密码后用户可立即使用新密码登录
 4. 操作日志应该记录在后端（如果有审计功能）
+
+## 更新记录
+
+### 2024-12-05：根据API文档修正实现
+**提交**: `ed5cba4`
+
+**修改内容**：
+1. 更新API端点路径
+   - 旧：`/admin-users/{id}/reset-password/`
+   - 新：`/api/v1/auth/{id}/change-password/`
+
+2. 更新请求参数名称
+   - 旧：`password`, `password_confirm`
+   - 新：`new_password`, `confirm_password`
+
+3. 修改的文件：
+   - `src/types/adminUser.ts` - 更新 `ResetPasswordParams` 接口
+   - `src/api/modules/adminUser.ts` - 更新API函数端点
+   - `src/components/AdminUserManagement/ResetPasswordDialog.vue` - 更新表单字段名
+
+**原因**：确保前端实现与后端API文档 (`docs/api/reset_tenant_admin_password.md`) 保持一致。
