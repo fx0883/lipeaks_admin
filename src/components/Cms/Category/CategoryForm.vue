@@ -43,7 +43,16 @@
               :prop="`translations.${lang.code}.name`"
               :rules="[
                 { required: lang.code === 'zh-hans', message: '请输入分类名称', trigger: 'blur' },
-                { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+                { 
+                  validator: (rule: any, value: string, callback: Function) => {
+                    if (value && (value.length < 2 || value.length > 50)) {
+                      callback(new Error('长度在 2 到 50 个字符'));
+                    } else {
+                      callback();
+                    }
+                  }, 
+                  trigger: 'blur' 
+                }
               ]"
             >
               <el-input
@@ -253,6 +262,7 @@ import ImageUpload from "@/components/Cms/Article/ImageUpload.vue";
 import { IconifyIconOnline } from "@/components/ReIcon";
 import { useI18n } from "vue-i18n";
 import { slugify } from "@/utils/string";
+import { getRelativePath } from "@/utils/media";
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, getLanguageInfo } from "@/config/languages";
 
 interface Props {
@@ -363,8 +373,19 @@ const rules = {
   slug: [
     { required: false, message: "请输入分类别名", trigger: "blur" },
     {
-      pattern: /^[a-z0-9-]+$/,
-      message: "只能包含小写字母、数字和连字符",
+      validator: (rule: any, value: any, callback: any) => {
+        // 允许空值
+        if (!value || value.trim() === '') {
+          callback();
+          return;
+        }
+        // 如果有值，则验证格式
+        if (!/^[a-z0-9-]+$/.test(value)) {
+          callback(new Error('只能包含小写字母、数字和连字符'));
+        } else {
+          callback();
+        }
+      },
       trigger: "blur"
     }
   ],
@@ -672,22 +693,52 @@ const handleSubmit = async () => {
 
     loading.value = true;
     const formData = { ...form };
+    
+    // 处理 cover_image：确保提交的是相对路径而非完整 URL
+    if (formData.cover_image) {
+      formData.cover_image = getRelativePath(formData.cover_image);
+    }
+    
     console.log("[CategoryForm] 提交的表单数据:", formData);
 
     if (props.formMode === "create") {
       console.log("[CategoryForm] 创建分类:", formData);
       await cmsStore.createCategory(formData);
+      ElMessage.success("分类创建成功");
     } else if (props.formMode === "edit" && props.editId) {
       console.log("[CategoryForm] 更新分类:", props.editId, formData);
       await cmsStore.updateCategory(
         props.editId,
         formData as CategoryUpdateParams
       );
+      ElMessage.success("分类更新成功");
     }
 
     emit("submit");
-  } catch (error) {
+  } catch (error: any) {
     console.error("[CategoryForm] 表单验证或提交失败", error);
+    
+    // 区分表单验证错误和API错误
+    if (error && error.fields) {
+      // Element Plus 表单验证失败会返回一个包含 fields 属性的对象
+      ElMessage.error('请检查表单填写是否正确');
+    } else if (error && error.response && error.response.data) {
+      // API 返回的错误
+      const apiError = error.response.data;
+      if (apiError.message) {
+        ElMessage.error(apiError.message);
+      } else if (apiError.detail) {
+        ElMessage.error(apiError.detail);
+      } else if (typeof apiError === 'string') {
+        ElMessage.error(apiError);
+      } else {
+        ElMessage.error('操作失败，请稍后重试');
+      }
+    } else if (error && error.message) {
+      ElMessage.error(error.message);
+    } else {
+      ElMessage.error('操作失败，请稍后重试');
+    }
   } finally {
     loading.value = false;
   }

@@ -463,11 +463,18 @@ export function createCategory(data: CategoryCreateParams) {
  * @param data 更新数据
  */
 export function updateCategory(id: number, data: CategoryUpdateParams) {
+  console.log("[CmsApi] updateCategory - 发送更新分类请求:", id, data);
   return http.request<ApiResponse<Category>>(
     "patch",
     `/cms/categories/${id}/`,
     { data }
-  );
+  ).then(response => {
+    console.log("[CmsApi] updateCategory - 请求成功, 响应:", response);
+    return response;
+  }).catch(error => {
+    console.error("[CmsApi] updateCategory - 请求失败:", error);
+    throw error;
+  });
 }
 
 /**

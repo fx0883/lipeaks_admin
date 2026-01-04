@@ -985,11 +985,24 @@ export const useCmsStore = defineStore("cms", {
      * 更新分类
      */
     async updateCategory(id: number, params: CategoryUpdateParams) {
+      console.log("[CmsStore] updateCategory - 开始更新分类:", id, params);
       this.categoryLoading = true;
       try {
-        const { data } = await updateCategory(id, params);
-        return data;
-      } catch (error) {
+        const response = await updateCategory(id, params);
+        console.log("[CmsStore] updateCategory - API响应:", response);
+
+        if (response && response.data) {
+          console.log("[CmsStore] updateCategory - 更新成功:", response.data);
+          return response.data;
+        } else {
+          console.warn("[CmsStore] updateCategory - 响应格式异常:", response);
+          return response;
+        }
+      } catch (error: any) {
+        console.error("[CmsStore] updateCategory - 更新失败:", error);
+        if (error.response) {
+          console.error("[CmsStore] updateCategory - 错误响应:", error.response.data);
+        }
         throw error;
       } finally {
         this.categoryLoading = false;

@@ -8,6 +8,143 @@
 import type { ApiResponse, DRFPaginationResponse } from "./api";
 import type { Application } from "./application";
 
+// ==================== 软件产品管理相关类型 ====================
+
+/**
+ * 软件产品状态
+ */
+export type SoftwareStatus = "development" | "testing" | "released" | "maintenance" | "deprecated";
+
+/**
+ * 软件分类
+ */
+export interface SoftwareCategory {
+  id: number;
+  name: string;
+  code: string;
+  description?: string;
+  icon?: string;
+  sort_order: number;
+  is_active: boolean;
+  software_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * 软件分类创建参数
+ */
+export interface SoftwareCategoryCreateParams {
+  name: string;
+  code: string;
+  description?: string;
+  icon?: string;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+/**
+ * 软件产品
+ */
+export interface Software {
+  id: number;
+  name: string;
+  code: string;
+  description?: string;
+  category: SoftwareCategory | number;
+  category_id?: number;
+  category_name?: string;
+  logo?: string;
+  website?: string;
+  owner?: string;
+  team?: string;
+  contact_email?: string;
+  current_version?: string;
+  status: SoftwareStatus;
+  is_active: boolean;
+  total_feedbacks?: number;
+  version_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * 软件产品创建参数
+ */
+export interface SoftwareCreateParams {
+  name: string;
+  code: string;
+  description?: string;
+  category_id: number;
+  website?: string;
+  owner?: string;
+  team?: string;
+  contact_email?: string;
+  status?: SoftwareStatus;
+  is_active?: boolean;
+}
+
+/**
+ * 软件产品更新参数
+ */
+export interface SoftwareUpdateParams extends SoftwareCreateParams { }
+
+/**
+ * 软件列表查询参数
+ */
+export interface SoftwareListParams {
+  category?: number;
+  status?: SoftwareStatus;
+  is_active?: boolean;
+  search?: string;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+}
+
+/**
+ * 软件版本
+ */
+export interface SoftwareVersion {
+  id: number;
+  software: number;
+  software_name?: string;
+  version: string;
+  version_code: number;
+  release_date?: string;
+  release_notes?: string;
+  download_url?: string;
+  is_stable: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * 软件版本创建参数
+ */
+export interface SoftwareVersionCreateParams {
+  version: string;
+  version_code: number;
+  release_date?: string;
+  release_notes?: string;
+  download_url?: string;
+  is_stable?: boolean;
+  is_active?: boolean;
+}
+
+/**
+ * 软件版本列表查询参数
+ */
+export interface SoftwareVersionListParams {
+  software?: number;
+  is_stable?: boolean;
+  is_active?: boolean;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+}
+
 // ==================== 反馈管理相关类型 ====================
 
 /**
@@ -391,6 +528,14 @@ export type EmailLogListResponse = ApiResponse<CustomPaginationResponse<EmailLog
 export type FeedbackStatisticsResponse = ApiResponse<FeedbackStatistics>;
 export type SystemHealthResponse = ApiResponse<SystemHealth>;
 export type RedisStatusResponse = ApiResponse<RedisStatus>;
+
+// 软件产品 API 响应类型
+export type SoftwareResponse = ApiResponse<Software>;
+export type SoftwareListResponse = ApiResponse<CustomPaginationResponse<Software>>;
+export type SoftwareCategoryResponse = ApiResponse<SoftwareCategory>;
+export type SoftwareCategoryListResponse = ApiResponse<SoftwareCategory[]>;
+export type SoftwareVersionResponse = ApiResponse<SoftwareVersion>;
+export type SoftwareVersionListResponse = ApiResponse<SoftwareVersion[] | CustomPaginationResponse<SoftwareVersion>>;
 
 // ==================== 反馈通知配置类型 ====================
 

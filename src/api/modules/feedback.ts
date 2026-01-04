@@ -44,7 +44,21 @@ import type {
   RecipientUpdateParams,
   RecipientResponse,
   RecipientListResponse,
-  TestNotificationParams
+  TestNotificationParams,
+  // 软件产品类型
+  SoftwareListParams,
+  SoftwareCreateParams,
+  SoftwareUpdateParams,
+  SoftwareResponse,
+  SoftwareListResponse,
+  SoftwareCategoryCreateParams,
+  SoftwareCategoryResponse,
+  SoftwareCategoryListResponse,
+  // 软件版本类型
+  SoftwareVersionListParams,
+  SoftwareVersionCreateParams,
+  SoftwareVersionResponse,
+  SoftwareVersionListResponse
 } from "@/types/feedback";
 import type { ApiResponse } from "@/types/api";
 import logger from "@/utils/logger";
@@ -635,5 +649,199 @@ export function getNotificationConfigByApplication(applicationId: number) {
   return http.request<NotificationConfigResponse>(
     "get",
     `/feedbacks/notification-configs/by-application/${applicationId}/`
+  );
+}
+
+// ==================== 软件产品管理 API ====================
+
+/**
+ * 获取软件产品列表
+ * @param params 查询参数
+ */
+export function getSoftwareList(params?: SoftwareListParams) {
+  logger.debug("API请求: 获取软件产品列表", params);
+  return http.request<SoftwareListResponse>("get", "/feedbacks/software/", {
+    params
+  });
+}
+
+/**
+ * 获取软件产品详情
+ * @param id 软件ID
+ */
+export function getSoftwareDetail(id: number) {
+  logger.debug("API请求: 获取软件产品详情", { id });
+  return http.request<SoftwareResponse>("get", `/feedbacks/software/${id}/`);
+}
+
+/**
+ * 创建软件产品
+ * @param data 软件数据
+ */
+export function createSoftware(data: SoftwareCreateParams) {
+  logger.debug("API请求: 创建软件产品", data);
+  return http.request<SoftwareResponse>("post", "/feedbacks/software/", {
+    data
+  });
+}
+
+/**
+ * 更新软件产品
+ * @param id 软件ID
+ * @param data 更新数据
+ */
+export function updateSoftware(id: number, data: SoftwareUpdateParams) {
+  logger.debug("API请求: 更新软件产品", { id, data });
+  return http.request<SoftwareResponse>("patch", `/feedbacks/software/${id}/`, {
+    data
+  });
+}
+
+/**
+ * 删除软件产品
+ * @param id 软件ID
+ */
+export function deleteSoftware(id: number) {
+  logger.debug("API请求: 删除软件产品", { id });
+  return http.request<ApiResponse<null>>("delete", `/feedbacks/software/${id}/`);
+}
+
+// ==================== 软件分类管理 API ====================
+
+/**
+ * 获取软件分类列表
+ */
+export function getSoftwareCategories() {
+  logger.debug("API请求: 获取软件分类列表");
+  return http.request<SoftwareCategoryListResponse>(
+    "get",
+    "/feedbacks/software-categories/"
+  );
+}
+
+/**
+ * 获取软件分类详情
+ * @param id 分类ID
+ */
+export function getSoftwareCategoryDetail(id: number) {
+  logger.debug("API请求: 获取软件分类详情", { id });
+  return http.request<SoftwareCategoryResponse>(
+    "get",
+    `/feedbacks/software-categories/${id}/`
+  );
+}
+
+/**
+ * 创建软件分类
+ * @param data 分类数据
+ */
+export function createSoftwareCategory(data: SoftwareCategoryCreateParams) {
+  logger.debug("API请求: 创建软件分类", data);
+  return http.request<SoftwareCategoryResponse>(
+    "post",
+    "/feedbacks/software-categories/",
+    { data }
+  );
+}
+
+/**
+ * 更新软件分类
+ * @param id 分类ID
+ * @param data 更新数据
+ */
+export function updateSoftwareCategory(
+  id: number,
+  data: Partial<SoftwareCategoryCreateParams>
+) {
+  logger.debug("API请求: 更新软件分类", { id, data });
+  return http.request<SoftwareCategoryResponse>(
+    "patch",
+    `/feedbacks/software-categories/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 删除软件分类
+ * @param id 分类ID
+ */
+export function deleteSoftwareCategory(id: number) {
+  logger.debug("API请求: 删除软件分类", { id });
+  return http.request<ApiResponse<null>>(
+    "delete",
+    `/feedbacks/software-categories/${id}/`
+  );
+}
+
+// ==================== 软件版本管理 API ====================
+
+/**
+ * 获取软件版本列表
+ * @param params 查询参数
+ */
+export function getSoftwareVersionList(params?: SoftwareVersionListParams) {
+  logger.debug("API请求: 获取软件版本列表", params);
+  return http.request<SoftwareVersionListResponse>(
+    "get",
+    "/feedbacks/software-versions/",
+    { params }
+  );
+}
+
+/**
+ * 获取软件版本详情
+ * @param id 版本ID
+ */
+export function getSoftwareVersionDetail(id: number) {
+  logger.debug("API请求: 获取软件版本详情", { id });
+  return http.request<SoftwareVersionResponse>(
+    "get",
+    `/feedbacks/software-versions/${id}/`
+  );
+}
+
+/**
+ * 添加软件版本
+ * @param softwareId 软件ID
+ * @param data 版本数据
+ */
+export function addSoftwareVersion(
+  softwareId: number,
+  data: SoftwareVersionCreateParams
+) {
+  logger.debug("API请求: 添加软件版本", { softwareId, data });
+  return http.request<SoftwareVersionResponse>(
+    "post",
+    "/feedbacks/software-versions/",
+    { data: { ...data, software: softwareId } }
+  );
+}
+
+/**
+ * 更新软件版本
+ * @param id 版本ID
+ * @param data 更新数据
+ */
+export function updateSoftwareVersion(
+  id: number,
+  data: Partial<SoftwareVersionCreateParams>
+) {
+  logger.debug("API请求: 更新软件版本", { id, data });
+  return http.request<SoftwareVersionResponse>(
+    "patch",
+    `/feedbacks/software-versions/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 删除软件版本
+ * @param id 版本ID
+ */
+export function deleteSoftwareVersion(id: number) {
+  logger.debug("API请求: 删除软件版本", { id });
+  return http.request<ApiResponse<null>>(
+    "delete",
+    `/feedbacks/software-versions/${id}/`
   );
 }
