@@ -83,6 +83,6 @@ export interface AdminUserUpdateParams {
  * 重置密码参数
  */
 export interface ResetPasswordParams {
-  password: string;
-  password_confirm: string;
-} 
+  new_password: string;
+  confirm_password: string;
+}

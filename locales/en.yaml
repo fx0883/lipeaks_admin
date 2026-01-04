@@ -981,6 +981,15 @@ adminUser:
   editAdminUser: Edit Admin User
   viewAdminUser: View Admin User
   selectTenantTitle: Select Tenant
+  resetPassword: Reset Password
+  confirmResetPassword: Confirm Reset Password
+  confirmResetPasswordMessage: Are you sure you want to reset password for {username}?
+  resetPasswordSuccess: Password reset successfully
+  resetPasswordFailed: Failed to reset password
+  newPassword: New Password
+  newPasswordPlaceholder: Please enter new password
+  confirmNewPassword: Confirm New Password
+  confirmNewPasswordPlaceholder: Please enter new password again
 
 buttons:
   pureClickCollapse: Click to Collapse
