@@ -134,7 +134,11 @@ class PureHttp {
     this.httpInterceptorsResponse();
   }
 
-  // 移除静态变量，由TokenManager管理
+  /** 是否正在刷新Token */
+  private static isRefreshing = false;
+
+  /** 等待Token刷新的请求队列 */
+  private static pendingRequests: Array<() => Promise<void>> = [];
 
   /** 初始化配置对象 */
   private static initConfig: PureHttpRequestConfig = {};

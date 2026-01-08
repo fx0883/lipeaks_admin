@@ -2696,3 +2696,83 @@ application:
   relatedData:
     articles: Related Articles
     noArticles: No related articles
+
+# Notification Management
+notification:
+  notificationManagement: Notification Management
+  list: Notification List
+  create: Create Notification
+  edit: Edit Notification
+  detail: Notification Details
+
+  # Section Titles
+  sections:
+    basicInfo: Basic Information
+    settings: Settings
+    statistics: Statistics
+    recipients: Recipients
+
+  # Fields
+  fields:
+    title: Title
+    content: Content
+    scope: Scope
+    application: Application
+    type: Type
+    priority: Priority
+    status: Status
+    sendEmail: Send Email
+    createdBy: Created By
+    createdAt: Created At
+    publishedAt: Published At
+    readStats: Read/Total
+
+  # Filters
+  filters:
+    application: Application
+    allApplications: All Applications
+    scope: Scope
+    allScopes: All Scopes
+    status: Status
+    allStatuses: All Statuses
+    type: Type
+    allTypes: All Types
+    priority: Priority
+    allPriorities: All Priorities
+
+  # Placeholders
+  placeholders:
+    title: Enter notification title
+    content: Enter notification content, supports Markdown
+    selectApplication: Select application
+    memberIds: "Enter member IDs, separated by comma, space or newline"
+
+  # Actions
+  actions:
+    publish: Publish
+    archive: Archive
+    createAndPublish: Create & Publish
+    addRecipients: Add Recipients
+
+  # Tips
+  tips:
+    sendEmail: Email notification will be sent to all recipients when published
+    membersScope: Notifications for specific members need to be created first, then add recipients before publishing
+    memberIds: "Multiple member IDs separated by comma, space or newline, e.g.: 1, 2, 3"
+
+  # Statistics
+  stats:
+    totalRecipients: Total Recipients
+    readCount: Read Count
+    unreadCount: Unread Count
+    readRate: Read Rate
+    noData: No statistics data
+
+  # Recipients
+  recipients:
+    username: Username
+    email: Email
+    readStatus: Read Status
+    readAt: Read At
+    addedAt: Added At
+    memberIds: Member IDs

@@ -9,8 +9,13 @@ import { useUserStoreHook } from '@/store/modules/user';
 
 // 刷新Token响应接口
 interface RefreshTokenResponse {
-  access: string;
-  refresh?: string;
+  success: boolean;
+  code: number;
+  message: string;
+  data: {
+    token: string;
+    refresh_token: string;
+  };
 }
 
 // 等待队列中的请求项
@@ -143,8 +148,8 @@ export class TokenManager {
       logger.debug('开始刷新Token...');
 
       const response = await Axios.post<RefreshTokenResponse>(
-        `${import.meta.env.VITE_BASE_API || "http://43.142.76.105:8000/api/v1"}/auth/token/refresh/`,
-        { refresh: refreshToken },
+        `${import.meta.env.VITE_BASE_API || "http://43.142.76.105:8000/api/v1"}/auth/refresh/`,
+        { refresh_token: refreshToken },
         {
           headers: {
             'Content-Type': 'application/json'
@@ -153,9 +158,9 @@ export class TokenManager {
         }
       );
 
-      if (response.status === 200 && response.data?.access) {
-        const newAccessToken = response.data.access;
-        const newRefreshToken = response.data.refresh;
+      if (response.status === 200 && response.data?.success && response.data?.data?.token) {
+        const newAccessToken = response.data.data.token;
+        const newRefreshToken = response.data.data.refresh_token;
 
         // 保存新Token
         this.saveTokens(newAccessToken, newRefreshToken);

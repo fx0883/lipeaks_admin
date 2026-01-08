@@ -2622,3 +2622,83 @@ application:
   relatedData:
     articles: 关联文章
     noArticles: 暂无关联文章
+
+# 通知管理
+notification:
+  notificationManagement: 通知管理
+  list: 通知列表
+  create: 创建通知
+  edit: 编辑通知
+  detail: 通知详情
+
+  # 区块标题
+  sections:
+    basicInfo: 基本信息
+    settings: 通知设置
+    statistics: 统计信息
+    recipients: 接收者列表
+
+  # 字段
+  fields:
+    title: 标题
+    content: 内容
+    scope: 通知范围
+    application: 关联应用
+    type: 通知类型
+    priority: 优先级
+    status: 状态
+    sendEmail: 发送邮件
+    createdBy: 创建人
+    createdAt: 创建时间
+    publishedAt: 发布时间
+    readStats: 已读/总数
+
+  # 筛选器
+  filters:
+    application: 应用
+    allApplications: 全部应用
+    scope: 范围
+    allScopes: 全部范围
+    status: 状态
+    allStatuses: 全部状态
+    type: 类型
+    allTypes: 全部类型
+    priority: 优先级
+    allPriorities: 全部优先级
+
+  # 占位符
+  placeholders:
+    title: 请输入通知标题
+    content: 请输入通知内容，支持Markdown格式
+    selectApplication: 请选择关联应用
+    memberIds: "请输入成员ID，多个ID用逗号、空格或换行分隔"
+
+  # 操作
+  actions:
+    publish: 发布
+    archive: 归档
+    createAndPublish: 创建并发布
+    addRecipients: 添加接收者
+
+  # 提示
+  tips:
+    sendEmail: 发布时将邮件通知所有接收者
+    membersScope: 面向特定成员的通知需要先创建，然后添加接收者后再发布
+    memberIds: 多个成员ID用逗号、空格或换行分隔，如：1, 2, 3
+
+  # 统计
+  stats:
+    totalRecipients: 总接收者
+    readCount: 已读数
+    unreadCount: 未读数
+    readRate: 阅读率
+    noData: 暂无统计数据
+
+  # 接收者
+  recipients:
+    username: 用户名
+    email: 邮箱
+    readStatus: 阅读状态
+    readAt: 阅读时间
+    addedAt: 添加时间
+    memberIds: 成员ID
