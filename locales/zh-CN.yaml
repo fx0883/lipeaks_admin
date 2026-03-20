@@ -2702,3 +2702,102 @@ notification:
     readAt: 阅读时间
     addedAt: 添加时间
     memberIds: 成员ID
+
+# 打卡系统 Check System
+checkSystem:
+  # 菜单
+  menu:
+    checkManagement: 打卡管理
+    taskCategorylist: 任务类型列表
+    taskTemplateList: 任务模板列表
+    taskList: 任务列表
+    checkRecordList: 打卡记录列表
+    cycleList: 周期列表
+  # 通用
+  common:
+    taskCategory: 任务类型
+    taskTemplate: 任务模板
+    task: 任务
+    checkRecord: 打卡记录
+    cycle: 21天周期
+  # 任务类型
+  taskCategory:
+    title: 任务类型管理
+    createTitle: 创建任务类型
+    editTitle: 编辑任务类型
+    name: 名称
+    description: 描述
+    icon: 图标
+    color: 颜色
+    formType: 表单类型
+    sortOrder: 排序
+    isSystem: 系统预设
+    goal: 目标
+    tip: 提示
+    quote: 励志语句
+    translations: 多语言翻译
+    createSuccess: 任务类型创建成功
+    updateSuccess: 任务类型更新成功
+    deleteSuccess: 任务类型删除成功
+    deleteConfirm: 确定要删除任务类型 "{name}" 吗？
+  # 任务模板
+  taskTemplate:
+    title: 任务模板管理
+    createTitle: 创建任务模板
+    editTitle: 编辑任务模板
+    name: 名称
+    description: 描述
+    category: 所属类型
+    reminder: 提醒
+    reminderTime: 提醒时间
+    isSystem: 系统预设
+    createSuccess: 任务模板创建成功
+    updateSuccess: 任务模板更新成功
+    deleteSuccess: 任务模板删除成功
+    deleteConfirm: 确定要删除任务模板 "{name}" 吗？
+  # 任务
+  task:
+    title: 任务管理
+    createTitle: 创建任务
+    editTitle: 编辑任务
+    name: 名称
+    description: 描述
+    category: 所属类型
+    member: 所属成员
+    startDate: 开始日期
+    endDate: 结束日期
+    status: 状态
+    statusActive: 进行中
+    statusCompleted: 已完成
+    statusPaused: 已暂停
+    statusCancelled: 已取消
+    reminder: 提醒
+    reminderTime: 提醒时间
+    frequencyType: 频率类型
+    frequencyDaily: 每天
+    frequencyWeekly: 每周
+    frequencyCustom: 自定义
+    frequencyDays: 频率天数
+  # 打卡记录
+  checkRecord:
+    title: 打卡记录管理
+    task: 任务
+    theme: 主题
+    member: 成员
+    checkDate: 打卡日期
+    checkTime: 打卡时间
+    remarks: 备注
+    comment: 评论
+    completionTime: 完成时间(分钟)
+    delayed: 是否延迟
+  # 周期
+  cycle:
+    title: 21天周期管理
+    member: 成员
+    startDate: 开始日期
+    endDate: 结束日期
+    selectedThemes: 已选主题
+    isActive: 是否活跃
+    currentDay: 当前天数
+    progress: 进度
+    themes: 主题列表

@@ -2776,3 +2776,102 @@ notification:
     readAt: Read At
     addedAt: Added At
     memberIds: Member IDs
+
+# Check System
+checkSystem:
+  # Menu
+  menu:
+    checkManagement: Check-in Management
+    taskCategorylist: Task Category List
+    taskTemplateList: Task Template List
+    taskList: Task List
+    checkRecordList: Check Record List
+    cycleList: Cycle List
+  # Common
+  common:
+    taskCategory: Task Category
+    taskTemplate: Task Template
+    task: Task
+    checkRecord: Check Record
+    cycle: 21-Day Cycle
+  # Task Category
+  taskCategory:
+    title: Task Category Management
+    createTitle: Create Task Category
+    editTitle: Edit Task Category
+    name: Name
+    description: Description
+    icon: Icon
+    color: Color
+    formType: Form Type
+    sortOrder: Sort Order
+    isSystem: System Preset
+    goal: Goal
+    tip: Tip
+    quote: Quote
+    translations: Translations
+    createSuccess: Task category created successfully
+    updateSuccess: Task category updated successfully
+    deleteSuccess: Task category deleted successfully
+    deleteConfirm: Are you sure you want to delete task category "{name}"?
+  # Task Template
+  taskTemplate:
+    title: Task Template Management
+    createTitle: Create Task Template
+    editTitle: Edit Task Template
+    name: Name
+    description: Description
+    category: Category
+    reminder: Reminder
+    reminderTime: Reminder Time
+    isSystem: System Preset
+    createSuccess: Task template created successfully
+    updateSuccess: Task template updated successfully
+    deleteSuccess: Task template deleted successfully
+    deleteConfirm: Are you sure you want to delete task template "{name}"?
+  # Task
+  task:
+    title: Task Management
+    createTitle: Create Task
+    editTitle: Edit Task
+    name: Name
+    description: Description
+    category: Category
+    member: Member
+    startDate: Start Date
+    endDate: End Date
+    status: Status
+    statusActive: Active
+    statusCompleted: Completed
+    statusPaused: Paused
+    statusCancelled: Cancelled
+    reminder: Reminder
+    reminderTime: Reminder Time
+    frequencyType: Frequency Type
+    frequencyDaily: Daily
+    frequencyWeekly: Weekly
+    frequencyCustom: Custom
+    frequencyDays: Frequency Days
+  # Check Record
+  checkRecord:
+    title: Check Record Management
+    task: Task
+    theme: Theme
+    member: Member
+    checkDate: Check Date
+    checkTime: Check Time
+    remarks: Remarks
+    comment: Comment
+    completionTime: Completion Time (mins)
+    delayed: Is Delayed
+  # Cycle
+  cycle:
+    title: 21-Day Cycle Management
+    member: Member
+    startDate: Start Date
+    endDate: End Date
+    selectedThemes: Selected Themes
+    isActive: Is Active
+    currentDay: Current Day
+    progress: Progress
+    themes: Theme List
