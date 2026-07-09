@@ -52,18 +52,22 @@
           <el-col :span="3">
             <el-form-item label="启用">
               <el-tooltip content="只显示启用的分类">
-                <el-switch
-                  v-model="onlyActive"
-                  @change="handleFilterChange"
-                />
+                <el-switch v-model="onlyActive" @change="handleFilterChange" />
               </el-tooltip>
             </el-form-item>
           </el-col>
           <el-col :span="3">
             <el-form-item label="置顶">
               <el-tooltip content="只显示置顶分类">
+                <el-switch v-model="onlyPinned" @change="handleFilterChange" />
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item label="管理员专属">
+              <el-tooltip content="只显示管理员专属分类">
                 <el-switch
-                  v-model="onlyPinned"
+                  v-model="onlyAdminOnly"
                   @change="handleFilterChange"
                 />
               </el-tooltip>
@@ -152,9 +156,16 @@
                       >置顶</el-tag
                     >
                     <el-tag
-                      v-if="!data.is_active"
+                      v-if="data.is_admin_only"
                       size="small"
                       type="danger"
+                      class="ml-2"
+                      >{{ $t("cms.category.isAdminOnlyTag") }}</el-tag
+                    >
+                    <el-tag
+                      v-if="!data.is_active"
+                      size="small"
+                      type="info"
                       class="ml-2"
                       >禁用</el-tag
                     >
@@ -245,7 +256,11 @@
                 {{ row.parent ? getCategoryNameById(row.parent) : "顶级分类" }}
               </template>
             </el-table-column>
-            <el-table-column prop="application_name" label="关联应用" min-width="120">
+            <el-table-column
+              prop="application_name"
+              label="关联应用"
+              min-width="120"
+            >
               <template #default="{ row }">
                 <el-tag v-if="row.application_name" type="primary" size="small">
                   {{ row.application_name }}
@@ -263,7 +278,9 @@
                     :content="`${lang.label}: ${hasTranslation(row, lang.code) ? '已翻译' : '未翻译'}`"
                   >
                     <el-tag
-                      :type="hasTranslation(row, lang.code) ? 'success' : 'info'"
+                      :type="
+                        hasTranslation(row, lang.code) ? 'success' : 'info'
+                      "
                       size="small"
                       class="ml-1"
                     >
@@ -278,6 +295,18 @@
                 <el-tag :type="row.is_pinned ? 'warning' : 'info'">
                   {{ row.is_pinned ? "置顶" : "普通" }}
                 </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="is_admin_only"
+              label="管理员专属"
+              width="110"
+            >
+              <template #default="{ row }">
+                <el-tag v-if="row.is_admin_only" type="danger">
+                  {{ $t("cms.category.isAdminOnlyTag") }}
+                </el-tag>
+                <span v-else class="text-gray-400 text-xs">-</span>
               </template>
             </el-table-column>
             <el-table-column prop="is_active" label="状态" width="80">
@@ -381,7 +410,11 @@ import {
 } from "@element-plus/icons-vue";
 import { useCmsStore } from "@/store/modules/cms";
 import { useApplicationStoreHook } from "@/store/modules/application";
-import type { Category, CategoryOrderParams, SupportedLanguage } from "@/types/cms";
+import type {
+  Category,
+  CategoryOrderParams,
+  SupportedLanguage
+} from "@/types/cms";
 import type { Application } from "@/types/application";
 import CategoryForm from "@/components/Cms/Category/CategoryForm.vue";
 import ConfirmDialog from "@/components/Cms/Category/ConfirmDialog.vue";
@@ -402,6 +435,8 @@ const searchKeyword = ref("");
 const onlyActive = ref(false);
 // 仅显示置顶分类
 const onlyPinned = ref(false);
+// 仅显示管理员专属分类
+const onlyAdminOnly = ref(false);
 // 应用过滤
 const filterApplication = ref<number | undefined>(undefined);
 // 应用列表
@@ -441,7 +476,10 @@ const fetchCategoryData = async () => {
     if (filterApplication.value) {
       params.application = filterApplication.value;
     }
-    
+    if (onlyAdminOnly.value) {
+      params.is_admin_only = true;
+    }
+
     // 获取分类列表（带过滤参数）
     await cmsStore.fetchCategoryList(params);
     // 构建树形结构（同样带过滤参数）
@@ -470,11 +508,19 @@ const fetchCategoryData = async () => {
 const fetchApplicationList = async () => {
   try {
     console.log("[分类列表] 开始获取应用列表");
-    const result = await applicationStore.fetchApplicationList({ page_size: 100, is_active: true });
+    const result = await applicationStore.fetchApplicationList({
+      page_size: 100,
+      is_active: true
+    });
     console.log("[分类列表] 获取到的应用列表:", result);
-    
+
     // 处理分页响应
-    if (result && result.data && result.data.results && Array.isArray(result.data.results)) {
+    if (
+      result &&
+      result.data &&
+      result.data.results &&
+      Array.isArray(result.data.results)
+    ) {
       applicationList.value = result.data.results;
     } else if (result && result.data && Array.isArray(result.data)) {
       applicationList.value = result.data;
@@ -484,8 +530,11 @@ const fetchApplicationList = async () => {
       console.warn("[分类列表] 应用列表格式异常:", result);
       applicationList.value = [];
     }
-    
-    console.log("[分类列表] 应用列表设置成功, 数量:", applicationList.value.length);
+
+    console.log(
+      "[分类列表] 应用列表设置成功, 数量:",
+      applicationList.value.length
+    );
   } catch (error) {
     console.error("[分类列表] 获取应用列表失败:", error);
     applicationList.value = [];
@@ -585,6 +634,10 @@ const filteredCategoryTree = computed(() => {
     filteredList = filteredList.filter(item => item.is_pinned);
   }
 
+  if (onlyAdminOnly.value) {
+    filteredList = filteredList.filter(item => item.is_admin_only);
+  }
+
   // 构建树形结构
   const buildTree = () => {
     // 找出所有顶级分类（没有父级的分类）
@@ -644,6 +697,10 @@ const filteredCategoryList = computed(() => {
     list = list.filter(item => item.is_pinned);
   }
 
+  if (onlyAdminOnly.value) {
+    list = list.filter(item => item.is_admin_only);
+  }
+
   // 按置顶和名称排序（置顶优先）
   return [...list].sort((a, b) => {
     if (a.is_pinned !== b.is_pinned) {
@@ -663,7 +720,10 @@ const getCategoryNameById = (id: number): string => {
 };
 
 // 检查分类是否有某个语言的翻译
-const hasTranslation = (category: Category, langCode: SupportedLanguage): boolean => {
+const hasTranslation = (
+  category: Category,
+  langCode: SupportedLanguage
+): boolean => {
   if (!category.translations) return false;
   const trans = category.translations[langCode];
   return !!(trans && trans.name && trans.name.trim());
@@ -672,7 +732,8 @@ const hasTranslation = (category: Category, langCode: SupportedLanguage): boolea
 // 获取翻译完成数量
 const getTranslationCount = (category: Category): number => {
   if (!category.translations) return 0;
-  return SUPPORTED_LANGUAGES.filter(lang => hasTranslation(category, lang.code)).length;
+  return SUPPORTED_LANGUAGES.filter(lang => hasTranslation(category, lang.code))
+    .length;
 };
 
 // 处理搜索
@@ -853,7 +914,7 @@ const handleDragEnd = async (
 onMounted(() => {
   // 获取应用列表
   fetchApplicationList();
-  
+
   fetchCategoryData().then(() => {
     // 添加详细日志记录
     console.log("组件挂载后 - 分类树数据:", cmsStore.categoryTree);

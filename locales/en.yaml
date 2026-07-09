@@ -839,6 +839,9 @@ cms:
     icon: Icon
     sortOrder: Sort Order
     isActive: Active
+    isAdminOnly: Admin Only
+    isAdminOnlyTip: When enabled, only admins can create/edit/delete articles in this category
+    isAdminOnlyTag: Admin Only
     nameRequired: Name is required
     slugInvalid: Invalid slug format
     updateSuccess: Category updated successfully
