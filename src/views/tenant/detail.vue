@@ -3,6 +3,7 @@ import { ref, computed, onMounted, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox, ElTabs, ElTabPane } from "element-plus";
+import { ArrowLeft } from "@element-plus/icons-vue";
 import { useTenantStoreHook } from "@/store/modules/tenant";
 import { useUserStoreHook } from "@/store/modules/user";
 import ConfirmDialog from "@/components/TenantManagement/ConfirmDialog.vue";
@@ -279,14 +280,14 @@ const handleUserPageSizeChange = size => {
 };
 
 // 监听标签页切换
-const handleTabChange = tab => {
+const handleTabChange = tabName => {
   // 如果切换到配额标签页，加载配额信息
-  if (tab.props.name === "quota" && !quota.value) {
+  if (tabName === "quota" && !quota.value) {
     fetchTenantQuota();
   }
 
   // 如果切换到用户标签页，加载用户列表
-  if (tab.props.name === "users" && users.value.length === 0) {
+  if (tabName === "users" && users.value.length === 0) {
     fetchTenantUsers();
   }
 };
@@ -327,7 +328,7 @@ onMounted(async () => {
     <div class="tenant-detail-header">
       <div class="tenant-detail-title-area">
         <el-button @click="handleBackToList" type="text" class="back-button">
-          <el-icon><arrow-left /></el-icon>
+          <el-icon><ArrowLeft /></el-icon>
           {{ t("tenant.backToList") }}
         </el-button>
         <h2 class="tenant-detail-title">{{ t("tenant.detail") }}</h2>
