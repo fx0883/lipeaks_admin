@@ -1,0 +1,754 @@
+{
+  "admin-user": {
+    "viewFilesCount": 6,
+    "compFilesCount": 8,
+    "matchedComponents": [
+      "AdminUserManagement"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n"
+    ],
+    "elComponentList": [
+      "el-button",
+      "el-card",
+      "el-checkbox",
+      "el-col",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-divider",
+      "el-dropdown",
+      "el-dropdown-item",
+      "el-dropdown-menu",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-icon-loading",
+      "el-icon-picture",
+      "el-icon-plus",
+      "el-image",
+      "el-input",
+      "el-option",
+      "el-pagination",
+      "el-row",
+      "el-select",
+      "el-skeleton",
+      "el-switch",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag",
+      "el-tree",
+      "el-upload"
+    ],
+    "pureComponents": [
+      "ResetPasswordDialog",
+      "ResetPasswordParams"
+    ],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "application": {
+    "viewFilesCount": 4,
+    "compFilesCount": 3,
+    "matchedComponents": [
+      "Application"
+    ],
+    "icons": [
+      "ep-icons",
+      "iconify/re-icon"
+    ],
+    "utils": [
+      "i18n"
+    ],
+    "elComponentList": [
+      "el-avatar",
+      "el-button",
+      "el-card",
+      "el-col",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-form",
+      "el-form-item",
+      "el-input",
+      "el-option",
+      "el-pagination",
+      "el-row",
+      "el-select",
+      "el-statistic",
+      "el-table",
+      "el-table-column",
+      "el-tag"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "check-system": {
+    "viewFilesCount": 9,
+    "compFilesCount": 0,
+    "matchedComponents": [],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "dayjs"
+    ],
+    "elComponentList": [
+      "el-button",
+      "el-card",
+      "el-col",
+      "el-color-picker",
+      "el-date-picker",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-divider",
+      "el-empty",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-input",
+      "el-input-number",
+      "el-option",
+      "el-page-header",
+      "el-pagination",
+      "el-progress",
+      "el-row",
+      "el-select",
+      "el-switch",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag",
+      "el-time-picker",
+      "el-tooltip"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "dayjs",
+      "element-plus",
+      "vue",
+      "vue-router"
+    ]
+  },
+  "cms": {
+    "viewFilesCount": 17,
+    "compFilesCount": 13,
+    "matchedComponents": [
+      "Cms"
+    ],
+    "icons": [
+      "ep-icons",
+      "iconify/re-icon"
+    ],
+    "utils": [
+      "i18n",
+      "dayjs",
+      "diff"
+    ],
+    "elComponentList": [
+      "el-alert",
+      "el-avatar",
+      "el-button",
+      "el-card",
+      "el-cascader",
+      "el-checkbox",
+      "el-col",
+      "el-color-picker",
+      "el-date-picker",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-divider",
+      "el-empty",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-icon-loading",
+      "el-icon-picture",
+      "el-image",
+      "el-input",
+      "el-input-number",
+      "el-link",
+      "el-option",
+      "el-pagination",
+      "el-progress",
+      "el-result",
+      "el-row",
+      "el-select",
+      "el-skeleton",
+      "el-statistic",
+      "el-step",
+      "el-steps",
+      "el-switch",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag",
+      "el-tooltip",
+      "el-tree",
+      "el-upload"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "dayjs",
+      "diff",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "customer": {
+    "viewFilesCount": 4,
+    "compFilesCount": 9,
+    "matchedComponents": [
+      "CustomerManagement"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n"
+    ],
+    "elComponentList": [
+      "el-avatar",
+      "el-button",
+      "el-card",
+      "el-date-picker",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-input",
+      "el-input-number",
+      "el-option",
+      "el-pagination",
+      "el-select",
+      "el-switch",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "dashboard": {
+    "viewFilesCount": 1,
+    "compFilesCount": 13,
+    "matchedComponents": [
+      "Dashboard"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n",
+      "dayjs",
+      "@pureadmin/utils"
+    ],
+    "elComponentList": [
+      "el-alert",
+      "el-card",
+      "el-col",
+      "el-date-picker",
+      "el-empty",
+      "el-icon",
+      "el-progress",
+      "el-radio-button",
+      "el-radio-group",
+      "el-row",
+      "el-tab-pane",
+      "el-tabs",
+      "el-tag"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "@pureadmin/utils",
+      "dayjs",
+      "element-plus",
+      "vue",
+      "vue-i18n"
+    ]
+  },
+  "feedback": {
+    "viewFilesCount": 15,
+    "compFilesCount": 0,
+    "matchedComponents": [],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n",
+      "dayjs",
+      "echarts"
+    ],
+    "elComponentList": [
+      "el-alert",
+      "el-avatar",
+      "el-button",
+      "el-card",
+      "el-checkbox",
+      "el-date-picker",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-empty",
+      "el-form",
+      "el-form-item",
+      "el-input",
+      "el-input-number",
+      "el-option",
+      "el-pagination",
+      "el-radio",
+      "el-radio-group",
+      "el-select",
+      "el-skeleton",
+      "el-switch",
+      "el-table",
+      "el-table-column",
+      "el-tag",
+      "el-timeline",
+      "el-timeline-item"
+    ],
+    "pureComponents": [
+      "Record"
+    ],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "@vueuse/core",
+      "dayjs",
+      "echarts",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "license": {
+    "viewFilesCount": 15,
+    "compFilesCount": 12,
+    "matchedComponents": [
+      "License"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n",
+      "echarts"
+    ],
+    "elComponentList": [
+      "el-alert",
+      "el-badge",
+      "el-breadcrumb",
+      "el-breadcrumb-item",
+      "el-button",
+      "el-card",
+      "el-col",
+      "el-collapse",
+      "el-collapse-item",
+      "el-date-picker",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-divider",
+      "el-dropdown",
+      "el-dropdown-item",
+      "el-dropdown-menu",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-input",
+      "el-input-number",
+      "el-option",
+      "el-pagination",
+      "el-progress",
+      "el-result",
+      "el-row",
+      "el-select",
+      "el-table",
+      "el-table-column",
+      "el-tag",
+      "el-timeline",
+      "el-timeline-item",
+      "el-tooltip",
+      "el-upload"
+    ],
+    "pureComponents": [
+      "Record",
+      "Refresh",
+      "RelatedLog"
+    ],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "echarts",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "login": {
+    "viewFilesCount": 4,
+    "compFilesCount": 0,
+    "matchedComponents": [],
+    "icons": [
+      "iconify/re-icon"
+    ],
+    "utils": [
+      "i18n",
+      "@pureadmin/utils"
+    ],
+    "elComponentList": [
+      "el-button",
+      "el-dropdown",
+      "el-dropdown-item",
+      "el-dropdown-menu",
+      "el-form",
+      "el-form-item",
+      "el-input",
+      "el-switch"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@pureadmin/utils",
+      "@vueuse/core",
+      "vue",
+      "vue-i18n",
+      "vue-router",
+      "~icons/ep/check",
+      "~icons/ri/lock-fill",
+      "~icons/ri/user-3-fill"
+    ]
+  },
+  "member": {
+    "viewFilesCount": 4,
+    "compFilesCount": 6,
+    "matchedComponents": [
+      "MemberManagement"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n"
+    ],
+    "elComponentList": [
+      "el-button",
+      "el-card",
+      "el-checkbox",
+      "el-col",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-image",
+      "el-input",
+      "el-option",
+      "el-pagination",
+      "el-row",
+      "el-select",
+      "el-switch",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag",
+      "el-upload"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "menu": {
+    "viewFilesCount": 1,
+    "compFilesCount": 3,
+    "matchedComponents": [
+      "MenuManagement"
+    ],
+    "icons": [
+      "ep-icons",
+      "iconify/re-icon"
+    ],
+    "utils": [
+      "i18n"
+    ],
+    "elComponentList": [
+      "el-button",
+      "el-card",
+      "el-col",
+      "el-dialog",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-icon-delete",
+      "el-icon-info-filled",
+      "el-icon-warning",
+      "el-input",
+      "el-input-number",
+      "el-option",
+      "el-pagination",
+      "el-row",
+      "el-select",
+      "el-switch",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag",
+      "el-tooltip",
+      "el-tree",
+      "el-upload"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "notification": {
+    "viewFilesCount": 3,
+    "compFilesCount": 0,
+    "matchedComponents": [],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "dayjs"
+    ],
+    "elComponentList": [
+      "el-alert",
+      "el-button",
+      "el-card",
+      "el-col",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-divider",
+      "el-empty",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-input",
+      "el-link",
+      "el-option",
+      "el-page-header",
+      "el-pagination",
+      "el-radio",
+      "el-radio-group",
+      "el-row",
+      "el-select",
+      "el-switch",
+      "el-table",
+      "el-table-column",
+      "el-tag",
+      "el-tooltip"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "dayjs",
+      "element-plus",
+      "vue",
+      "vue-router"
+    ]
+  },
+  "order": {
+    "viewFilesCount": 5,
+    "compFilesCount": 15,
+    "matchedComponents": [
+      "OrderManagement"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n"
+    ],
+    "elComponentList": [
+      "el-alert",
+      "el-button",
+      "el-card",
+      "el-checkbox",
+      "el-checkbox-group",
+      "el-col",
+      "el-date-picker",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-divider",
+      "el-empty",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-input",
+      "el-option",
+      "el-pagination",
+      "el-progress",
+      "el-row",
+      "el-select",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag",
+      "el-timeline",
+      "el-timeline-item",
+      "el-tooltip"
+    ],
+    "pureComponents": [
+      "Record",
+      "Refresh"
+    ],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "permission": {
+    "viewFilesCount": 3,
+    "compFilesCount": 0,
+    "matchedComponents": [],
+    "icons": [],
+    "utils": [
+      "@pureadmin/utils"
+    ],
+    "elComponentList": [
+      "el-button",
+      "el-card",
+      "el-option",
+      "el-select",
+      "el-space"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@pureadmin/utils",
+      "vue"
+    ]
+  },
+  "tenant": {
+    "viewFilesCount": 4,
+    "compFilesCount": 4,
+    "matchedComponents": [
+      "TenantManagement"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [
+      "i18n"
+    ],
+    "elComponentList": [
+      "el-button",
+      "el-card",
+      "el-descriptions",
+      "el-descriptions-item",
+      "el-dialog",
+      "el-dropdown",
+      "el-dropdown-item",
+      "el-dropdown-menu",
+      "el-form",
+      "el-form-item",
+      "el-icon",
+      "el-input",
+      "el-input-number",
+      "el-option",
+      "el-pagination",
+      "el-progress",
+      "el-select",
+      "el-tab-pane",
+      "el-table",
+      "el-table-column",
+      "el-tabs",
+      "el-tag"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-i18n",
+      "vue-router"
+    ]
+  },
+  "welcome": {
+    "viewFilesCount": 1,
+    "compFilesCount": 0,
+    "matchedComponents": [],
+    "icons": [],
+    "utils": [],
+    "elComponentList": [],
+    "pureComponents": [],
+    "externalImports": []
+  },
+  "error": {
+    "viewFilesCount": 3,
+    "compFilesCount": 8,
+    "matchedComponents": [
+      "ErrorHandling"
+    ],
+    "icons": [
+      "ep-icons"
+    ],
+    "utils": [],
+    "elComponentList": [
+      "el-button",
+      "el-collapse",
+      "el-collapse-item",
+      "el-dialog",
+      "el-form-item",
+      "el-input"
+    ],
+    "pureComponents": [],
+    "externalImports": [
+      "@element-plus/icons-vue",
+      "element-plus",
+      "vue",
+      "vue-router"
+    ]
+  }
+}
