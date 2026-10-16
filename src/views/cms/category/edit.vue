@@ -73,6 +73,21 @@
             <el-form-item :label="$t('cms.category.isActive')" prop="is_active">
               <el-switch v-model="form.is_active" />
             </el-form-item>
+
+            <el-form-item
+              v-if="isAdminUser"
+              :label="$t('cms.category.isAdminOnly')"
+              prop="is_admin_only"
+            >
+              <el-switch
+                v-model="form.is_admin_only"
+                :active-text="$t('common.yes')"
+                :inactive-text="$t('common.no')"
+              />
+              <div class="text-gray-400 text-xs mt-1">
+                {{ $t("cms.category.isAdminOnlyTip") }}
+              </div>
+            </el-form-item>
           </el-tab-pane>
         </el-tabs>
 
@@ -92,6 +107,7 @@ import { ref, reactive, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, FormInstance, FormRules } from "element-plus";
 import { useCmsStore } from "@/store/modules/cms";
+import { useUserStoreHook } from "@/store/modules/user";
 import { useI18n } from "vue-i18n";
 import { slugify } from "@/utils/string";
 
@@ -99,9 +115,13 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const cmsStore = useCmsStore();
+const userStore = useUserStoreHook();
 const formRef = ref<FormInstance>();
 const loading = ref(false);
 const activeTab = ref("basic");
+
+// 当前用户是否为管理员（仅管理员可设置 is_admin_only）
+const isAdminUser = computed(() => userStore.is_admin || userStore.is_super_admin);
 
 // 获取分类ID
 const categoryId = computed(() => Number(route.params.id));
@@ -114,7 +134,8 @@ const form = reactive({
   parent_id: null as number | null,
   icon: "",
   sort_order: 0,
-  is_active: true
+  is_active: true,
+  is_admin_only: false
 });
 
 // 表单验证规则
@@ -168,6 +189,7 @@ const fetchCategoryDetail = async () => {
       form.icon = category.icon || "";
       form.sort_order = category.sort_order;
       form.is_active = category.is_active;
+      form.is_admin_only = category.is_admin_only || false;
     }
   } catch (error) {
     console.error("Failed to fetch category detail:", error);

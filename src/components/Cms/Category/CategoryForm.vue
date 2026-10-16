@@ -219,6 +219,23 @@
       </div>
     </el-form-item>
 
+    <el-form-item
+      v-if="isAdminUser"
+      label="管理员专属"
+      prop="is_admin_only"
+    >
+      <el-switch
+        v-model="form.is_admin_only"
+        :active-value="true"
+        :inactive-value="false"
+        active-text="是"
+        inactive-text="否"
+      />
+      <div class="text-gray-400 text-xs mt-1">
+        {{ $t("cms.category.isAdminOnlyTip") }}
+      </div>
+    </el-form-item>
+
     <el-form-item label="封面图" prop="cover_image">
       <ImageUpload
         v-model="form.cover_image"
@@ -249,6 +266,7 @@ import { ElMessage, ElButton, ElSelect, ElOption, ElInput } from "element-plus";
 import { RefreshRight, CircleCheckFilled, QuestionFilled, DocumentCopy } from "@element-plus/icons-vue";
 import { useCmsStore } from "@/store/modules/cms";
 import { useApplicationStoreHook } from "@/store/modules/application";
+import { useUserStoreHook } from "@/store/modules/user";
 import type {
   Category,
   CategoryCreateParams,
@@ -285,7 +303,11 @@ const emit = defineEmits(["submit", "cancel"]);
 
 const cmsStore = useCmsStore();
 const applicationStore = useApplicationStoreHook();
+const userStore = useUserStoreHook();
 const formRef = ref();
+
+// 当前用户是否为管理员（仅管理员可设置 is_admin_only）
+const isAdminUser = computed(() => userStore.is_admin || userStore.is_super_admin);
 const loading = ref(props.loading);
 const categoriesLoading = ref(false);
 const applicationsLoading = ref(false);
@@ -317,10 +339,11 @@ const form = reactive<CategoryCreateParams>({
   cover_image: "",
   is_active: true,
   is_pinned: false,
+  is_admin_only: false,
   sort_order: 0,
-  
+
   application: null,
-  
+
   // 多语言翻译对象
   translations: {
     'zh-hans': { name: '', description: '', seo_title: '', seo_description: '' },
@@ -445,6 +468,10 @@ const initFormData = () => {
     form.is_pinned =
       props.categoryData.is_pinned !== undefined
         ? props.categoryData.is_pinned
+        : false;
+    form.is_admin_only =
+      props.categoryData.is_admin_only !== undefined
+        ? props.categoryData.is_admin_only
         : false;
     form.sort_order =
       props.categoryData.sort_order !== undefined

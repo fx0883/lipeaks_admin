@@ -5,7 +5,13 @@
 // --------------------------------------------
 
 // 支持的语言类型
-export type SupportedLanguage = 'zh-hans' | 'en' | 'zh-hant' | 'ja' | 'ko' | 'fr';
+export type SupportedLanguage =
+  | "zh-hans"
+  | "en"
+  | "zh-hant"
+  | "ja"
+  | "ko"
+  | "fr";
 
 // 语言信息接口
 export interface LanguageInfo {
@@ -24,37 +30,37 @@ export interface CategoryTranslation {
 
 // 分类多语言翻译对象
 export interface CategoryTranslations {
-  'zh-hans'?: CategoryTranslation;
-  'en'?: CategoryTranslation;
-  'zh-hant'?: CategoryTranslation;
-  'ja'?: CategoryTranslation;
-  'ko'?: CategoryTranslation;
-  'fr'?: CategoryTranslation;
+  "zh-hans"?: CategoryTranslation;
+  en?: CategoryTranslation;
+  "zh-hant"?: CategoryTranslation;
+  ja?: CategoryTranslation;
+  ko?: CategoryTranslation;
+  fr?: CategoryTranslation;
 }
 
 // 文章相关类型
 // --------------------------------------------
 
 // 文章状态枚举
-export type ArticleStatus = 'draft' | 'pending' | 'published' | 'archived';
+export type ArticleStatus = "draft" | "pending" | "published" | "archived";
 
 // 文章可见性枚举
-export type ArticleVisibility = 'public' | 'private' | 'password';
+export type ArticleVisibility = "public" | "private" | "password";
 
 // 内容类型枚举
 export type ContentType =
-  | 'markdown'
-  | 'html'
-  | 'image'
-  | 'image_upload'
-  | 'video'
-  | 'audio'
-  | 'file'
-  | 'link'
-  | 'quote'
-  | 'code'
-  | 'table'
-  | 'list';
+  | "markdown"
+  | "html"
+  | "image"
+  | "image_upload"
+  | "video"
+  | "audio"
+  | "file"
+  | "link"
+  | "quote"
+  | "code"
+  | "table"
+  | "list";
 
 // 简化的分类信息
 export interface CategorySimple {
@@ -85,7 +91,7 @@ export interface Article {
     username: string;
     avatar: string;
   };
-  author_type?: 'admin' | 'member';
+  author_type?: "admin" | "member";
   status: ArticleStatus;
   is_featured: boolean;
   is_pinned: boolean;
@@ -127,7 +133,7 @@ export interface ArticleListParams {
   author_id?: number;
   user_id?: number;
   member_id?: number;
-  author_type?: 'admin' | 'member';
+  author_type?: "admin" | "member";
   parent_id?: number;
   has_parent?: boolean | string;
   is_featured?: boolean;
@@ -136,7 +142,7 @@ export interface ArticleListParams {
   date_from?: string;
   date_to?: string;
   sort_by?: string;
-  sort_order?: 'asc' | 'desc';
+  sort_order?: "asc" | "desc";
 }
 
 // 文章创建参数
@@ -173,10 +179,15 @@ export interface ArticleUpdateParams extends Partial<ArticleCreateParams> {
 // --------------------------------------------
 
 // 评论状态枚举
-export type CommentStatus = 'pending' | 'approved' | 'spam' | 'trash' | 'rejected';
+export type CommentStatus =
+  | "pending"
+  | "approved"
+  | "spam"
+  | "trash"
+  | "rejected";
 
 // 评论作者类型
-export type CommentAuthorType = 'admin' | 'member' | 'guest';
+export type CommentAuthorType = "admin" | "member" | "guest";
 
 // 评论模型
 export interface Comment {
@@ -255,7 +266,7 @@ export interface CommentUpdateParams {
 // --------------------------------------------
 
 // 分类状态枚举
-export type CategoryStatus = 'active' | 'inactive';
+export type CategoryStatus = "active" | "inactive";
 
 // 分类对象接口
 export interface Category {
@@ -271,6 +282,7 @@ export interface Category {
   cover_image?: string;
   is_active: boolean;
   is_pinned: boolean;
+  is_admin_only: boolean;
   created_at: string;
   updated_at: string;
   article_count?: number;
@@ -293,6 +305,7 @@ export interface CategoryListParams {
   parent?: number | null;
   is_active?: boolean | string;
   is_pinned?: boolean | string;
+  is_admin_only?: boolean | string;
   application?: number;
   ordering?: string;
   page?: number;
@@ -301,7 +314,7 @@ export interface CategoryListParams {
 
 // 分类创建参数
 export interface CategoryCreateParams {
-  name?: string;  // 改为可选，因为可能通过translations提供
+  name?: string; // 改为可选，因为可能通过translations提供
   slug?: string;
   description?: string;
   parent?: number | null;
@@ -309,6 +322,7 @@ export interface CategoryCreateParams {
   cover_image?: string;
   is_active?: boolean;
   is_pinned?: boolean;
+  is_admin_only?: boolean;
   sort_order?: number;
   application?: number | null;
 
@@ -329,6 +343,7 @@ export interface CategoryUpdateParams {
   cover_image?: string;
   is_active?: boolean;
   is_pinned?: boolean;
+  is_admin_only?: boolean;
   sort_order?: number;
   application?: number | null;
 
@@ -350,7 +365,7 @@ export interface CategoryOrderParams {
 // --------------------------------------------
 
 // 标签状态枚举
-export type TagStatus = 'active' | 'inactive';
+export type TagStatus = "active" | "inactive";
 
 // 标签对象接口
 export interface Tag {
@@ -358,8 +373,8 @@ export interface Tag {
   name: string;
   slug: string;
   description?: string;
-  group?: number | null;  // 所属标签组ID
-  group_name?: string;    // 标签组名称
+  group?: number | null; // 所属标签组ID
+  group_name?: string; // 标签组名称
   color?: string;
   is_active: boolean;
   created_at: string;
@@ -381,7 +396,7 @@ export interface TagCreateParams {
   name: string;
   slug?: string;
   description?: string;
-  group?: number | null;  // 所属标签组ID
+  group?: number | null; // 所属标签组ID
   color?: string;
   is_active?: boolean;
 }
@@ -391,7 +406,7 @@ export interface TagUpdateParams {
   name?: string;
   slug?: string;
   description?: string;
-  group?: number | null;  // 所属标签组ID
+  group?: number | null; // 所属标签组ID
   color?: string;
   is_active?: boolean;
 }
@@ -433,7 +448,7 @@ export interface TagGroupCreateParams {
 }
 
 // 标签组更新参数
-export interface TagGroupUpdateParams extends Partial<TagGroupCreateParams> { }
+export interface TagGroupUpdateParams extends Partial<TagGroupCreateParams> {}
 
 // 文章统计数据
 export interface ArticleStatistics {
@@ -454,4 +469,4 @@ export interface ArticleVersion {
     id: number;
     username: string;
   };
-} 
+}

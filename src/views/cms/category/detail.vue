@@ -72,6 +72,13 @@
               </el-tag>
             </el-descriptions-item>
 
+            <el-descriptions-item :label="$t('cms.category.isAdminOnly')">
+              <el-tag v-if="category.is_admin_only" type="danger">
+                {{ $t("cms.category.isAdminOnlyTag") }}
+              </el-tag>
+              <span v-else>{{ $t("common.no") }}</span>
+            </el-descriptions-item>
+
             <el-descriptions-item :label="$t('cms.category.articleCount')">
               {{ category.article_count || 0 }}
             </el-descriptions-item>

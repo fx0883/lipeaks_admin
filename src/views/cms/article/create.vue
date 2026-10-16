@@ -65,11 +65,14 @@ const handleCancel = () => {
 };
 
 // 页面加载时获取分类和标签数据
-onMounted(() => {
-  // 这里应该加载分类和标签数据
-  // 在实际项目中，需要调用相应的API获取这些数据
-  // 例如：await cmsStore.fetchCategoryList();
-  //      await cmsStore.fetchTagList();
+onMounted(async () => {
+  try {
+    await cmsStore.fetchCategoryList();
+    categories.value = cmsStore.categoryList || [];
+  } catch (error) {
+    logger.error("加载分类列表失败", error);
+    categories.value = [];
+  }
 });
 </script>
 

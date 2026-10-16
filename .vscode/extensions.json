@@ -15,7 +15,6 @@
     "mikestead.dotenv",
     "eamodio.gitlens",
     "antfu.iconify",
-    "Vue.volar",
-    "stagewise.stagewise-vscode-extension"
+    "Vue.volar"
   ]
 }

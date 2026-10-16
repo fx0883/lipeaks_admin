@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { useUserStoreHook } from "@/store/modules/user";
 import type {
   Article,
   ArticleCreateParams,
@@ -18,6 +19,16 @@ import ImageUploadWithThumbnail from "./ImageUploadWithThumbnail.vue";
 import ParentArticleSelector from "./ParentArticleSelector.vue";
 
 const { t } = useI18n();
+const userStore = useUserStoreHook();
+
+// 当前用户是否为管理员
+const isAdminUser = computed(() => userStore.is_admin || userStore.is_super_admin);
+
+// 非管理员用户不能选择管理员专属分类
+const availableCategories = computed(() => {
+  if (isAdminUser.value) return props.categories;
+  return props.categories.filter(category => !category.is_admin_only);
+});
 
 // 定义组件属性
 const props = defineProps({
@@ -506,18 +517,18 @@ onMounted(() => {
         :placeholder="t('cms.article.categoriesPlaceholder')"
         class="w-full"
       >
-        <div v-if="!categories || categories.length === 0" class="empty-tip">
+        <div v-if="!availableCategories || availableCategories.length === 0" class="empty-tip">
           {{ t("cms.article.noCategories") }}
         </div>
         <el-option
-          v-for="category in categories"
+          v-for="category in availableCategories"
           :key="category.id"
           :label="category.name"
           :value="category.id"
         />
       </el-select>
       <div class="selection-debug">
-        {{ categories?.length || 0 }} {{ t("cms.article.categoriesAvailable") }}
+        {{ availableCategories?.length || 0 }} {{ t("cms.article.categoriesAvailable") }}
       </div>
     </el-form-item>
 

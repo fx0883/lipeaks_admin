@@ -941,6 +941,9 @@ cms:
     icon: 图标
     sortOrder: 排序
     isActive: 是否激活
+    isAdminOnly: 管理员专属
+    isAdminOnlyTip: 开启后，该分类下的文章仅管理员可增删改，Member 不可操作
+    isAdminOnlyTag: 管理员专属
     nameRequired: 名称不能为空
     slugInvalid: 别名格式不正确
     updateSuccess: 分类更新成功
