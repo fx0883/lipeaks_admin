@@ -11,9 +11,13 @@ const adminUserStore = useAdminUserStoreHook();
 const props = defineProps({
   userId: {
     type: Number,
-    required: true
+    default: 0
   },
   currentAvatar: {
+    type: String,
+    default: ""
+  },
+  avatar: {
     type: String,
     default: ""
   },

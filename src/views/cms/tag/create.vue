@@ -33,7 +33,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('cms.tag.description')" prop="description">
-              <el-input v-model="form.description" type="textarea" rows="3" />
+              <el-input v-model="form.description" type="textarea" :rows="3" />
             </el-form-item>
           </el-tab-pane>
 

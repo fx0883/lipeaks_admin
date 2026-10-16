@@ -3,7 +3,7 @@
  */
 
 // 会员状态
-export type MemberStatus = "active" | "suspended" | "inactive";
+export type MemberStatus = "active" | "suspended" | "inactive" | "locked" | "pending";
 
 // 会员基本信息接口
 export interface Member {
@@ -32,6 +32,7 @@ export interface Member {
   customer_count?: number; // 关联客户数量（可选，仅在详情中返回）
   first_name?: string; // 名
   last_name?: string; // 姓
+  relation?: MemberCustomerRelation; // 关联客户关系
 }
 
 // 会员列表请求参数接口
@@ -56,6 +57,7 @@ export interface MemberCreateUpdateParams {
   wechat_id?: string; // 微信号
   password?: string; // 密码（仅创建时需要）
   confirm_password?: string; // 确认密码（仅创建时需要）
+  password_confirm?: string; // 兼容确认密码字段
   status?: MemberStatus; // 状态
   tenant_id?: number; // 所属租户ID
   notes?: string; // 备注
@@ -124,6 +126,9 @@ export interface MemberSearchResult {
   id: number; // 会员ID
   username: string; // 用户名
   name: string; // 姓名
+  nick_name?: string;
+  first_name?: string;
+  last_name?: string;
   email: string; // 邮箱
   status: MemberStatus; // 状态
   tenant_name?: string; // 所属租户名称

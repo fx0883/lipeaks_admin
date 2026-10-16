@@ -97,7 +97,7 @@ const beforeAvatarUpload = (file: File) => {
 };
 
 // 自定义上传
-const customUpload = (options: UploadRequestOptions) => {
+const customUpload = async (options: UploadRequestOptions) => {
   const { file } = options;
   if (!(file instanceof File)) {
     logger.error("上传文件类型错误");

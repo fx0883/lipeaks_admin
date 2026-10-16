@@ -8,7 +8,6 @@ import {
   Delete,
   Upload,
   Download,
-  Archive,
   Document,
   ChatLineRound,
   View,
@@ -57,12 +56,18 @@ const categories = ref([]);
 const tags = ref([]);
 
 // 确认对话框
-const confirmDialog = reactive({
+const confirmDialog = reactive<{
+  visible: boolean;
+  title: string;
+  content: string;
+  type: "warning" | "info" | "success" | "error" | string;
+  confirmAction: (() => Promise<void>) | null;
+}>({
   visible: false,
   title: "",
   content: "",
-  type: "warning" as const,
-  confirmAction: null as (() => Promise<void>) | null
+  type: "warning",
+  confirmAction: null
 });
 
 // 获取文章详情
@@ -94,13 +99,17 @@ const loadCategoriesAndTags = async () => {
     console.log("[ArticleDetail] 开始加载分类和标签数据");
     
     // 加载分类数据
-    const categoryResponse = await cmsStore.fetchCategoryList();
+    const categoryResponse: any = await cmsStore.fetchCategoryList();
     console.log("[ArticleDetail] 分类数据响应:", categoryResponse);
     
-    if (categoryResponse && categoryResponse.data) {
-      categories.value = Array.isArray(categoryResponse.data) 
-        ? categoryResponse.data 
-        : [];
+    if (categoryResponse) {
+      if (Array.isArray(categoryResponse)) {
+        categories.value = categoryResponse;
+      } else if (categoryResponse.data && Array.isArray(categoryResponse.data)) {
+        categories.value = categoryResponse.data;
+      } else {
+        categories.value = [];
+      }
       console.log("[ArticleDetail] 已加载分类数据:", categories.value);
     } else {
       console.warn("[ArticleDetail] 分类数据响应为空或格式不正确");

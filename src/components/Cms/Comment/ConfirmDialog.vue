@@ -73,7 +73,7 @@ const handleConfirm = () => {
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleClose">{{ cancelButtonText }}</el-button>
-        <el-button :type="type" @click="handleConfirm">
+        <el-button :type="(type as any)" @click="handleConfirm">
           {{ confirmButtonText }}
         </el-button>
       </span>

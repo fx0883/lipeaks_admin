@@ -120,7 +120,7 @@ const submitUpdate = async () => {
 
   // 构建请求参数
   const params: OrderBulkOperationParams = {
-    order_ids: props.selectedOrders.map(order => order.id),
+    order_ids: props.selectedOrders.map((order: any) => order.id),
     operation_type: "update",
     data: updateData
   };

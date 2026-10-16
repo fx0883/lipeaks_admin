@@ -63,9 +63,12 @@ export interface Software {
   status: SoftwareStatus;
   is_active: boolean;
   total_feedbacks?: number;
+  open_feedbacks?: number;
+  versions?: any[];
   version_count?: number;
   created_at: string;
   updated_at: string;
+  [key: string]: any;
 }
 
 /**
@@ -497,7 +500,7 @@ export interface RedisStatus {
  * 自定义分页响应格式（后端使用）
  */
 export interface CustomPaginationResponse<T = any> {
-  pagination: {
+  pagination?: {
     count: number;
     next: string | null;
     previous: string | null;
@@ -505,7 +508,13 @@ export interface CustomPaginationResponse<T = any> {
     current_page: number;
     total_pages: number;
   };
-  results: T[];
+  results?: T[];
+  count?: number;
+  next?: string | null;
+  previous?: string | null;
+  data?: any;
+  id?: any;
+  [key: string]: any;
 }
 
 // ==================== API 响应类型 ====================

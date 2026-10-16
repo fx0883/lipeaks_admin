@@ -87,7 +87,7 @@ const sortedHistoryList = computed(() => {
 });
 
 // 获取变更类型对应的图标和颜色
-const getChangeTypeInfo = (change: OrderHistory) => {
+const getChangeTypeInfo = (change: OrderHistory): { icon: string; type: "primary" | "success" | "warning" | "danger" | "info" } => {
   const action = change.change_details_data?.action;
   switch (action) {
     case "create":
@@ -187,7 +187,7 @@ onMounted(() => {
                   <span class="value">
                     <template v-if="field === 'customer_contact'">
                       {{
-                        change.old_name || formatContactPersonValue(change.old)
+                        (change as any).old_name || formatContactPersonValue(change.old)
                       }}
                     </template>
                     <template v-else>
@@ -200,7 +200,7 @@ onMounted(() => {
                   <span class="value">
                     <template v-if="field === 'customer_contact'">
                       {{
-                        change.new_name || formatContactPersonValue(change.new)
+                        (change as any).new_name || formatContactPersonValue(change.new)
                       }}
                     </template>
                     <template v-else>

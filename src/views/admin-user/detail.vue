@@ -33,7 +33,7 @@ if (!isSuperAdmin.value) {
 const currentAdminUser = computed(() => adminUserStore.currentAdminUser);
 
 // 重置密码表单
-const resetPasswordForm = reactive<ResetPasswordParams>({
+const resetPasswordForm = reactive<any>({
   password: "",
   password_confirm: ""
 });
@@ -42,12 +42,18 @@ const resetPasswordForm = reactive<ResetPasswordParams>({
 const resetPasswordDialogVisible = ref(false);
 
 // 确认对话框
-const confirmDialog = reactive({
+const confirmDialog = reactive<{
+  visible: boolean;
+  title: string;
+  content: string;
+  type: "warning" | "info" | "success" | "error";
+  confirmAction: (() => Promise<void>) | null;
+}>({
   visible: false,
   title: "",
   content: "",
-  type: "warning" as const,
-  confirmAction: null as (() => Promise<void>) | null
+  type: "warning",
+  confirmAction: null
 });
 
 // 租户选择对话框可见性
@@ -291,6 +297,7 @@ onMounted(() => {
       <div v-if="currentAdminUser" class="admin-user-detail-content">
         <div class="admin-user-avatar-section">
           <AvatarUpload
+            :userId="adminUserId"
             :avatar="currentAdminUser.avatar"
             @upload="handleAvatarUpload"
           />

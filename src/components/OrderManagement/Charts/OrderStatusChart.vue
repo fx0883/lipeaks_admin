@@ -128,7 +128,7 @@ const chartOptions = computed<EChartsOption>(() => {
   const statusData = statisticsData.value.by_payment_status;
 
   // 按支付状态合并数据
-  const mergedData = {};
+  const mergedData: Record<string, { payment_status: any; orders: number; amount: number }> = {};
   statusData.forEach(item => {
     let status = item.payment_status;
     if (!mergedData[status]) {

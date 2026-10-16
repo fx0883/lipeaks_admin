@@ -1,15 +1,11 @@
 import dayjs from "dayjs";
-import { readdir, stat } from "node:fs";
+import { existsSync, readdir, stat } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { sum, formatBytes } from "@pureadmin/utils";
-import {
-  name,
-  version,
-  engines,
-  dependencies,
-  devDependencies
-} from "../package.json";
+import packageJson from "../package.json" with { type: "json" };
+
+const { name, version, engines, dependencies, devDependencies } = packageJson;
 
 /** 启动`node`进程时所在工作目录的绝对路径 */
 const root: string = process.cwd();
@@ -52,7 +48,7 @@ const wrapperEnv = (envConf: Recordable): ViteEnv => {
   // 默认值
   const ret: ViteEnv = {
     VITE_PORT: 8848,
-    VITE_PUBLIC_PATH: "/",
+    VITE_PUBLIC_PATH: "",
     VITE_ROUTER_HISTORY: "",
     VITE_CDN: false,
     VITE_HIDE_HOME: "false",
@@ -82,8 +78,15 @@ const fileListTotal: number[] = [];
 /** 获取指定文件夹中所有文件的总大小 */
 const getPackageSize = options => {
   const { folder = "dist", callback, format = true } = options;
+  if (!existsSync(folder)) {
+    callback(format ? "0B" : 0);
+    return;
+  }
   readdir(folder, (err, files: string[]) => {
-    if (err) throw err;
+    if (err) {
+      callback(format ? "0B" : 0);
+      return;
+    }
     let count = 0;
     const checkEnd = () => {
       ++count == files.length &&
@@ -91,7 +94,10 @@ const getPackageSize = options => {
     };
     files.forEach((item: string) => {
       stat(`${folder}/${item}`, async (err, stats) => {
-        if (err) throw err;
+        if (err) {
+          checkEnd();
+          return;
+        }
         if (stats.isFile()) {
           fileListTotal.push(stats.size);
           checkEnd();

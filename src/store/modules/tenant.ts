@@ -79,7 +79,18 @@ export const useTenantStore = defineStore("tenant", {
     }
   }),
   
+  getters: {
+    tenantsList: state => state.tenantList.data
+  },
+
   actions: {
+    /**
+     * 获取租户列表别名
+     */
+    async getTenants(params: TenantListParams = {}) {
+      return this.fetchTenantList(params);
+    },
+
     /**
      * 获取租户列表
      */

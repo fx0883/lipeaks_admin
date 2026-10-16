@@ -24,9 +24,8 @@ import { usePermissionStoreHook } from "@/store/modules/permission";
 import { getConfig } from "@/config";
 import { findIndex } from "lodash-unified";
 import { remainingPaths } from "./index";
-import { openLink } from "@/utils/link";
+import { openLink } from "@pureadmin/utils";
 import { transformI18n } from "@/plugins/i18n";
-import type { ToRouteType } from "./types";
 import logger from "@/utils/logger";
 const Layout = () => import("@/layout/index.vue");
 const IFrame = () => import("@/layout/frame.vue");
@@ -191,7 +190,7 @@ function handleAsyncRoutes(routeList) {
         // 最终路由进行升序
         ascending(router.options.routes[0].children);
         if (!router.hasRoute(v?.name)) {
-          logger.debug(`[处理动态路由] 向Vue Router添加路由: ${v.name}`);
+          logger.debug(`[处理动态路由] 向Vue Router添加路由: ${String(v?.name)}`);
           router.addRoute(v);
         }
         const flattenRouters: any = router

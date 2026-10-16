@@ -189,7 +189,7 @@ async function fetchData() {
       const activeRateDataset = data.datasets[1];
       const seriesConfig = {
         name: activeRateDataset.label || t("dashboard.activeRate"),
-        type: "line",
+        type: "line" as const,
         yAxisIndex: 1,
         data: activeRateDataset.data,
         smooth: true,
@@ -209,7 +209,7 @@ async function fetchData() {
         Array.isArray(options.value.series) &&
         options.value.series.length === 1
       ) {
-        options.value.series.push(seriesConfig);
+        (options.value.series as any[]).push(seriesConfig);
       }
     }
 

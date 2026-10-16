@@ -75,7 +75,7 @@
                   <el-input
                     v-model="form.translations![lang.code]!.description"
                     type="textarea"
-                    rows="3"
+                    :rows="3"
                     :placeholder="`请输入${lang.label}模板描述`"
                     maxlength="500"
                     show-word-limit

@@ -12,7 +12,9 @@ const props = defineProps<{
 }>();
 
 // 支付状态配置
-const paymentStatusConfig = {
+type TagType = "primary" | "success" | "warning" | "danger" | "info";
+
+const paymentStatusConfig: Record<string, { label: string; type: TagType }> = {
   paid: {
     label: t("order.paymentStatusPaid"),
     type: "success"
@@ -36,7 +38,7 @@ const paymentStatusConfig = {
 };
 
 // 发票状态配置
-const invoiceStatusConfig = {
+const invoiceStatusConfig: Record<string, { label: string; type: TagType }> = {
   issued: {
     label: t("order.invoiceStatusIssued"),
     type: "success"
@@ -52,7 +54,7 @@ const invoiceStatusConfig = {
 };
 
 // 计算状态配置
-const statusConfig = computed(() => {
+const statusConfig = computed<{ label: string; type: "primary" | "success" | "warning" | "danger" | "info" }>(() => {
   if (props.type === "payment") {
     return (
       paymentStatusConfig[props.status as PaymentStatus] || {

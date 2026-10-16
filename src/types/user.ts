@@ -79,7 +79,7 @@ export interface UserSummary {
 }
 
 // 导出ChartPeriod类型，保持与tenant.ts一致
-export { ChartPeriod };
+export type { ChartPeriod };
 
 // 用户图表请求参数接口
 export interface UserChartParams {

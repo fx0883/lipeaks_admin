@@ -124,7 +124,7 @@ export class ErrorMigrationHelper {
   static replaceElMessage() {
     // 在开发环境提供兼容层
     if (import.meta.env.DEV) {
-      const originalElMessage = window.ElMessage;
+      const originalElMessage = (window as any).ElMessage;
 
       if (originalElMessage) {
         // 保存原始方法的引用

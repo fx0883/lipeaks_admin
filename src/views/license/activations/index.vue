@@ -8,7 +8,6 @@ import {
   Refresh,
   Delete,
   View,
-  Shield,
   Warning
 } from "@element-plus/icons-vue";
 import { useLicenseStoreHook } from "@/store/modules/license";

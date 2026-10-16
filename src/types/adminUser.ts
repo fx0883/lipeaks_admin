@@ -64,25 +64,33 @@ export interface AdminUserCreateParams {
   tenant_id?: number;
   is_active?: boolean;
   is_super_admin?: boolean;
+  [key: string]: any;
 }
 
 /**
  * 更新管理员用户参数
  */
 export interface AdminUserUpdateParams {
+  username?: string;
   email?: string;
   phone?: string;
   nick_name?: string;
   first_name?: string;
   last_name?: string;
+  tenant_id?: number;
   is_active?: boolean;
+  is_super_admin?: boolean;
   status?: AdminUserStatus;
+  [key: string]: any;
 }
 
 /**
  * 重置密码参数
  */
 export interface ResetPasswordParams {
-  new_password: string;
-  confirm_password: string;
+  new_password?: string;
+  confirm_password?: string;
+  password?: string;
+  password_confirm?: string;
+  [key: string]: any;
 }

@@ -190,9 +190,12 @@ export interface PlanFormData {
   currency: string
   defaultValidityDays: number      // 新字段名：默认有效天数
   defaultMaxActivations: number   // 新字段名：默认最大激活数
+  maxActivations?: number
+  validityDays?: number
   features: string
   restrictions: string
   status?: 'active' | 'inactive' | 'archived'
+  [key: string]: any
 }
 
 export interface Product {

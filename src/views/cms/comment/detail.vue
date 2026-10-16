@@ -49,12 +49,18 @@ const replyDialog = reactive({
 });
 
 // 确认对话框状态
-const confirmDialog = reactive({
+const confirmDialog = reactive<{
+  visible: boolean;
+  title: string;
+  content: string;
+  type: "warning" | "info" | "success" | "error" | string;
+  confirmAction: (() => Promise<void>) | null;
+}>({
   visible: false,
   title: "",
   content: "",
-  type: "warning" as const,
-  confirmAction: null as (() => Promise<void>) | null
+  type: "warning",
+  confirmAction: null
 });
 
 // 获取评论详情

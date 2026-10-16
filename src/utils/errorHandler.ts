@@ -1,7 +1,7 @@
 import { ElMessage, ElNotification } from 'element-plus'
 import { i18n } from '@/plugins/i18n'
 
-const { t } = i18n.global
+const t = (key: string, ...args: any[]) => (i18n.global as any).t(key, ...args);
 
 export interface ErrorResponse {
   code?: string

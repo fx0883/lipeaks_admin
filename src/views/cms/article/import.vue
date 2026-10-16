@@ -79,7 +79,7 @@ const fetchCategories = async () => {
   console.log("[ArticleImport] 开始获取分类列表");
   loadingCategories.value = true;
   try {
-    const response = await cmsStore.fetchCategoryList();
+    const response: any = await cmsStore.fetchCategoryList();
     console.log("[ArticleImport] 获取分类列表成功:", response);
 
     // 从响应中提取分类数据 - 兼容多种响应格式

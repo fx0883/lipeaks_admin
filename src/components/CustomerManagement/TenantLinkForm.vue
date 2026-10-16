@@ -28,10 +28,10 @@ const emit = defineEmits<{
 const formRef = ref<FormInstance>();
 
 // 表单数据
-const formData = reactive<CustomerTenantLinkCreateParams>({
+const formData = reactive<any>({
   customer_id: props.customerId,
-  tenant_id: props.tenantLink?.tenant_id,
-  relationship_type: props.tenantLink?.relationship_type || "customer",
+  tenant_id: props.tenantLink?.tenant_id || props.tenantLink?.tenant?.id,
+  relationship_type: props.tenantLink?.relationship_type || props.tenantLink?.relation_type || "customer",
   start_date: props.tenantLink?.start_date
     ? new Date(props.tenantLink.start_date)
     : new Date(),
@@ -47,14 +47,14 @@ watch(
   () => props.tenantLink,
   newVal => {
     if (newVal) {
-      formData.customer_id = props.customerId || newVal.customer_id;
-      formData.tenant_id = newVal.tenant_id;
-      formData.relationship_type = newVal.relationship_type;
+      formData.customer_id = props.customerId || newVal.customer_id || newVal.customer?.id;
+      formData.tenant_id = newVal.tenant_id || newVal.tenant?.id;
+      formData.relationship_type = newVal.relationship_type || newVal.relation_type;
       formData.start_date = newVal.start_date
         ? new Date(newVal.start_date)
         : new Date();
       formData.end_date = newVal.end_date ? new Date(newVal.end_date) : null;
-      formData.is_active = newVal.is_active;
+      formData.is_active = newVal.is_active ?? true;
       formData.notes = newVal.notes || "";
     }
   }

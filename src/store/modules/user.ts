@@ -71,6 +71,10 @@ export const useUserStore = defineStore("pure-user", {
       updateCurrentAdmin: false
     }
   }),
+  getters: {
+    isAdmin: state => state.is_admin,
+    isSuperAdmin: state => state.is_super_admin
+  },
   actions: {
     /** 存储用户ID */
     SET_ID(id: number) {

@@ -80,12 +80,18 @@ const editDialog = reactive({
 });
 
 // 确认对话框
-const confirmDialog = reactive({
+const confirmDialog = reactive<{
+  visible: boolean;
+  title: string;
+  content: string;
+  type: "warning" | "info" | "success" | "error" | string;
+  confirmAction: (() => Promise<void>) | null;
+}>({
   visible: false,
   title: "",
   content: "",
-  type: "warning" as const,
-  confirmAction: null as (() => Promise<void>) | null
+  type: "warning",
+  confirmAction: null
 });
 
 // 状态选项
@@ -349,8 +355,8 @@ const formatDate = (date: string) => {
 };
 
 // 格式化评论状态
-const formatStatus = (status: CommentStatus) => {
-  const statusMap = {
+const formatStatus = (status: CommentStatus): { label: string; type: "primary" | "success" | "warning" | "danger" | "info" } => {
+  const statusMap: Record<string, { label: string; type: "primary" | "success" | "warning" | "danger" | "info" }> = {
     pending: { label: t("cms.comment.statusPending"), type: "warning" },
     approved: { label: t("cms.comment.statusApproved"), type: "success" },
     spam: { label: t("cms.comment.statusSpam"), type: "danger" },
@@ -358,11 +364,11 @@ const formatStatus = (status: CommentStatus) => {
     rejected: { label: t("cms.comment.statusRejected"), type: "danger" }
   };
 
-  return statusMap[status] || { label: status, type: "default" };
+  return statusMap[status] || { label: status, type: "info" };
 };
 
 // 格式化作者类型
-const formatAuthorType = (comment: Comment) => {
+const formatAuthorType = (comment: Comment): { label: string; type: "primary" | "success" | "warning" | "danger" | "info" } => {
   const authorType = comment.author_type;
   if (authorType === "admin") {
     return { label: "管理员", type: "success" };
@@ -371,7 +377,7 @@ const formatAuthorType = (comment: Comment) => {
   } else if (authorType === "guest") {
     return { label: "游客", type: "info" };
   }
-  return { label: "未知", type: "default" };
+  return { label: "未知", type: "info" };
 };
 
 // 获取作者显示名称

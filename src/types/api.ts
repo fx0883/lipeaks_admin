@@ -10,20 +10,37 @@ export interface ApiResponse<T = any> {
   data: T;               // 响应数据
 }
 
-// 分页数据接口
+// 分页数据接口（双向兼容前端统一结构与 DRF 原生分页契约）
 export interface PaginationData<T = any> {
-  total: number;         // 总条数
-  page: number;          // 当前页码
-  limit: number;         // 每页条数
+  total?: number;         // 总条数
+  page?: number;          // 当前页码
+  limit?: number;         // 每页条数
   total_pages?: number;  // 总页数
-  data: T[];             // 数据列表
+  data?: T[];             // 数据列表
+  count?: number;         // DRF 总条数
+  next?: string | null;   // DRF 下一页
+  previous?: string | null;// DRF 上一页
+  results?: T[];          // DRF 数据列表
+  pagination?: {
+    total?: number;
+    page?: number;
+    limit?: number;
+    total_pages?: number;
+    count?: number;
+    current_page?: number;
+    page_size?: number;
+    next?: string | null;
+    previous?: string | null;
+    [key: string]: any;
+  };
+  [key: string]: any;
 }
 
 // Django REST Framework 分页响应数据接口
 export interface DRFPaginationData<T = any> {
   count: number;          // 总条数
-  next?: string;          // 下一页URL
-  previous?: string;      // 上一页URL
+  next?: string | null;   // 下一页URL
+  previous?: string | null;// 上一页URL
   results: T[];           // 数据列表
 }
 
@@ -39,8 +56,11 @@ export interface UserInfo {
   username: string;
   email: string;
   nick_name: string;
+  nickname?: string;
   is_admin: boolean;
   is_super_admin: boolean;
+  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
   is_member?: boolean;
   avatar?: string;
   phone?: string;

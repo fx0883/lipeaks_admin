@@ -51,7 +51,7 @@
               :label="$t('cms.category.description')"
               prop="description"
             >
-              <el-input v-model="form.description" type="textarea" rows="3" />
+              <el-input v-model="form.description" type="textarea" :rows="3" />
             </el-form-item>
           </el-tab-pane>
 
@@ -185,7 +185,7 @@ const fetchCategoryDetail = async () => {
       form.name = category.name;
       form.slug = category.slug;
       form.description = category.description || "";
-      form.parent_id = category.parent_id;
+      form.parent_id = (category as any).parent_id ?? (category as any).parent ?? null;
       form.icon = category.icon || "";
       form.sort_order = category.sort_order;
       form.is_active = category.is_active;

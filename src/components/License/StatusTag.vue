@@ -36,8 +36,8 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 // 获取标签类型（颜色）
-const getTagType = (status: string) => {
-  const statusMap: Record<string, string> = {
+const getTagType = (status: string): "primary" | "success" | "warning" | "danger" | "info" => {
+  const statusMap: Record<string, "primary" | "success" | "warning" | "danger" | "info"> = {
     // License statuses
     active: 'success',
     expired: 'warning',
@@ -53,7 +53,7 @@ const getTagType = (status: string) => {
     archived: 'info',
     
     // Default
-    default: ''
+    default: 'info'
   }
   
   return statusMap[status.toLowerCase()] || statusMap.default

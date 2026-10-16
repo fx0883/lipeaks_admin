@@ -14,7 +14,7 @@ export type CustomerType =
 export type CustomerValueLevel = "platinum" | "gold" | "silver" | "bronze";
 
 // 客户状态
-export type CustomerStatus = "active" | "inactive" | "prospect" | "lost";
+export type CustomerStatus = "active" | "inactive" | "prospect" | "lost" | "churned";
 
 // 客户基本信息接口
 export interface Customer {
@@ -51,6 +51,7 @@ export interface CustomerListParams {
   industry?: string; // 行业过滤
   page?: number; // 页码
   page_size?: number; // 每页条数
+  limit?: number; // 兼容
   sort_by?: string; // 排序字段
   sort_order?: "asc" | "desc"; // 排序方向
 }
@@ -79,70 +80,110 @@ export interface CustomerCreateUpdateParams {
 // 客户-联系人关系接口
 export interface CustomerMemberRelation {
   id: number; // 关系ID
-  customer: {
+  customer?: {
     // 所属客户
     id: number;
     name: string;
   };
-  member: {
+  customer_id?: number;
+  member_id?: number;
+  first_name?: string;
+  last_name?: string;
+  position?: string;
+  email?: string;
+  phone?: string;
+  mobile?: string;
+  member?: {
     // 联系人信息
     id: number;
     name: string;
+    username?: string;
     email: string;
     phone?: string;
     position?: string;
+    [key: string]: any;
   };
   role: string; // 联系人角色
   is_primary: boolean; // 是否主要联系人
   remarks?: string; // 备注
+  notes?: string; // 兼容
   created_at: string; // 创建时间
   updated_at: string; // 更新时间
+  [key: string]: any;
 }
+
+export type ContactPerson = CustomerMemberRelation;
+export type MemberCustomerRelation = CustomerMemberRelation;
 
 // 客户-联系人关系请求参数接口
 export interface CustomerMemberRelationCreateUpdateParams {
-  customer_id: number; // 客户ID
-  member_id: number; // 联系人ID
-  role: string; // 联系人角色
+  customer_id?: number; // 客户ID
+  member_id?: number; // 联系人ID
+  role?: string; // 联系人角色
+  first_name?: string;
+  last_name?: string;
+  position?: string;
+  email?: string;
+  phone?: string;
+  mobile?: string;
   is_primary?: boolean; // 是否主要联系人
   remarks?: string; // 备注
+  notes?: string; // 兼容
+  [key: string]: any;
 }
+
+export type ContactPersonCreateUpdateParams = CustomerMemberRelationCreateUpdateParams;
+export type MemberCustomerRelationCreateUpdateParams = CustomerMemberRelationCreateUpdateParams;
 
 // 客户-租户关系接口
 export interface CustomerTenantRelation {
   id: number; // 关系ID
-  customer: {
+  customer?: {
     // 所属客户
     id: number;
     name: string;
   };
-  tenant: {
+  customer_id?: number;
+  tenant?: {
     // 租户信息
     id: number;
     name: string;
     status: string;
+    [key: string]: any;
   };
-  relation_type: string; // 关系类型
-  is_primary: boolean; // 是否主要关系
-  start_date?: string; // 关系开始日期
-  end_date?: string; // 关系结束日期
+  tenant_id?: number;
+  tenant_name?: string;
+  relation_type?: string; // 关系类型
+  relationship_type?: string; // 兼容历史别名
+  is_primary?: boolean; // 是否主要关系
+  is_active?: boolean;
+  start_date?: string | Date | null; // 关系开始日期
+  end_date?: string | Date | null; // 关系结束日期
   contract_id?: string; // 合同编号
   notes?: string; // 备注
-  created_at: string; // 创建时间
-  updated_at: string; // 更新时间
+  created_at?: string; // 创建时间
+  updated_at?: string; // 更新时间
+  [key: string]: any;
 }
+
+export type CustomerTenantLink = CustomerTenantRelation;
 
 // 客户-租户关系请求参数接口
 export interface CustomerTenantRelationCreateUpdateParams {
-  customer_id: number; // 客户ID
-  tenant_id: number; // 租户ID
-  relation_type: string; // 关系类型
+  customer_id?: number; // 客户ID
+  tenant_id?: number; // 租户ID
+  relation_type?: string; // 关系类型
+  relationship_type?: string; // 兼容
   is_primary?: boolean; // 是否主要关系
-  start_date?: string; // 关系开始日期
-  end_date?: string; // 关系结束日期
+  is_active?: boolean;
+  start_date?: string | Date | null; // 关系开始日期
+  end_date?: string | Date | null; // 关系结束日期
   contract_id?: string; // 合同编号
   notes?: string; // 备注
+  [key: string]: any;
 }
+
+export type CustomerTenantLinkCreateParams = CustomerTenantRelationCreateUpdateParams;
 
 // 批量操作请求参数接口
 export interface CustomerBulkOperationParams {

@@ -44,7 +44,7 @@ const emit = defineEmits(["submit", "cancel"]);
 const formRef = ref();
 
 // 表单数据
-const formData = reactive<AdminUserCreateParams | AdminUserUpdateParams>({
+const formData = reactive<AdminUserCreateParams & AdminUserUpdateParams>({
   username: "",
   email: "",
   password: undefined,

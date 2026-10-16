@@ -26,6 +26,8 @@ export interface LicensePlan {
   currency: string;
   status: "active" | "inactive";
   licenses_count?: number; // 只读字段
+  max_machines?: number;
+  validity_days?: number;
   created_at: string;
   updated_at: string;
 }
@@ -96,6 +98,8 @@ export interface License {
   days_until_expiry: number;
   notes?: string;
   metadata?: Record<string, any>;
+  tenant?: number | null;
+  tenant_name?: string | null;
   created_at: string;
   updated_at: string;
   machine_bindings?: MachineBinding[];
@@ -113,7 +117,11 @@ export interface LicenseListParams {
   status?: LicenseStatus;
   page?: number;
   page_size?: number;
+  limit?: number;
   ordering?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  [key: string]: any;
 }
 
 export interface LicenseCreateParams {
@@ -143,6 +151,8 @@ export interface MachineBinding {
   license: number; // 关联的许可证ID
   license_key_preview: string; // 许可证密钥预览
   machine_id: string; // 机器唯一标识符
+  hostname?: string;
+  fingerprint?: string;
   hardware_summary: {
     cpu?: string;
     memory?: string;
@@ -175,6 +185,7 @@ export interface MachineBindingListParams {
   search?: string; // 按机器ID搜索
   license?: number; // 按许可证ID过滤
   status?: MachineBindingStatus; // 按状态过滤
+  is_active?: boolean;
   ordering?: string; // 排序字段
   page?: number;
   page_size?: number;
@@ -185,7 +196,7 @@ export interface MachineBindingBlockParams {
 }
 
 // 许可证激活相关类型
-export type ActivationStatus = "success" | "failed" | "pending";
+export type ActivationStatus = "success" | "failed" | "pending" | "active" | "revoked" | (string & {});
 
 export interface LicenseActivation {
   id: number;
@@ -203,9 +214,12 @@ export interface LicenseActivation {
   machine_binding?: MachineBinding;
 }
 
+export type Activation = LicenseActivation;
+
 export interface ActivationListParams {
   search?: string;
   license_id?: string;
+  machine_id?: string;
   status?: ActivationStatus;
   date_from?: string;
   date_to?: string;
@@ -251,6 +265,8 @@ export interface AuditLogListParams {
   level?: AuditLevel;
   date_from?: string;
   date_to?: string;
+  start_date?: string;
+  end_date?: string;
   page?: number;
   page_size?: number;
 }
@@ -258,9 +274,13 @@ export interface AuditLogListParams {
 // 统计数据相关类型
 export interface LicenseStatistics {
   total_products: number;
+  totalProducts?: number;
   total_plans: number;
+  totalPlans?: number;
   total_licenses: number;
+  totalLicenses?: number;
   active_licenses: number;
+  activeLicenses?: number;
   expired_licenses: number;
   total_activations: number;
   active_machines: number;

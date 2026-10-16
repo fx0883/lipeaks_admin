@@ -14,6 +14,9 @@ export interface ChartDataset {
 export interface TenantChartData {
   labels: string[];     // X轴标签（如日期）
   datasets: ChartDataset[];  // 数据集
+  hasData?: boolean;
+  summary?: any;
+  [key: string]: any;
 }
 
 // 租户状态分布数据接口
@@ -72,6 +75,7 @@ export interface TenantListParams {
   status?: string;       // 状态过滤
   page?: number;         // 页码
   page_size?: number;    // 每页条数
+  limit?: number;        // 兼容每页条数字段
 }
 
 // 创建/更新租户请求参数接口

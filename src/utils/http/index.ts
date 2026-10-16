@@ -274,7 +274,7 @@ class PureHttp {
         // 如果是Blob类型的响应，直接返回原始响应
         if (response.config.responseType === "blob") {
           // 为Blob响应添加headers属性，以便后续处理可以访问到headers
-          const blobWithHeaders = response.data;
+          const blobWithHeaders = response.data as Blob & { headers?: any };
           blobWithHeaders.headers = response.headers;
           return blobWithHeaders;
         }
@@ -554,9 +554,9 @@ class PureHttp {
           const handleResult = await errorHandlerChain.handle(errorResponse);
 
           // 如果需要重试，在一定延迟后重试
-          if (handleResult.shouldRetry && handleResult.retryAfter) {
+          if (handleResult.shouldRetry && handleResult.retryAfter && error.config) {
             await new Promise(resolve => setTimeout(resolve, handleResult.retryAfter!));
-            return this.retryRequest(error.config);
+            return PureHttp.axiosInstance(error.config);
           }
         } catch (handlerError) {
           logger.error('错误处理器执行失败:', handlerError);

@@ -28,10 +28,10 @@
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| M1 | Git 基线固化与前置清理 | Git 提交基线 checkpoint，清理 `src/temp1006/` 等临时文件 | none | IN_PROGRESS |
-| M2 | 官方底座同步与 Demo 路由收拢 | 同步 v7.0.0 依赖、Vite 8/Rolldown/TS 6 构建链，收拢 Demo 菜单至“示例/开发参考” | M1 | PLANNED |
-| M3 | DRF 网络底座平移与部署契约保全 | 平移注入 TokenManager、异常责任链、CSRF 头及运维部署配置，适配 TS 6 类型 | M2 | PLANNED |
-| M4 | 17 业务模块与 Pinia 状态层全量注入 | 迁移 17 个业务 views、配套 components、9 个 Pinia Stores 与 7 个 Composables | M3 | PLANNED |
+| M1 | Git 基线固化与前置清理 | Git 提交基线 checkpoint，清理 `src/temp1006/` 等临时文件 | none | DONE |
+| M2 | 官方底座同步与 Demo 路由收拢 | 同步 v7.0.0 依赖、Vite 8/Rolldown/TS 6 构建链，收拢 Demo 菜单至“示例/开发参考” | M1 | DONE |
+| M3 | DRF 网络底座平移与部署契约保全 | 平移注入 TokenManager、异常责任链、CSRF 头及运维部署配置，适配 TS 6 类型 | M2 | DONE |
+| M4 | 17 业务模块与 Pinia 状态层全量注入 | 迁移 17 个业务 views、配套 components、9 个 Pinia Stores 与 7 个 Composables | M3 | IN_PROGRESS |
 | M5 | 全量构建闭环与运行时验证 (Final Milestone) | 验证 `pnpm install`、`pnpm typecheck`、`pnpm build` 及运行时 17 个路由与 Demo 菜单 | M4 | PLANNED |
 
 ## Interface Contracts

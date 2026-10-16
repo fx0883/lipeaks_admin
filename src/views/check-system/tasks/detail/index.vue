@@ -118,9 +118,9 @@ const formatDate = (date: string) => {
 /**
  * 获取状态标签类型
  */
-const getStatusTagType = (status: TaskStatus): string => {
+const getStatusTagType = (status: TaskStatus): "primary" | "success" | "warning" | "danger" | "info" => {
   const opt = TASK_STATUS_OPTIONS.find(o => o.value === status);
-  return opt?.color || "";
+  return (opt?.color as any) || "info";
 };
 
 /**

@@ -88,7 +88,8 @@ export function transformI18n(message: any = "") {
 
   // 尝试直接使用i18n.global.t翻译消息
   try {
-    const translated = i18n.global.t(message);
+    const globalI18n: any = i18n.global;
+    const translated = globalI18n.t(message);
     // 如果翻译结果与原始消息不同，说明翻译成功
     if (translated !== message) {
       return translated;
@@ -100,11 +101,12 @@ export function transformI18n(message: any = "") {
   // 如果直接翻译失败，尝试使用原来的逻辑
   const key = message.match(/(\S*)\./)?.input;
 
+  const globalI18n: any = i18n.global;
   if (key && flatI18n("zh-CN").has(key)) {
-    return i18n.global.t.call(i18n.global.locale, message);
+    return globalI18n.t.call(globalI18n.locale, message);
   } else if (!key && Object.hasOwn(siphonI18n("zh-CN"), message)) {
     // 兼容非嵌套形式的国际化写法
-    return i18n.global.t.call(i18n.global.locale, message);
+    return globalI18n.t.call(globalI18n.locale, message);
   } else {
     return message;
   }

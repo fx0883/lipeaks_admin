@@ -30,6 +30,8 @@ interface MessageParams {
   repeatNum?: number;
   /** 关闭时的回调函数, 参数为被关闭的 `message` 实例 */
   onClose?: Function | null;
+  /** 消息显示位置，可选 `top-left`、`top-right`、`bottom`、`bottom-left`、`bottom-right` 等 */
+  placement?: any;
 }
 
 /** 用法非常简单，参考 src/views/components/message/index.vue 文件 */
@@ -59,6 +61,7 @@ const message = (
       appendTo = document.body,
       grouping = false,
       repeatNum = 1,
+      placement,
       onClose
     } = params;
 
@@ -74,6 +77,7 @@ const message = (
       appendTo,
       grouping,
       repeatNum,
+      placement,
       // 全局搜 pure-message 即可知道该类的样式位置
       customClass: customClass === "antd" ? "pure-message" : "",
       onClose: () => (isFunction(onClose) ? onClose() : null)

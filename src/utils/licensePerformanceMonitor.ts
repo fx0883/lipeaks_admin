@@ -99,7 +99,7 @@ export class LicenseUpdatePerformanceMonitor {
     apiFunction: T,
     operationName: string
   ): T {
-    return ((...args: Parameters<T>): ReturnType<T> => {
+    const wrapped = (...args: Parameters<T>): any => {
       if (!this.isMonitoring) {
         return apiFunction(...args);
       }
@@ -129,7 +129,8 @@ export class LicenseUpdatePerformanceMonitor {
 
           throw error;
         });
-    }) as T;
+    };
+    return wrapped as T;
   }
 
   wrapFormOperation<T extends (...args: any[]) => any>(

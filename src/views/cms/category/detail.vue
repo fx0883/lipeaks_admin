@@ -160,7 +160,7 @@ const formatDateTime = (dateTimeString: string) => {
 // 获取父分类名称
 const getParentName = (parentId: number) => {
   const parent = cmsStore.categories.find(item => item.id === parentId);
-  return parent ? parent.name : $t("common.unknown");
+  return parent ? parent.name : t("common.unknown");
 };
 
 // 获取分类详情

@@ -170,7 +170,7 @@ const getUsagePercentage = (used: number, max: number): number => {
 }
 
 // 获取进度条状态
-const getProgressStatus = (used: number, max: number): string => {
+const getProgressStatus = (used: number, max: number): "" | "success" | "warning" | "exception" => {
   const percentage = getUsagePercentage(used, max)
   if (percentage >= 90) return 'exception'
   if (percentage >= 70) return 'warning'

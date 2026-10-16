@@ -11,7 +11,6 @@ import {
   View,
   Upload,
   Download,
-  Archive,
   Lock,
   Unlock
 } from "@element-plus/icons-vue";
@@ -74,12 +73,18 @@ const searchForm = reactive<ArticleListParams>({
 });
 
 // 确认对话框
-const confirmDialog = reactive({
+const confirmDialog = reactive<{
+  visible: boolean;
+  title: string;
+  content: string;
+  type: "warning" | "info" | "success" | "error" | string;
+  confirmAction: (() => Promise<void>) | null;
+}>({
   visible: false,
   title: "",
   content: "",
-  type: "warning" as const,
-  confirmAction: null as (() => Promise<void>) | null
+  type: "warning",
+  confirmAction: null
 });
 
 // 创建文章模态窗口
@@ -176,12 +181,12 @@ const fetchArticles = async () => {
 
     // 处理布尔值转换
     const params = { ...searchForm };
-    if (params.is_featured === "true") params.is_featured = true;
-    if (params.is_featured === "false") params.is_featured = false;
-    if (params.is_pinned === "true") params.is_pinned = true;
-    if (params.is_pinned === "false") params.is_pinned = false;
-    if (params.is_locked === "true") params.is_locked = true;
-    if (params.is_locked === "false") params.is_locked = false;
+    if ((params.is_featured as any) === "true") params.is_featured = true;
+    if ((params.is_featured as any) === "false") params.is_featured = false;
+    if ((params.is_pinned as any) === "true") params.is_pinned = true;
+    if ((params.is_pinned as any) === "false") params.is_pinned = false;
+    if ((params.is_locked as any) === "true") params.is_locked = true;
+    if ((params.is_locked as any) === "false") params.is_locked = false;
 
     // 记录请求参数，用于调试
     console.log("[ArticleIndex] 文章列表请求参数:", params);
@@ -209,7 +214,7 @@ const fetchArticles = async () => {
 const fetchCategories = async () => {
   console.log("[ArticleIndex] 开始获取分类列表");
   try {
-    const response = await cmsStore.fetchCategoryList();
+    const response: any = await cmsStore.fetchCategoryList();
     console.log("[ArticleIndex] 获取分类列表成功:", response);
 
     // 从响应中提取分类数据
@@ -869,7 +874,7 @@ onMounted(() => {
             type="danger"
             :icon="Delete"
             :disabled="multipleSelection.length === 0"
-            @click="handleBatchDelete"
+            @click="() => handleBatchDelete()"
           >
             {{ t("cms.article.batchDelete") }}
           </el-button>
