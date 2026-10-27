@@ -389,8 +389,11 @@ const fetchMemberRelations = async (customerId: number) => {
 };
 
 // 表格展开行变化
-const handleExpandChange = (row: Customer, expanded: boolean) => {
-  if (expanded) {
+const handleExpandChange = (row: Customer, expanded: any) => {
+  const isExpanded = Array.isArray(expanded)
+    ? expanded.some((item: any) => item.id === row.id)
+    : Boolean(expanded);
+  if (isExpanded) {
     // 加载会员关系数据
     fetchMemberRelations(row.id);
     // 添加到已展开行
@@ -517,7 +520,7 @@ onMounted(() => {
             <CustomerMembersSubTable
               :customer-id="row.id"
               :member-relations="
-                customerStore.getCustomerMemberRelationsByCustomerId(row.id)
+                customerStore.getCustomerMemberRelationsByCustomerId(row.id) as any
               "
               :loading="memberRelationsLoading"
               @refresh="() => handleRefreshMemberRelations(row.id)"

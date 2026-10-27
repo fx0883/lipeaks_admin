@@ -24,13 +24,17 @@ const getLinkProps = (item: menuType) => {
     to: item
   };
 };
+
+const handleClick = () => {
+  logger.debug("[菜单导航] 点击菜单项:", props.to?.path);
+};
 </script>
 
 <template>
   <component
     :is="isExternalLink ? 'a' : 'router-link'"
     v-bind="getLinkProps(to)"
-    @click="() => logger.debug('[菜单导航] 点击菜单项:', to.path)"
+    @click="handleClick"
   >
     <slot />
   </component>

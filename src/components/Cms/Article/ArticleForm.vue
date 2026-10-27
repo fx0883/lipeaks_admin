@@ -70,7 +70,7 @@ const formRef = ref(null);
 const editorContent = ref("");
 
 // 表单数据
-const formData = reactive<ArticleCreateParams | ArticleUpdateParams>({
+const formData = reactive<ArticleCreateParams & ArticleUpdateParams & { cover_image_small?: string; [key: string]: any }>({
   title: "",
   slug: "",
   content: "",
@@ -209,15 +209,10 @@ const initFormData = () => {
       if (key in article) {
         // 特殊处理 categories 和 tags：如果是对象数组，提取 ID
         if (key === "categories" || key === "tags") {
-          const items = article[key];
+          const items = article[key as keyof typeof article] as any[];
           if (Array.isArray(items) && items.length > 0) {
             // 如果是对象数组（如 [{id: 1, name: "xxx"}]），提取 ID
-            if (typeof items[0] === "object" && items[0] !== null && "id" in items[0]) {
-              formData[key] = items.map((item: { id: number }) => item.id);
-            } else {
-              // 已经是 ID 数组
-              formData[key] = items;
-            }
+            formData[key] = items.map((item: any) => (typeof item === "object" && item !== null && "id" in item ? item.id : item));
           } else {
             formData[key] = [];
           }

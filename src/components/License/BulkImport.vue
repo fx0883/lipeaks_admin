@@ -439,7 +439,7 @@ const performImport = async () => {
       },
       body: JSON.stringify({
         resource_type: props.resourceType,
-        file_id: fileList.value[0]?.response?.file_id
+        file_id: (fileList.value[0]?.response as any)?.file_id
       })
     })
     

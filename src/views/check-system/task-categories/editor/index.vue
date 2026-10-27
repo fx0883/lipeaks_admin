@@ -75,7 +75,7 @@
                   <el-input
                     v-model="form.translations![lang.code]!.description"
                     type="textarea"
-                    rows="3"
+                    :rows="3"
                     :placeholder="`请输入${lang.label}类型描述`"
                     maxlength="200"
                     show-word-limit
@@ -104,7 +104,7 @@
                   <el-input
                     v-model="form.translations![lang.code]!.quote"
                     type="textarea"
-                    rows="2"
+                    :rows="2"
                     :placeholder="`请输入${lang.label}引用语`"
                     maxlength="500"
                     show-word-limit

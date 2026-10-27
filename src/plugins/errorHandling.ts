@@ -3,7 +3,7 @@
  * 为Vue应用提供全局错误处理功能
  */
 
-import type { App } from 'vue';
+import { type App, version } from 'vue';
 import { globalErrorHandler } from '@/composables/useErrorHandling';
 import logger from '@/utils/logger';
 
@@ -109,7 +109,7 @@ function reportVueError(error: Error, instance: any, info: string, endpoint: str
     url: window.location.href,
     userAgent: navigator.userAgent,
     timestamp: new Date().toISOString(),
-    vue_version: app?.version || 'unknown'
+    vue_version: version || 'unknown'
   };
 
   sendErrorReport(errorData, endpoint);

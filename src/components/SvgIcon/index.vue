@@ -18,7 +18,7 @@ import SvgIconFailed from "./failed.vue";
 
 const { t } = useI18n();
 
-defineProps({
+const props = defineProps({
   name: {
     type: String,
     required: true
@@ -43,11 +43,11 @@ defineProps({
 
 const getStyle = computed(() => {
   const style: Record<string, string> = {};
-  if (typeof width === "number" || typeof width === "string") {
-    style.width = `${width}px`;
+  if (typeof props.width === "number" || typeof props.width === "string") {
+    style.width = `${props.width}px`;
   }
-  if (typeof height === "number" || typeof height === "string") {
-    style.height = `${height}px`;
+  if (typeof props.height === "number" || typeof props.height === "string") {
+    style.height = `${props.height}px`;
   }
   return style;
 });

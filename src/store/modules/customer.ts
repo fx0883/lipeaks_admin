@@ -141,6 +141,7 @@ export const useCustomerStore = defineStore("customer", {
 
     // 获取客户的联系人关系列表
     getMemberRelations: state => state.customerMemberRelations.data,
+    customerContacts: state => state.customerMemberRelations.data,
 
     // 根据客户ID获取对应的会员关系数据
     getCustomerMemberRelationsByCustomerId: state => (customerId: number) =>
@@ -148,6 +149,7 @@ export const useCustomerStore = defineStore("customer", {
 
     // 获取客户的租户关系列表
     getTenantRelations: state => state.customerTenantRelations.data,
+    customerTenants: state => state.customerTenantRelations.data,
 
     // 获取加载状态
     isLoading: state => (key: keyof CustomerState["loading"]) =>
@@ -158,6 +160,13 @@ export const useCustomerStore = defineStore("customer", {
   },
 
   actions: {
+    /**
+     * 批量删除客户别名
+     */
+    async batchDeleteCustomers(customerIds: number[]) {
+      return this.bulkDeleteCustomers(customerIds);
+    },
+
     /**
      * 获取客户列表
      */

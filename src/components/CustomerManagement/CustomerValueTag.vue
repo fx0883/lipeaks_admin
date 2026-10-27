@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 // 根据价值等级获取标签类型和样式
-const tagConfig = computed(() => {
+const tagConfig = computed<{ type: "primary" | "success" | "warning" | "danger" | "info"; class: string }>(() => {
   switch (props.valueLevel) {
     case "platinum":
       return {

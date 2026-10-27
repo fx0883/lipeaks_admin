@@ -36,12 +36,27 @@ export default class PureHttp {
   ): Promise<T>;
   post<T, P>(
     url: string,
-    params?: P,
+    params?: AxiosRequestConfig<P>,
     config?: PureHttpRequestConfig
   ): Promise<T>;
   get<T, P>(
     url: string,
-    params?: P,
+    params?: AxiosRequestConfig<P>,
+    config?: PureHttpRequestConfig
+  ): Promise<T>;
+  put<T, P>(
+    url: string,
+    params?: AxiosRequestConfig<P>,
+    config?: PureHttpRequestConfig
+  ): Promise<T>;
+  delete<T, P>(
+    url: string,
+    params?: AxiosRequestConfig<P>,
+    config?: PureHttpRequestConfig
+  ): Promise<T>;
+  patch<T, P>(
+    url: string,
+    params?: AxiosRequestConfig<P>,
     config?: PureHttpRequestConfig
   ): Promise<T>;
 }

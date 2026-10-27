@@ -14,6 +14,7 @@ import type {
   LicenseActivation,
   ActivationListParams,
   AuditLog,
+  AuditLogListParams,
   LicenseStatistics,
   ActivationTrend,
   RevenueReport
@@ -147,6 +148,10 @@ export const useLicenseStore = defineStore("license", {
       exportAuditLogs: false
     }
   }),
+
+  getters: {
+    machines: state => state.machineBindings
+  },
 
   actions: {
     // ============================
@@ -778,6 +783,33 @@ export const useLicenseStore = defineStore("license", {
         throw error;
       } finally {
         this.loading.machineBindingDetail = false;
+      }
+    },
+
+    /**
+     * 获取审计日志列表
+     */
+    async fetchAuditLogList(params: AuditLogListParams = {}) {
+      this.loading.auditLogList = true;
+      try {
+        const response = (await licenseApi.getAuditLogList(params)) as any;
+        if (response.success) {
+          this.auditLogs = {
+            data: response.data?.results || [],
+            total: response.data?.count || 0,
+            page: params.page || 1,
+            limit: params.page_size || 20
+          };
+          return response;
+        } else {
+          logger.error(response.message || "获取审计日志列表失败");
+          return Promise.reject(new Error(response.message));
+        }
+      } catch (error) {
+        logger.error("获取审计日志列表失败", error);
+        throw error;
+      } finally {
+        this.loading.auditLogList = false;
       }
     }
   }

@@ -36,6 +36,11 @@ const handleClose = () => {
 };
 
 // 确认操作
+const buttonType = computed(() => {
+  if (props.type === "error") return "danger";
+  return props.type || "primary";
+});
+
 const handleConfirm = () => {
   logger.debug("ConfirmDialog: 确认按钮被点击");
   emit("confirm");
@@ -75,7 +80,7 @@ watch(
         <el-button @click="handleClose">
           {{ cancelButtonText || "取消" }}
         </el-button>
-        <el-button :type="type || 'primary'" @click="handleConfirm">
+        <el-button :type="buttonType" @click="handleConfirm">
           {{ confirmButtonText || "确认" }}
         </el-button>
       </span>

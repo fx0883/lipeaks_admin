@@ -65,7 +65,7 @@
               <el-input
                 v-model="form.translations![lang.code]!.description"
                 type="textarea"
-                rows="3"
+                :rows="3"
                 :placeholder="`请输入${lang.label}分类描述`"
               />
             </el-form-item>
@@ -83,7 +83,7 @@
               <el-input
                 v-model="form.translations![lang.code]!.seo_description"
                 type="textarea"
-                rows="2"
+                :rows="2"
                 :placeholder="`请输入${lang.label}SEO描述`"
               />
             </el-form-item>
@@ -127,7 +127,6 @@
     <el-form-item label="父级分类" prop="parent">
       <el-select
         v-model="form.parent"
-        :model-value="form.parent"
         placeholder="请选择父级分类（可选）"
         clearable
         filterable
@@ -142,10 +141,6 @@
         />
       </el-select>
       <div class="text-gray-400 text-xs mt-1">不选择则为顶级分类</div>
-      <!-- 调试信息 -->
-      <div v-if="false" class="text-xs text-gray-400 mt-1">
-        当前选中的父级ID: {{ form.parent }}
-      </div>
     </el-form-item>
 
     <el-form-item label="关联应用" prop="application">
@@ -578,7 +573,7 @@ const fetchCategoryList = async () => {
   try {
     console.log("[CategoryForm] 开始获取分类列表");
     categoriesLoading.value = true; // 设置加载状态
-    const result = await cmsStore.fetchCategoryList();
+    const result: any = await cmsStore.fetchCategoryList();
     console.log("[CategoryForm] 获取到的分类列表:", result);
 
     // 详细检查返回的数据结构

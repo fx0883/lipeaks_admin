@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <el-card v-loading="loading" :header="false" shadow="never">
+    <el-card v-loading="loading" shadow="never">
       <template #header>
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/license/dashboard' }">

@@ -138,18 +138,10 @@
           <template #extra>
             <div class="variables-tip">
               <p>{{ t("feedback.email.availableVariables") }}:</p>
-              <el-tag size="small" class="variable-tag"
-                >{'{{ user_name }}'}</el-tag
-              >
-              <el-tag size="small" class="variable-tag"
-                >{'{{ feedback_title }}'}</el-tag
-              >
-              <el-tag size="small" class="variable-tag"
-                >{'{{ software_name }}'}</el-tag
-              >
-              <el-tag size="small" class="variable-tag"
-                >{'{{ reply_content }}'}</el-tag
-              >
+              <el-tag size="small" class="variable-tag" v-text="'{{ user_name }}'" />
+              <el-tag size="small" class="variable-tag" v-text="'{{ feedback_title }}'" />
+              <el-tag size="small" class="variable-tag" v-text="'{{ software_name }}'" />
+              <el-tag size="small" class="variable-tag" v-text="'{{ reply_content }}'" />
             </div>
           </template>
         </el-form-item>
@@ -268,19 +260,20 @@ const fetchTemplates = async () => {
     const response = await getEmailTemplateList();
 
     if (response.success && response.data) {
+      const respData: any = response.data;
       // 处理多种数据格式
-      if (Array.isArray(response.data)) {
-        templates.value = response.data;
+      if (Array.isArray(respData)) {
+        templates.value = respData;
       } else if (
-        response.data.results &&
-        Array.isArray(response.data.results)
+        respData.results &&
+        Array.isArray(respData.results)
       ) {
-        templates.value = response.data.results;
-      } else if (response.data.data && Array.isArray(response.data.data)) {
-        templates.value = response.data.data;
-      } else if (response.data.id) {
+        templates.value = respData.results;
+      } else if (respData.data && Array.isArray(respData.data)) {
+        templates.value = respData.data;
+      } else if (respData.id) {
         // 如果返回的是单个对象，包装成数组
-        templates.value = [response.data];
+        templates.value = [respData];
       } else {
         templates.value = [];
       }

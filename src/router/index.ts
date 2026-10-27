@@ -1,4 +1,3 @@
-// import "@/utils/sso";
 import Cookies from "js-cookie";
 import { getConfig } from "@/config";
 import NProgress from "@/utils/progress";
@@ -98,6 +97,14 @@ export const router: Router = createRouter({
   }
 });
 
+/** 记录已经加载的页面路径 */
+const loadedPaths = new Set<string>();
+
+/** 重置已加载页面记录 */
+export function resetLoadedPaths() {
+  loadedPaths.clear();
+}
+
 /** 重置路由 */
 export function resetRouter() {
   router.clearRoutes();
@@ -108,6 +115,7 @@ export function resetRouter() {
     formatFlatteningRoutes(buildHierarchyTree(ascending(routes.flat(Infinity))))
   );
   usePermissionStoreHook().clearAllCachePage();
+  resetLoadedPaths();
 }
 
 /** 路由白名单 */
@@ -115,7 +123,7 @@ const whiteList = ["/login"];
 
 const { VITE_HIDE_HOME } = import.meta.env;
 
-router.beforeEach((to: ToRouteType, _from, next) => {
+router.beforeEach((to: ToRouteType, _from) => {
   logger.debug("[路由导航] 路由导航开始:", {
     from: _from.path,
     to: to.path,
@@ -123,6 +131,12 @@ router.beforeEach((to: ToRouteType, _from, next) => {
     params: to.params,
     query: to.query
   });
+
+  to.meta.loaded = loadedPaths.has(to.path);
+
+  if (!to.meta.loaded) {
+    NProgress.start();
+  }
 
   if (to.meta?.keepAlive) {
     handleAliveRoute(to, "add");
@@ -132,20 +146,10 @@ router.beforeEach((to: ToRouteType, _from, next) => {
     }
   }
   const userInfo = storageLocal().getItem<DataInfo<number>>(userKey);
-  NProgress.start();
   const externalLink = isUrl(to?.name as string);
-
-  logger.debug("[路由导航] 匹配的路由数量:", to.matched.length);
 
   if (!externalLink) {
     to.matched.some(item => {
-      logger.debug("[路由导航] 匹配的路由项:", {
-        path: item.path,
-        name: item.name,
-        redirect: item.redirect,
-        meta: item.meta
-      });
-
       if (!item.meta.title) return "";
       const Title = getConfig().Title;
       if (Title)
@@ -153,26 +157,29 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       else document.title = transformI18n(item.meta.title);
     });
   }
+
   /** 如果已经登录并存在登录信息后不能跳转到路由白名单，而是继续保持在当前页面 */
   function toCorrectRoute() {
-    whiteList.includes(to.fullPath) ? next(_from.fullPath) : next();
+    return whiteList.includes(to.fullPath) ? _from.fullPath : undefined;
   }
+
   if (Cookies.get(multipleTabsKey) && userInfo) {
     // 无权限跳转403页面
     if (to.meta?.roles && !isOneOfArray(to.meta?.roles, userInfo?.roles)) {
-      next({ path: "/error/403" });
+      return { path: "/error/403" };
     }
     // 开启隐藏首页后在浏览器地址栏手动输入首页welcome路由则跳转到404页面
     if (VITE_HIDE_HOME === "true" && to.fullPath === "/welcome") {
-      next({ path: "/error/404" });
+      return { path: "/error/404" };
     }
     if (_from?.name) {
       // name为超链接
       if (externalLink) {
         openLink(to?.name as string);
         NProgress.done();
+        return false;
       } else {
-        toCorrectRoute();
+        return toCorrectRoute();
       }
     } else {
       // 刷新
@@ -208,32 +215,32 @@ router.beforeEach((to: ToRouteType, _from, next) => {
               }
             }
           }
-          // 确保动态路由完全加入路由列表并且不影响静态路由（注意：动态路由刷新时router.beforeEach可能会触发两次，第一次触发动态路由还未完全添加，第二次动态路由才完全添加到路由列表，如果需要在router.beforeEach做一些判断可以在to.name存在的条件下去判断，这样就只会触发一次）
+          // 确保动态路由完全加入路由列表并且不影响静态路由
           if (isAllEmpty(to.name)) router.push(to.fullPath);
         });
       }
-      toCorrectRoute();
+      return toCorrectRoute();
     }
   } else {
     if (to.path !== "/login") {
       if (whiteList.indexOf(to.path) !== -1) {
-        next();
+        return true;
       } else {
         removeToken();
-        next({ path: "/login" });
+        return { path: "/login" };
       }
     } else {
-      next();
+      return true;
     }
   }
 });
 
-router.afterEach((to, from) => {
+router.afterEach(to => {
   logger.debug("[路由导航] 路由导航完成:", {
-    from: from.path,
     to: to.path,
     toName: to.name
   });
+  loadedPaths.add(to.path);
   NProgress.done();
 });
 

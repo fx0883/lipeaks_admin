@@ -258,8 +258,9 @@ export interface CommentCreateParams {
 // 评论更新参数
 export interface CommentUpdateParams {
   content?: string;
-  status?: CommentStatus;
+  status?: CommentStatus | (string & {});
   is_pinned?: boolean;
+  [key: string]: any;
 }
 
 // 分类相关类型
@@ -275,6 +276,7 @@ export interface Category {
   slug: string;
   description?: string;
   parent?: number | null;
+  parent_id?: number | null;
   level: number;
   path: string;
   sort_order: number;
@@ -297,6 +299,7 @@ export interface Category {
   // SEO字段
   seo_title?: string;
   seo_description?: string;
+  [key: string]: any;
 }
 
 // 分类列表查询参数

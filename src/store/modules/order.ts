@@ -467,7 +467,7 @@ export const useOrderStore = defineStore("order", {
         link.href = url;
         
         // 设置文件名（从headers或默认）
-        const contentDisposition = response.headers?.["content-disposition"];
+        const contentDisposition = (response as any).headers?.["content-disposition"];
         let filename = `订单数据.${options.format || 'xlsx'}`;
         if (contentDisposition) {
           const filenameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);

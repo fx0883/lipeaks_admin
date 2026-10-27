@@ -111,7 +111,7 @@ const clearUpload = () => {
 
 // 计算样式
 const containerStyle = computed(() => {
-  const style = {
+  const style: Record<string, string> = {
     height: `${props.height}px`
   };
   if (props.width > 0) {

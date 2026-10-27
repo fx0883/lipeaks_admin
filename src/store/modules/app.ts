@@ -28,7 +28,8 @@ export const useAppStore = defineStore("pure-app", {
     viewportSize: {
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight
-    }
+    },
+    sortSwap: false
   }),
   getters: {
     getSidebarStatus(state) {
@@ -76,6 +77,9 @@ export const useAppStore = defineStore("pure-app", {
     },
     setViewportSize(size) {
       this.viewportSize = size;
+    },
+    setSortSwap(val) {
+      this.sortSwap = val;
     }
   }
 });

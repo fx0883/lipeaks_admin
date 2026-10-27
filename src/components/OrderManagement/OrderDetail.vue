@@ -28,12 +28,13 @@ const profitInfo = computed(() => {
 
 // 计算客户名称
 const customerName = computed(() => {
+  const customer = props.order.customer as any;
   if (
-    typeof props.order.customer === "object" &&
-    props.order.customer !== null &&
-    props.order.customer.name
+    typeof customer === "object" &&
+    customer !== null &&
+    customer.name
   ) {
-    return props.order.customer.name;
+    return customer.name;
   }
   return props.order.customer_name || t("common.notSpecified");
 });
@@ -48,13 +49,14 @@ const contactPersonName = computed(() => {
     return props.order.customer_contact_info.display_name;
   }
   // 如果customer_contact是对象且有name或display_name
-  else if (
-    typeof props.order.customer_contact === "object" &&
-    props.order.customer_contact !== null
+  const contact = props.order.customer_contact as any;
+  if (
+    typeof contact === "object" &&
+    contact !== null
   ) {
     return (
-      props.order.customer_contact.display_name ||
-      props.order.customer_contact.name ||
+      contact.display_name ||
+      contact.name ||
       t("common.notSpecified")
     );
   }

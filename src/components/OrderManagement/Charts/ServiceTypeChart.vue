@@ -136,7 +136,7 @@ const chartOptions = computed<EChartsOption>(() => {
   const serviceTypeData = statisticsData.value.by_service_type;
 
   // 按服务类型合并数据 - 因为API可能会返回多条相同服务类型的记录
-  const mergedData = {};
+  const mergedData: Record<string, { service_type: any; orders: number; amount: number }> = {};
   serviceTypeData.forEach(item => {
     const type = item.service_type;
     if (!mergedData[type]) {

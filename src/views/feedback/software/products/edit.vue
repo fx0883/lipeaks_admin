@@ -207,7 +207,7 @@ const loadDetail = async () => {
       if (typeof software.category === "object" && software.category !== null) {
         formData.category_id = software.category.id;
       } else {
-        formData.category_id = software.category_id || software.category || 0;
+        formData.category_id = (software.category_id || software.category || 0) as number;
       }
       formData.website = software.website || "";
       formData.owner = software.owner || "";

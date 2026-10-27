@@ -445,7 +445,7 @@ const fetchCategories = async () => {
     logger.info('开始获取分类列表');
     
     // 直接调用API而不是通过store
-    const response = await getCategoryList({});
+    const response: any = await getCategoryList({});
     logger.info('分类列表API响应:', response);
     
     if (response) {

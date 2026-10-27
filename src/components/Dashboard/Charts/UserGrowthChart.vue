@@ -163,7 +163,7 @@ const options = computed<EChartsOption>(() => {
 
   // 如果有新增用户数据，添加到系列中
   if (newDataset) {
-    chartOptions.series.push({
+    (chartOptions.series as any[]).push({
       name: newDataset.label || t("dashboard.newUsers"),
       type: "bar",
       data: newDataset.data,

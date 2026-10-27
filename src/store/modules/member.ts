@@ -469,11 +469,11 @@ export const useMemberStore = defineStore("member", {
       this.error = null;
 
       try {
-        // 使用新的API，传递会员ID和客户ID数组
-        const response = await deleteMemberCustomerRelation(memberId, [customerId]);
-        if (response.success || response.status === 204) { // 新API返回204状态码表示成功
+        // 调用删除会员-客户关系API
+        const response: any = await deleteMemberCustomerRelation(memberId, customerId);
+        if (response?.success || response?.status === 204) { // 新API返回204状态码表示成功
           // 从关系列表中移除被删除的关系
-          this.memberCustomerRelations.data = this.memberCustomerRelations.data.filter(relation => relation.customer.id !== customerId);
+          this.memberCustomerRelations.data = this.memberCustomerRelations.data.filter(relation => relation.customer?.id !== customerId);
           // 移除成功消息提示，由视图层负责
           return response;
         } else {

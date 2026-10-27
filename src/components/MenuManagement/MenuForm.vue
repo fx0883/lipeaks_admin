@@ -281,7 +281,7 @@
               <el-input
                 v-model="formData.remarks"
                 type="textarea"
-                rows="3"
+                :rows="3"
                 :placeholder="t('menu.remarks')"
               />
             </el-form-item>

@@ -127,7 +127,7 @@ const memberSearchLoading = ref(false);
 const memberOptions = ref<Array<{ value: number; label: string }>>([]);
 
 // 表单数据
-const formData = reactive<MemberCustomerRelationCreateUpdateParams & { remarks: string }>({
+const formData = reactive<MemberCustomerRelationCreateUpdateParams & { remarks: string; notes?: string }>({
   customer_id: props.customerId,
   member_id: 0,
   role: "",
@@ -203,7 +203,7 @@ const initFormData = () => {
       memberOptions.value = [
         {
           value: props.memberRelation.member.id,
-          label: `${props.memberRelation.member.username} - ${props.memberRelation.member.name || props.memberRelation.member.email}`
+          label: `${props.memberRelation.member.username} - ${props.memberRelation.member.name || (props.memberRelation.member as any).email || ''}`
         }
       ];
     }

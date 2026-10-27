@@ -4,7 +4,7 @@ import { loadingManager, LoadingKeys } from './loadingManager'
 import { ElMessage } from 'element-plus'
 import { i18n } from '@/plugins/i18n'
 
-const { t } = i18n.global
+const t = (key: string, ...args: any[]) => (i18n.global as any).t(key, ...args);
 
 // Request interceptor
 export const requestInterceptor = (config: AxiosRequestConfig): AxiosRequestConfig => {
@@ -92,7 +92,8 @@ export const responseErrorInterceptor = (error: AxiosError): Promise<AxiosError>
       })
     }
   } else {
-    const { status, data } = response
+    const { status } = response;
+    const data: any = response.data;
 
     switch (status) {
       case 400:

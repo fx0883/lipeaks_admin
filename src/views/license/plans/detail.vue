@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <el-card v-loading="loading" :header="false" shadow="never">
+    <el-card v-loading="loading" shadow="never">
       <template #header>
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/license/dashboard' }">
@@ -194,6 +194,8 @@ interface PlanData {
   plan_type: string;
   max_machines: number;
   validity_days: number;
+  default_max_activations?: number;
+  default_validity_days?: number;
   features?: Record<string, any>;
   price: string;
   currency: string;
@@ -219,6 +221,8 @@ const planData = reactive<PlanData>({
   plan_type: "",
   max_machines: 0,
   validity_days: 0,
+  default_max_activations: 0,
+  default_validity_days: 0,
   features: {},
   price: "0.00",
   currency: "CNY",
@@ -248,6 +252,8 @@ const loadPlanData = async () => {
     const response = await licenseStore.getPlanDetail(Number(planId));
     if (response.success && response.data) {
       const plan = response.data;
+      const maxMachines = plan.max_machines ?? plan.default_max_activations ?? 0;
+      const validityDays = plan.validity_days ?? plan.default_validity_days ?? 0;
       Object.assign(planData, {
         id: plan.id,
         application: plan.application,
@@ -255,8 +261,10 @@ const loadPlanData = async () => {
         name: plan.name,
         code: plan.code,
         plan_type: plan.plan_type,
-        max_machines: plan.max_machines,
-        validity_days: plan.validity_days,
+        max_machines: maxMachines,
+        validity_days: validityDays,
+        default_max_activations: maxMachines,
+        default_validity_days: validityDays,
         features: plan.features,
         price: plan.price,
         currency: plan.currency,
@@ -272,7 +280,7 @@ const loadPlanData = async () => {
         activeLicenses: Math.floor((plan.licenses_count || 0) * 0.9),
         revenue: `${plan.currency} ${(parseFloat(plan.price) * (plan.licenses_count || 0)).toFixed(2)}`,
         activeUsers: Math.floor(
-          (plan.licenses_count || 0) * plan.max_machines * 0.8
+          (plan.licenses_count || 0) * maxMachines * 0.8
         )
       });
     }
@@ -295,7 +303,7 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleString();
 };
 
-const getPlanTypeTagType = (type: string) => {
+const getPlanTypeTagType = (type: string): any => {
   const typeMap = {
     trial: "",
     basic: "success",

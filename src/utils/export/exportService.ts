@@ -6,6 +6,7 @@
 import type { Article } from '@/types/cms';
 import { ArticleExporter, type ExportFormat, type ExportConfig } from './articleExporter';
 import { errorService } from '@/utils/errorService';
+import { saveAs } from 'file-saver';
 import logger from '@/utils/logger';
 
 // 导出选项接口

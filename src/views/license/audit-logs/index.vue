@@ -151,8 +151,8 @@ const handleView = (row: AuditLog) => {
 };
 
 // 获取操作类型标签类型
-const getActionTagType = (action: AuditAction) => {
-  const actionMap = {
+const getActionTagType = (action: AuditAction): "primary" | "success" | "warning" | "danger" | "info" => {
+  const actionMap: Record<string, "primary" | "success" | "warning" | "danger" | "info"> = {
     create: "success",
     update: "warning",
     delete: "danger",
@@ -161,10 +161,10 @@ const getActionTagType = (action: AuditAction) => {
     revoke: "danger",
     bind: "success",
     unbind: "warning",
-    view: "",
+    view: "info",
     download: "info"
   };
-  return actionMap[action] || "";
+  return actionMap[action] || "info";
 };
 
 // 获取资源类型图标

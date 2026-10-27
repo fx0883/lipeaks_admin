@@ -1424,7 +1424,7 @@ export const useCmsStore = defineStore("cms", {
           article.currentStep = "创建文章";
           onProgress(article);
 
-          const articleData = {
+          const articleData: any = {
             title: article.title,
             content: finalContent,
             content_type: article.fileType === "markdown" ? "markdown" : "html",

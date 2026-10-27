@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <el-card v-loading="loading" :header="false" shadow="never">
+    <el-card v-loading="loading" shadow="never">
       <template #header>
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/license/dashboard' }">
@@ -341,7 +341,7 @@
                   v-for="activity in recentActivities"
                   :key="activity.id"
                   :timestamp="formatDate(activity.timestamp)"
-                  :type="activity.type"
+                  :type="activity.type as any"
                 >
                   {{ activity.description }}
                 </el-timeline-item>
@@ -450,6 +450,7 @@ const getStatusType = (status: string) => {
       return "info";
   }
 };
+const getStatusTagType = getStatusType;
 
 const loadMachineData = async () => {
   const machineBindingId = route.params.id;

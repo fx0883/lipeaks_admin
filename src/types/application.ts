@@ -8,7 +8,9 @@ export type ApplicationStatus =
   | "testing"      // 测试中
   | "active"       // 已发布
   | "inactive"     // 已下线
-  | "deprecated";  // 已废弃
+  | "deprecated"   // 已废弃
+  | "maintenance"  // 维护中
+  | "archived";    // 已归档
 
 // 应用基本信息接口
 export interface Application {

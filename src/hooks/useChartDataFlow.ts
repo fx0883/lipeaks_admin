@@ -191,6 +191,16 @@ export function useChartDataFlow(
     error,
     loadData,
     reloadData,
-    forceReInit
+    forceReInit,
+    setOptions: (options: any) => {
+      if (chartInstance && typeof (chartInstance as any).setOption === 'function') {
+        (chartInstance as any).setOption(options);
+      }
+    },
+    resizeChart: () => {
+      if (chartInstance && typeof (chartInstance as any).resize === 'function') {
+        (chartInstance as any).resize();
+      }
+    }
   };
 } 

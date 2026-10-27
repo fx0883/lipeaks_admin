@@ -283,11 +283,11 @@ async function compareWithCurrent(versionNumber: number) {
     const currentVersionResponse = await cmsStore.fetchArticleDetail(
       articleId.value
     );
-    const currentVersion = currentVersionResponse;
+    const currentVersion: any = (currentVersionResponse as any)?.data || currentVersionResponse;
 
     // 实现差异比较逻辑
-    const oldContent = historicalVersion.content || "";
-    const newContent = currentVersion.content || "";
+    const oldContent = (historicalVersion as any)?.content || "";
+    const newContent = currentVersion?.content || "";
 
     // 文本差异
     const diffParts = Diff.diffWords(oldContent, newContent);
@@ -340,8 +340,8 @@ async function restoreVersion() {
       status: versionData.status,
       visibility: versionData.visibility,
       allow_comment: versionData.allow_comment,
-      categories: versionData.categories,
-      tags: versionData.tags
+      categories: versionData.categories as any,
+      tags: versionData.tags as any
     });
 
     ElMessage.success(t("cms.article.restoreSuccess"));

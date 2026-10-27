@@ -292,43 +292,45 @@ const formatDate = (date: string) => {
   return dayjs(date).format("YYYY-MM-DD HH:mm");
 };
 
+type TagType = "primary" | "success" | "warning" | "danger" | "info";
+
 /**
  * 获取类型标签类型
  */
-const getTypeTagType = (type: NotificationType): string => {
-  const map: Record<NotificationType, string> = {
+const getTypeTagType = (type: NotificationType): TagType => {
+  const map: Record<NotificationType, TagType> = {
     info: "info",
     warning: "warning",
     error: "danger",
     update: "success",
-    announcement: ""
+    announcement: "primary"
   };
-  return map[type] || "";
+  return map[type] || "info";
 };
 
 /**
  * 获取优先级标签类型
  */
-const getPriorityTagType = (priority: NotificationPriority): string => {
-  const map: Record<NotificationPriority, string> = {
+const getPriorityTagType = (priority: NotificationPriority): TagType => {
+  const map: Record<NotificationPriority, TagType> = {
     low: "info",
-    normal: "",
+    normal: "primary",
     high: "warning",
     urgent: "danger"
   };
-  return map[priority] || "";
+  return map[priority] || "info";
 };
 
 /**
  * 获取状态标签类型
  */
-const getStatusTagType = (status: NotificationStatus): string => {
-  const map: Record<NotificationStatus, string> = {
+const getStatusTagType = (status: NotificationStatus): TagType => {
+  const map: Record<NotificationStatus, TagType> = {
     draft: "info",
     published: "success",
-    archived: ""
+    archived: "info"
   };
-  return map[status] || "";
+  return map[status] || "info";
 };
 
 /**

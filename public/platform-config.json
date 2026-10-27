@@ -1,5 +1,5 @@
 {
-  "Version": "6.0.0",
+  "Version": "7.0.0",
   "Title": "LipeaksAdmin",
   "FixedHeader": true,
   "HiddenSideBar": false,
@@ -9,7 +9,7 @@
   "Layout": "vertical",
   "Theme": "light",
   "DarkMode": false,
-  "OverallStyle": "light",
+  "ThemeMode": "light",
   "Grey": false,
   "Weak": false,
   "HideTabs": false,
@@ -18,10 +18,19 @@
   "SidebarStatus": true,
   "EpThemeColor": "#409EFF",
   "ShowLogo": true,
-  "ShowModel": "smart",
+  "Watermark": false,
+  "TagsStyle": "smart",
   "MenuArrowIconNoTransition": false,
   "CachingAsyncRoutes": false,
   "TooltipEffect": "light",
   "ResponsiveStorageNameSpace": "responsive-",
-  "MenuSearchHistory": 6
+  "MenuSearchHistory": 6,
+  "MapConfigure": {
+    "amapKey": "adc139d56406f3844c8f1cf1c6b65c41",
+    "options": {
+      "resizeEnable": true,
+      "center": [113.6401, 34.72468],
+      "zoom": 12
+    }
+  }
 }

@@ -257,8 +257,8 @@ const statusTagType = status => {
 };
 
 // 用户角色标签类型映射
-const userRoleTagType = isAdmin => {
-  return isAdmin ? "primary" : "";
+const userRoleTagType = (isAdmin: boolean): "primary" | "info" => {
+  return isAdmin ? "primary" : "info";
 };
 
 // 用户状态标签类型映射
@@ -297,7 +297,7 @@ watch(
   () => userPagination.currentPage,
   newPage => {
     if (newPage && tenantId.value) {
-      fetchTenantUsers(tenantId.value);
+      fetchTenantUsers();
     }
   }
 );
@@ -307,7 +307,7 @@ watch(
   newSize => {
     if (newSize && tenantId.value) {
       userPagination.currentPage = 1; // 当每页条数变化时，重置为第一页
-      fetchTenantUsers(tenantId.value);
+      fetchTenantUsers();
     }
   }
 );

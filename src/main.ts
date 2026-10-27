@@ -6,6 +6,7 @@ import { getPlatformConfig } from "./config";
 import { MotionPlugin } from "@vueuse/motion";
 import { useEcharts } from "@/plugins/echarts";
 import { createApp, type Directive } from "vue";
+import { useVxeTable } from "@/plugins/vxeTable";
 import { useElementPlus } from "@/plugins/elementPlus";
 import { injectResponsiveStorage } from "@/utils/responsive";
 import logger from "@/utils/logger"; // 导入日志工具
@@ -18,7 +19,7 @@ if (import.meta.env.DEV) {
 }
 
 import Table from "@pureadmin/table";
-// import PureDescriptions from "@pureadmin/descriptions";
+import PureDescriptions from "@pureadmin/descriptions";
 
 import { registerGlobalComponents } from "@/components";
 
@@ -102,7 +103,8 @@ getPlatformConfig(app).then(async config => {
     .use(useI18n)
     .use(useElementPlus)
     .use(Table)
-    // .use(PureDescriptions)
+    .use(useVxeTable)
+    .use(PureDescriptions)
     .use(useEcharts);
   app.mount("#app");
 

@@ -387,7 +387,7 @@ onMounted(() => {
 
     <el-tabs
       v-model="activeTab"
-      @tab-click="tab => handleTabChange(tab.props.name)"
+      @tab-click="tab => handleTabChange(String(tab.props.name))"
     >
       <el-tab-pane :label="t('customer.basicInfo')" name="basic">
         <el-card v-loading="loading">

@@ -101,8 +101,8 @@ export interface Order {
 
 // 订单列表请求参数接口
 export interface OrderListParams {
-  payment_status?: PaymentStatus; // 支付状态过滤
-  service_type?: ServiceType;    // 服务类型过滤
+  payment_status?: PaymentStatus | (string & {}); // 支付状态过滤
+  service_type?: ServiceType | (string & {});    // 服务类型过滤
   language?: string;            // 语种过滤
   customer_id?: number;         // 按客户ID筛选
   customer_type?: string;       // 按客户类型筛选
@@ -113,6 +113,7 @@ export interface OrderListParams {
   ordering?: string;            // 排序字段
   start_date?: string;          // 开始日期，格式：YYYY-MM-DD
   end_date?: string;            // 结束日期，格式：YYYY-MM-DD
+  [key: string]: any;
 }
 
 // 创建/更新订单请求参数接口
@@ -193,27 +194,36 @@ export interface OrderStatistics {
   by_period: Array<{
     period: string;             // 周期标识，如"2025-01"
     count: number;              // 订单数量
+    orders?: number;
     customer_total_amount: string; // 客户总金额
+    amount?: number | string;
     profit: string;             // 毛利
     profit_rate: number;        // 毛利率
+    [key: string]: any;
   }>;
   
   // 按服务类型分组的统计
   by_service_type: Array<{
     service_type: string;       // 服务类型
     count: number;              // 订单数量
+    orders?: number;
     customer_total_amount: string; // 客户总金额
+    amount?: number | string;
     profit: string;             // 毛利
     profit_rate: number;        // 毛利率
+    [key: string]: any;
   }>;
   
   // 按支付状态分组的统计
   by_payment_status: Array<{
     payment_status: string;     // 支付状态
     count: number;              // 订单数量
+    orders?: number;
     customer_total_amount: string; // 客户总金额
+    amount?: number | string;
     profit: string;             // 毛利
     profit_rate: number;        // 毛利率
+    [key: string]: any;
   }>;
 }
 

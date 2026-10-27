@@ -147,8 +147,11 @@ export class TokenManager {
     try {
       logger.debug('开始刷新Token...');
 
+      const baseUrl = (
+        import.meta.env.VITE_BASE_API || "http://43.142.76.105:8000/api/v1"
+      ).replace(/\/+$/, "");
       const response = await Axios.post<RefreshTokenResponse>(
-        `${import.meta.env.VITE_BASE_API || "http://43.142.76.105:8000/api/v1"}/auth/refresh/`,
+        `${baseUrl}/auth/refresh/`,
         { refresh_token: refreshToken },
         {
           headers: {

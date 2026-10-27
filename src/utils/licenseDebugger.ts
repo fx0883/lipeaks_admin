@@ -262,7 +262,8 @@ class LicenseUpdateDiagnosticImpl implements LicenseUpdateDiagnostic {
 
     let isValid = true;
 
-    Object.entries(validationRules).forEach(([field, rules]) => {
+    Object.entries(validationRules).forEach(([field, r]) => {
+      const rules = r as any;
       const value = formData[field];
 
       console.group(`字段: ${field}`);

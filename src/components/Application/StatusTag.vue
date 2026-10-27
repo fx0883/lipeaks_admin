@@ -23,15 +23,17 @@ const props = withDefaults(defineProps<Props>(), {
 const { t } = useI18n();
 
 // 状态对应的标签类型
-const tagType = computed(() => {
-  const typeMap: Record<ApplicationStatus, "" | "success" | "warning" | "danger" | "info"> = {
+const tagType = computed<"primary" | "success" | "warning" | "danger" | "info">(() => {
+  const typeMap: Record<ApplicationStatus, "primary" | "success" | "warning" | "danger" | "info"> = {
     development: "info",
-    testing: "",
+    testing: "warning",
     active: "success",
     inactive: "info",
-    deprecated: "danger"
+    deprecated: "danger",
+    archived: "info",
+    maintenance: "warning"
   };
-  return typeMap[props.status] || "";
+  return typeMap[props.status] || "info";
 });
 
 // 状态文本

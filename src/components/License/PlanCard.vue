@@ -143,14 +143,14 @@ const parsedFeatures = computed(() => {
 })
 
 // 获取计划类型标签类型
-const getTypeTagType = (type: string): string => {
-  const typeMap: Record<string, string> = {
-    basic: '',
+const getTypeTagType = (type: string): "primary" | "success" | "warning" | "danger" | "info" => {
+  const typeMap: Record<string, "primary" | "success" | "warning" | "danger" | "info"> = {
+    basic: 'primary',
     pro: 'success',
     enterprise: 'warning',
     custom: 'info'
   }
-  return typeMap[type] || ''
+  return typeMap[type] || 'primary'
 }
 
 // 获取计划类型文本

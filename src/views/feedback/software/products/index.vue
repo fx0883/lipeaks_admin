@@ -529,7 +529,7 @@ const handleEdit = (software: Software) => {
   if (typeof software.category === "object" && software.category !== null) {
     dialogFormData.category_id = software.category.id;
   } else {
-    dialogFormData.category_id = software.category_id || software.category || 0;
+    dialogFormData.category_id = (software.category_id || software.category || 0) as number;
   }
 
   dialogFormData.website = software.website || "";

@@ -7,6 +7,12 @@ import { ref, reactive, readonly } from 'vue';
 import { errorService } from '@/utils/errorService';
 import type { StandardErrorResponse } from '@/utils/http/errorHandlers';
 import type { FormErrorOptions } from '@/utils/errorService';
+import logger from '@/utils/logger';
+
+// 模块级通知辅助函数
+const showSuccess = (message: string) => errorService.showSuccess(message);
+const showWarning = (message: string) => errorService.showWarning(message);
+const showError = (message: string) => errorService.showError(message);
 
 // 表单错误状态
 export interface FormErrorState {

@@ -48,7 +48,7 @@ const emit = defineEmits(["submit", "cancel"]);
 const formRef = ref(null);
 
 // 表单数据
-const formData = reactive<CommentCreateParams | CommentUpdateParams>({
+const formData = reactive<CommentCreateParams & CommentUpdateParams>({
   article: props.articleId || 0,
   parent: props.parentId || undefined,
   content: "",
