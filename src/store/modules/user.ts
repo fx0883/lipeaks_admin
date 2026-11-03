@@ -199,21 +199,38 @@ export const useUserStore = defineStore("pure-user", {
     },
     /** 前端登出（不调用接口） */
     logOut() {
+      // 重置所有用户信息字段
+      this.id = undefined;
+      this.avatar = "";
       this.username = "";
+      this.nickname = "";
+      this.email = "";
+      this.is_admin = false;
+      this.is_super_admin = false;
+      this.is_member = false;
+      this.phone = "";
+      this.status = "";
+      this.last_login_ip = "";
+      this.tenant = undefined;
+      this.parent = undefined;
       this.roles = [];
       this.permissions = [];
 
-      // 清除localStorage中的token和用户信息
+      // 清除localStorage中的token和用户信息及租户缓存
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("user_info");
+      localStorage.removeItem("current_tenant_id");
 
       // 清除cookie中的token
       removeToken();
 
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
       resetRouter();
-      router.push("/login");
+      router.push("/login").then(() => {
+        // 全页面重载，彻底释放内存中的 Store 与动态路由闭包
+        window.location.reload();
+      });
     },
     /** 刷新`token` */
     async handRefreshToken(data) {
