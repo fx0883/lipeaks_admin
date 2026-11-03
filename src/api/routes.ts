@@ -6,5 +6,9 @@ type Result = {
 };
 
 export const getAsyncRoutes = () => {
-  return http.request<Result>("get", "/menus/admin/routes/");
+  return http.request<Result>("get", "/menus/admin/routes/", {
+    params: {
+      _t: Date.now()
+    }
+  });
 };

@@ -86,8 +86,11 @@ function filterChildrenTree(data: RouteComponent[]) {
   return newTree;
 }
 
-/** 判断两个数组彼此是否存在相同值 */
+/** 判断两个数组彼此是否存在相同值（超级管理员全局一票放行） */
 function isOneOfArray(a: Array<string>, b: Array<string>) {
+  if (Array.isArray(b) && b.includes("super_admin")) {
+    return true;
+  }
   return Array.isArray(a) && Array.isArray(b)
     ? intersection(a, b).length > 0
       ? true
@@ -99,6 +102,10 @@ function isOneOfArray(a: Array<string>, b: Array<string>) {
 function filterNoPermissionTree(data: RouteComponent[]) {
   const currentRoles =
     storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
+  // 超级管理员默认拥有全部菜单权限
+  if (currentRoles.includes("super_admin")) {
+    return filterChildrenTree(cloneDeep(data));
+  }
   const newTree = cloneDeep(data).filter((v: any) =>
     isOneOfArray(v.meta?.roles, currentRoles)
   );

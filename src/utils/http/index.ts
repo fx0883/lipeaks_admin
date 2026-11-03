@@ -197,16 +197,18 @@ class PureHttp {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
 
-        // 自动附加租户信息请求头
+        // 自动附加租户信息请求头（超级管理员默认不绑定租户）
         if (!config.headers["X-Tenant-ID"]) {
           const userStore = useUserStoreHook();
-          const tenantVal = userStore.tenant as any;
-          const currentTenantId =
-            tenantVal?.id ??
-            tenantVal ??
-            localStorage.getItem("current_tenant_id");
-          if (currentTenantId) {
-            config.headers["X-Tenant-ID"] = String(currentTenantId);
+          if (!userStore.is_super_admin) {
+            const tenantVal = userStore.tenant as any;
+            const currentTenantId =
+              tenantVal?.id ??
+              tenantVal ??
+              localStorage.getItem("current_tenant_id");
+            if (currentTenantId) {
+              config.headers["X-Tenant-ID"] = String(currentTenantId);
+            }
           }
         }
 
