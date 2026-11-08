@@ -20,6 +20,7 @@ import { useUserStoreHook } from "@/store/modules/user";
 import ConfirmDialog from "@/components/Cms/Article/ConfirmDialog.vue";
 import ArticleForm from "@/components/Cms/Article/ArticleForm.vue";
 import logger from "@/utils/logger";
+import { getMediaUrl } from "@/utils/media";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -354,8 +355,8 @@ onMounted(() => {
         <!-- 封面图展示 -->
         <div v-if="currentArticle.cover_image" class="article-cover-section">
           <el-image
-            :src="currentArticle.cover_image"
-            :preview-src-list="[currentArticle.cover_image]"
+            :src="getMediaUrl(currentArticle.cover_image)"
+            :preview-src-list="[getMediaUrl(currentArticle.cover_image)]"
             fit="cover"
             class="article-cover-image"
           >

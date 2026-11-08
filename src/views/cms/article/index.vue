@@ -29,6 +29,7 @@ import type {
   Tag
 } from "@/types/cms";
 import logger from "@/utils/logger";
+import { getMediaUrl } from "@/utils/media";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -949,10 +950,10 @@ onMounted(() => {
           <template #default="{ row }">
             <el-image
               v-if="row.cover_image"
-              :src="row.cover_image"
+              :src="getMediaUrl(row.cover_image)"
               style="width: 100px; height: 60px"
               fit="contain"
-              :preview-src-list="[row.cover_image]"
+              :preview-src-list="[getMediaUrl(row.cover_image)]"
             >
               <template #error>
                 <div class="image-placeholder">

@@ -123,8 +123,8 @@
                   <div class="node-label">
                     <el-image
                       v-if="data.cover_image"
-                      :src="data.cover_image"
-                      :preview-src-list="[data.cover_image]"
+                      :src="getMediaUrl(data.cover_image)"
+                      :preview-src-list="[getMediaUrl(data.cover_image)]"
                       fit="cover"
                       class="tree-cover-thumbnail mr-2"
                     >
@@ -217,8 +217,8 @@
               <template #default="{ row }">
                 <el-image
                   v-if="row.cover_image"
-                  :src="row.cover_image"
-                  :preview-src-list="[row.cover_image]"
+                  :src="getMediaUrl(row.cover_image)"
+                  :preview-src-list="[getMediaUrl(row.cover_image)]"
                   fit="cover"
                   class="category-cover-thumbnail"
                 >
@@ -420,6 +420,7 @@ import CategoryForm from "@/components/Cms/Category/CategoryForm.vue";
 import ConfirmDialog from "@/components/Cms/Category/ConfirmDialog.vue";
 import { IconifyIconOnline } from "@/components/ReIcon";
 import { SUPPORTED_LANGUAGES } from "@/config/languages";
+import { getMediaUrl } from "@/utils/media";
 
 const cmsStore = useCmsStore();
 const applicationStore = useApplicationStoreHook();
