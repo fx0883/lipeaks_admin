@@ -373,6 +373,24 @@ class PureHttp {
 
           // 处理401未授权（Token过期）
           if (status === 401) {
+            // 登录接口或刷新Token接口报401，说明凭据错误或刷新已失效，绝对不能尝试刷新Token并重试原请求（否则会陷入死循环）
+            const isAuthOrWhiteList = errorConfig.url && (
+              errorConfig.url.includes("/auth/login/") ||
+              errorConfig.url.includes("/auth/refresh/")
+            );
+
+            if (isAuthOrWhiteList) {
+              const data = error.response.data as Record<string, any>;
+              errorResponse = {
+                success: false,
+                code: data?.code || 4002,
+                message: data?.message || "用户名或密码错误",
+                data: data?.data || null,
+                error_code: data?.error_code || "INVALID_CREDENTIALS"
+              };
+              return Promise.reject(errorResponse);
+            }
+
             // 防止重复刷新
             if (!PureHttp.isRefreshing) {
               PureHttp.isRefreshing = true;

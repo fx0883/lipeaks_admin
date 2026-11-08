@@ -9,9 +9,11 @@ import type {
 } from "@/types/adminUser";
 import AvatarUpload from "./AvatarUpload.vue";
 import { useTenantStoreHook } from "@/store/modules/tenant";
+import { useApplicationStoreHook } from "@/store/modules/application";
 
 const { t } = useI18n();
 const tenantStore = useTenantStoreHook();
+const applicationStore = useApplicationStoreHook();
 
 const props = defineProps({
   // 表单模式：create-创建，update-更新，superAdmin-创建超管，view-查看
@@ -55,7 +57,9 @@ const formData = reactive<AdminUserCreateParams & AdminUserUpdateParams>({
   last_name: undefined,
   tenant_id: undefined,
   is_active: true,
-  is_super_admin: false
+  is_super_admin: false,
+  admin_type: "tenant_owner",
+  application_ids: []
 });
 
 // 重置表单方法
@@ -71,6 +75,8 @@ const resetForm = () => {
   formData.tenant_id = undefined;
   formData.is_active = true;
   formData.is_super_admin = false;
+  formData.admin_type = "tenant_owner";
+  formData.application_ids = [];
 
   // 如果表单引用存在，重置表单验证状态
   if (formRef.value) {
@@ -121,6 +127,18 @@ const rules = {
       },
       trigger: "blur"
     }
+  ],
+  application_ids: [
+    {
+      validator: (rule: any, value: number[], callback: Function) => {
+        if (formData.admin_type === "app_admin" && (!formData.application_ids || formData.application_ids.length === 0)) {
+          callback(new Error("应用管理员必须至少指定一个管辖应用"));
+        } else {
+          callback();
+        }
+      },
+      trigger: "change"
+    }
   ]
 };
 
@@ -143,26 +161,27 @@ const handleSubmit = async () => {
 
   try {
     await formRef.value.validate();
-
-    // 提交前确保undefined值被转换为适当的空字符串
-    const processedData = { ...formData };
-    if (processedData.last_name === undefined) {
-      processedData.last_name = "";
-    }
-    if ((processedData as AdminUserCreateParams).password === undefined) {
-      (processedData as AdminUserCreateParams).password = "";
-    }
-    if (
-      (processedData as AdminUserCreateParams).password_confirm === undefined
-    ) {
-      (processedData as AdminUserCreateParams).password_confirm = "";
-    }
-
-    emit("submit", processedData);
   } catch (error) {
-    console.error("表单验证失败", error);
+    console.error("表单前端验证失败", error);
     ElMessage.error(t("adminUser.formValidationFailed"));
+    return;
   }
+
+  // 提交前确保undefined值被转换为适当的空字符串
+  const processedData = { ...formData };
+  if (processedData.last_name === undefined) {
+    processedData.last_name = "";
+  }
+  if ((processedData as AdminUserCreateParams).password === undefined) {
+    (processedData as AdminUserCreateParams).password = "";
+  }
+  if (
+    (processedData as AdminUserCreateParams).password_confirm === undefined
+  ) {
+    (processedData as AdminUserCreateParams).password_confirm = "";
+  }
+
+  emit("submit", processedData);
 };
 
 // 取消
@@ -184,6 +203,10 @@ watch(
       formData.first_name = newVal.first_name || "";
       formData.last_name = newVal.last_name || undefined;
       formData.is_active = newVal.is_active;
+      formData.admin_type = newVal.admin_type || "tenant_owner";
+      formData.application_ids = newVal.managed_applications
+        ? newVal.managed_applications.map(app => app.id)
+        : ((newVal as any).application_ids || []);
 
       // 清空密码字段，更新时不需要填写密码
       (formData as AdminUserCreateParams).password = undefined;
@@ -191,6 +214,8 @@ watch(
     } else if (props.mode === "superAdmin") {
       // 创建超管模式，设置超管标志
       (formData as AdminUserCreateParams).is_super_admin = true;
+      formData.admin_type = "tenant_owner";
+      formData.application_ids = [];
       formData.tenant_id = undefined;
     }
   },
@@ -208,6 +233,17 @@ const fetchTenants = async () => {
   }
 };
 
+// 初始化获取应用列表
+const fetchApplications = async () => {
+  if (props.mode !== "superAdmin") {
+    try {
+      await applicationStore.fetchApplicationList({ page: 1, page_size: 100 });
+    } catch (error) {
+      console.error("获取应用列表失败", error);
+    }
+  }
+};
+
 // 计算租户选项列表
 const tenantOptions = computed(() => {
   return tenantStore.tenantList.data.map(item => ({
@@ -216,8 +252,17 @@ const tenantOptions = computed(() => {
   }));
 });
 
-// 组件挂载时获取租户列表
+// 计算应用选项列表
+const applicationOptions = computed(() => {
+  return (applicationStore.applicationList?.data || []).map(item => ({
+    label: `${item.name} (${item.code})`,
+    value: item.id
+  }));
+});
+
+// 组件挂载时获取数据
 fetchTenants();
+fetchApplications();
 </script>
 
 <template>
@@ -324,6 +369,42 @@ fetchTenants();
             >
               <el-option
                 v-for="item in tenantOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <!-- 管理员权限类型选择 -->
+          <el-form-item
+            v-if="mode !== 'superAdmin'"
+            label="管理员类型"
+            prop="admin_type"
+          >
+            <el-radio-group v-model="formData.admin_type">
+              <el-radio value="tenant_owner">租户主管理员</el-radio>
+              <el-radio value="app_admin">应用管理员</el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <!-- 管辖应用选择：仅在应用管理员时展示 -->
+          <el-form-item
+            v-if="mode !== 'superAdmin' && formData.admin_type === 'app_admin'"
+            label="管辖应用"
+            prop="application_ids"
+          >
+            <el-select
+              v-model="formData.application_ids"
+              multiple
+              filterable
+              collapse-tags
+              collapse-tags-tooltip
+              placeholder="请选择管辖的应用（可多选）"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in applicationOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"

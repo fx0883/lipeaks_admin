@@ -8,7 +8,8 @@ export default {
   meta: {
     icon: "ep/coin",
     title: "积分成长",
-    rank: 18
+    rank: 18,
+    showLink: false
   },
   children: [
     {

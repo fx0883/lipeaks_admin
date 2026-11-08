@@ -13,6 +13,20 @@ export type AdminUserStatus = 'active' | 'suspended' | 'inactive';
 export type AdminUserRole = 'super_admin' | 'tenant_admin';
 
 /**
+ * 管理员角色细分类型
+ */
+export type AdminType = 'tenant_owner' | 'app_admin';
+
+/**
+ * 管辖应用信息
+ */
+export interface ManagedApplication {
+  id: number;
+  name: string;
+  code: string;
+}
+
+/**
  * 管理员用户对象
  */
 export interface AdminUser {
@@ -26,10 +40,13 @@ export interface AdminUser {
   is_active: boolean;
   avatar: string;
   tenant: number | null;
+  tenant_id?: number | null;
   tenant_name: string | null;
   is_admin: boolean;
   is_member: boolean;
   is_super_admin: boolean;
+  admin_type?: AdminType;
+  managed_applications?: ManagedApplication[];
   role: string;
   status: AdminUserStatus;
   last_login_time: string | null;
@@ -64,6 +81,8 @@ export interface AdminUserCreateParams {
   tenant_id?: number;
   is_active?: boolean;
   is_super_admin?: boolean;
+  admin_type?: AdminType;
+  application_ids?: number[];
   [key: string]: any;
 }
 
@@ -81,6 +100,8 @@ export interface AdminUserUpdateParams {
   is_active?: boolean;
   is_super_admin?: boolean;
   status?: AdminUserStatus;
+  admin_type?: AdminType;
+  application_ids?: number[];
   [key: string]: any;
 }
 

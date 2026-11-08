@@ -729,11 +729,26 @@ onMounted(() => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('adminUser.roles')" width="130">
+        <el-table-column :label="t('adminUser.roles')" width="180">
           <template #default="scope">
             <el-tag v-if="scope.row.is_super_admin" type="danger">
               {{ t("adminUser.superAdmin") }}
             </el-tag>
+            <template v-else-if="scope.row.admin_type === 'app_admin'">
+              <el-tag type="warning" style="margin-bottom: 4px">
+                应用管理员
+              </el-tag>
+              <div v-if="scope.row.managed_applications && scope.row.managed_applications.length" style="display: flex; flex-wrap: wrap; gap: 4px">
+                <el-tag
+                  v-for="app in scope.row.managed_applications"
+                  :key="app.id"
+                  size="small"
+                  type="info"
+                >
+                  {{ app.name }}
+                </el-tag>
+              </div>
+            </template>
             <el-tag v-else type="primary">
               {{ t("adminUser.tenantAdmin") }}
             </el-tag>

@@ -6,11 +6,12 @@ import NoticeList from "./components/NoticeList.vue";
 import BellIcon from "~icons/ep/bell";
 
 const { t } = useI18n();
-const noticesNum = ref(0);
 const notices = ref(noticesData);
 const activeKey = ref(noticesData[0]?.key);
 
-notices.value.map(v => (noticesNum.value += v.list.length));
+const noticesNum = computed(() =>
+  notices.value.reduce((total, item) => total + (item.list?.length || 0), 0)
+);
 
 const getLabel = computed(
   () => item =>

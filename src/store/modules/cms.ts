@@ -448,11 +448,13 @@ export const useCmsStore = defineStore("cms", {
 
     /**
      * 删除文章
+     * @param id 文章ID
+     * @param force 是否强制物理删除
      */
-    async deleteArticle(id: number) {
+    async deleteArticle(id: number, force = false) {
       this.loading.articleDelete = true;
       try {
-        const response = await cmsApi.deleteArticle(id);
+        const response = await cmsApi.deleteArticle(id, force);
         if (response.success) {
           // 如果当前选中的文章是被删除的文章，则清空当前选中的文章
           if (this.currentArticle && this.currentArticle.id === id) {

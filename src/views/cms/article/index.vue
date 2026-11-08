@@ -427,15 +427,26 @@ const handleDetail = (row: Article) => {
 
 // 删除文章
 const handleDelete = (row: Article) => {
-  confirmDialog.title = t("cms.article.confirmDelete");
-  confirmDialog.content = t("cms.article.confirmDeleteMessage", {
-    title: row.title
-  });
-  confirmDialog.type = "warning";
+  const isArchived = row.status === "archived";
+  if (isArchived) {
+    confirmDialog.title = "彻底删除确认";
+    confirmDialog.content = `文章【${row.title}】当前已处于归档状态。再次删除将执行【物理彻底删除】，永久清除文章数据及关联的封面、图片等磁盘资源，此操作无法恢复！是否确认彻底删除？`;
+    confirmDialog.type = "danger";
+  } else {
+    confirmDialog.title = t("cms.article.confirmDelete");
+    confirmDialog.content = t("cms.article.confirmDeleteMessage", {
+      title: row.title
+    });
+    confirmDialog.type = "warning";
+  }
   confirmDialog.confirmAction = async () => {
     try {
-      await cmsStore.deleteArticle(row.id);
-      ElMessage.success(t("cms.article.deleteSuccess"));
+      await cmsStore.deleteArticle(row.id, isArchived);
+      ElMessage.success(
+        isArchived
+          ? "文章及相关图片等资源已彻底物理删除"
+          : t("cms.article.deleteSuccess")
+      );
       fetchArticles();
     } catch (error) {
       logger.error("删除文章失败", error);
@@ -458,26 +469,48 @@ const handleBatchDelete = async (force = false) => {
   }
 
   const article_ids = multipleSelection.value.map(item => item.id);
-  
-  confirmDialog.title = t("cms.article.confirmBatchDelete");
-  confirmDialog.content = t("cms.article.confirmBatchDeleteMessage", {
-    count: article_ids.length
-  });
-  confirmDialog.type = "warning";
+  const archivedCount = multipleSelection.value.filter(
+    item => item.status === "archived"
+  ).length;
+  const isAllArchived = archivedCount === multipleSelection.value.length;
+  const hasArchived = archivedCount > 0;
+
+  if (hasArchived) {
+    confirmDialog.title = "彻底删除确认";
+    if (isAllArchived) {
+      confirmDialog.content = `选中的 ${archivedCount} 篇文章均已处于归档状态。执行删除将进行【物理彻底删除】，永久清除文章数据及关联图片等磁盘资源，无法恢复！是否确定继续？`;
+    } else {
+      confirmDialog.content = `选中的 ${multipleSelection.value.length} 篇文章中包含 ${archivedCount} 篇已归档文章。已归档的文章将执行【物理彻底删除】（清除数据与关联资源），其余文章将转为归档状态。是否确定继续？`;
+    }
+    confirmDialog.type = "danger";
+  } else {
+    confirmDialog.title = t("cms.article.confirmBatchDelete");
+    confirmDialog.content = t("cms.article.confirmBatchDeleteMessage", {
+      count: article_ids.length
+    });
+    confirmDialog.type = "warning";
+  }
+
   confirmDialog.confirmAction = async () => {
     try {
-      const response = await cmsStore.batchDeleteArticles(article_ids, force);
+      const response = await cmsStore.batchDeleteArticles(
+        article_ids,
+        force || hasArchived
+      );
       
       if (response.success && response.data) {
         const { deleted_count, requested_count } = response.data;
         
         if (deleted_count === requested_count) {
           ElMessage.success(
-            t("cms.article.batchDeleteSuccess") + ` (${deleted_count}/${requested_count})`
+            hasArchived
+              ? `批量操作完成：成功处理 ${deleted_count}/${requested_count} 篇文章（含归档文章物理删除）`
+              : t("cms.article.batchDeleteSuccess") +
+                  ` (${deleted_count}/${requested_count})`
           );
         } else {
           ElMessage.warning(
-            `部分删除成功：已删除 ${deleted_count}/${requested_count} 个文章`
+            `部分操作完成：已处理 ${deleted_count}/${requested_count} 篇文章`
           );
         }
         
@@ -1071,7 +1104,7 @@ onMounted(() => {
               :icon="Delete"
               type="danger"
               @click="handleDelete(row)"
-              title="删除"
+              :title="row.status === 'archived' ? '彻底删除' : '删除'"
               text
             />
           </template>

@@ -7,7 +7,13 @@ import type {
   TenantUserPoints,
   TenantUserTypeTag,
   PointsStatistics,
-  PointsQueryParams
+  PointsQueryParams,
+  ApplicationUserLevel,
+  AppUserPointsAccount,
+  CheckinConfig,
+  CheckinLadderItem,
+  UserCheckinStreak,
+  UserCheckinRecord
 } from "@/types/points";
 import logger from "@/utils/logger";
 
@@ -167,3 +173,245 @@ export function getPointsTrend(days: number = 30) {
     { params: { days } }
   );
 }
+
+// ==========================================
+// 应用专属积分等级与应用积分账户 API
+// ==========================================
+
+/**
+ * 获取应用专属积分等级列表
+ */
+export function getApplicationPointsLevels(params: Record<string, any> = {}) {
+  logger.debug("API请求: 获取应用专属积分等级列表", params);
+  return http.request<DRFPaginationResponse<ApplicationUserLevel>>(
+    "get",
+    "/points/app-levels/",
+    { params }
+  );
+}
+
+/**
+ * 创建应用专属积分等级
+ */
+export function createApplicationPointsLevel(data: Partial<ApplicationUserLevel>) {
+  logger.debug("API请求: 创建应用专属积分等级", data);
+  return http.request<ApiResponse<ApplicationUserLevel>>(
+    "post",
+    "/points/app-levels/",
+    { data }
+  );
+}
+
+/**
+ * 更新应用专属积分等级
+ */
+export function updateApplicationPointsLevel(id: number, data: Partial<ApplicationUserLevel>) {
+  logger.debug("API请求: 更新应用专属积分等级", { id, data });
+  return http.request<ApiResponse<ApplicationUserLevel>>(
+    "patch",
+    `/points/app-levels/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 删除应用专属积分等级
+ */
+export function deleteApplicationPointsLevel(id: number) {
+  logger.debug("API请求: 删除应用专属积分等级", { id });
+  return http.request<ApiResponse<any>>(
+    "delete",
+    `/points/app-levels/${id}/`
+  );
+}
+
+/**
+ * 获取系统预置的等级透明图标列表
+ */
+export function getPresetLevelIcons() {
+  logger.debug("API请求: 获取预置等级图标列表");
+  return http.request<ApiResponse<Array<{ filename: string; name: string; relative_path: string; url: string }>>>(
+    "get",
+    "/points/app-levels/preset_icons/"
+  );
+}
+
+/**
+ * 上传自定义等级图标
+ */
+export function uploadLevelIcon(formData: FormData) {
+  logger.debug("API请求: 上传自定义等级图标");
+  return http.request<ApiResponse<{ filename: string; path: string; url: string }>>(
+    "post",
+    "/points/app-levels/upload_icon/",
+    {
+      data: formData,
+      headers: { "Content-Type": "multipart/form-data" }
+    }
+  );
+}
+
+/**
+ * 获取应用用户积分账户列表
+ */
+export function getApplicationPointsAccounts(params: Record<string, any> = {}) {
+  logger.debug("API请求: 获取应用用户积分账户列表", params);
+  return http.request<DRFPaginationResponse<AppUserPointsAccount>>(
+    "get",
+    "/points/app-accounts/",
+    { params }
+  );
+}
+
+/**
+ * 管理员对应用用户积分进行调账
+ */
+export function adjustAppUserPoints(id: number, data: { points: number; reason?: string; category?: string }) {
+  logger.debug("API请求: 调账应用用户积分", { id, data });
+  return http.request<ApiResponse<any>>(
+    "post",
+    `/points/app-accounts/${id}/adjust/`,
+    { data }
+  );
+}
+
+/**
+ * 获取应用用户积分账户明细流水
+ */
+export function getAppUserPointsRecords(id: number, params: Record<string, any> = {}) {
+  logger.debug("API请求: 获取应用用户账户流水", { id, params });
+  return http.request<DRFPaginationResponse<TenantUserPoints>>(
+    "get",
+    `/points/app-accounts/${id}/records/`,
+    { params }
+  );
+}
+
+// ============================
+// 每日签到规则配置 API
+// ============================
+
+/**
+ * 获取签到规则配置列表
+ */
+export function getCheckinConfigs(params: Record<string, any> = {}) {
+  logger.debug("API请求: 获取签到规则配置列表", params);
+  return http.request<DRFPaginationResponse<CheckinConfig>>(
+    "get",
+    "/points/checkin-configs/",
+    { params: { ...params, _t: Date.now() } }
+  );
+}
+
+/**
+ * 获取系统预设的默认7天阶梯奖励
+ */
+export function getDefaultCheckinLadder() {
+  logger.debug("API请求: 获取默认阶梯奖励");
+  return http.request<ApiResponse<CheckinLadderItem[]> | CheckinLadderItem[]>(
+    "get",
+    "/points/checkin-configs/default_ladder/"
+  );
+}
+
+/**
+ * 创建签到规则配置
+ */
+export function createCheckinConfig(data: Partial<CheckinConfig>) {
+  logger.debug("API请求: 创建签到规则配置", data);
+  return http.request<ApiResponse<CheckinConfig>>(
+    "post",
+    "/points/checkin-configs/",
+    { data }
+  );
+}
+
+/**
+ * 更新签到规则配置
+ */
+export function updateCheckinConfig(id: number, data: Partial<CheckinConfig>) {
+  logger.debug("API请求: 更新签到规则配置", { id, data });
+  return http.request<ApiResponse<CheckinConfig>>(
+    "put",
+    `/points/checkin-configs/${id}/`,
+    { data }
+  );
+}
+
+/**
+ * 删除签到规则配置
+ */
+export function deleteCheckinConfig(id: number) {
+  logger.debug("API请求: 删除签到规则配置", id);
+  return http.request<ApiResponse<any>>(
+    "delete",
+    `/points/checkin-configs/${id}/`
+  );
+}
+
+// ==========================================
+// 用户签到管理与打卡/补签 API
+// ==========================================
+
+/**
+ * 获取用户连续签到统计列表（管理端）
+ */
+export function getCheckinStreaks(params: Record<string, any> = {}) {
+  logger.debug("API请求: 获取用户连续签到统计", params);
+  return http.request<DRFPaginationResponse<UserCheckinStreak>>(
+    "get",
+    "/points/checkin-streaks/",
+    { params: { ...params, _t: Date.now() } }
+  );
+}
+
+/**
+ * 获取签到打卡流水记录（管理端）
+ */
+export function getCheckinRecords(params: Record<string, any> = {}) {
+  logger.debug("API请求: 获取签到打卡流水记录", params);
+  return http.request<DRFPaginationResponse<UserCheckinRecord>>(
+    "get",
+    "/points/checkin-records/",
+    { params: { ...params, _t: Date.now() } }
+  );
+}
+
+/**
+ * 个人每日打卡签到接口
+ */
+export function userCheckin(application_id?: number) {
+  logger.debug("API请求: 执行每日打卡签到", { application_id });
+  return http.request<ApiResponse<any>>(
+    "post",
+    "/points/checkin/execute/",
+    { data: application_id ? { application_id } : {} }
+  );
+}
+
+/**
+ * 个人补签接口
+ */
+export function userRecheckin(target_date: string, application_id?: number) {
+  logger.debug("API请求: 执行补签操作", { target_date, application_id });
+  return http.request<ApiResponse<any>>(
+    "post",
+    "/points/checkin/recheckin/",
+    { data: { target_date, application_id } }
+  );
+}
+
+/**
+ * 查询个人签到状态与日历
+ */
+export function getUserCheckinStatus(application_id?: number) {
+  logger.debug("API请求: 获取个人签到状态", { application_id });
+  return http.request<ApiResponse<any>>(
+    "get",
+    "/points/checkin/status/",
+    { params: application_id ? { application_id, _t: Date.now() } : { _t: Date.now() } }
+  );
+}
+
+
+

@@ -163,15 +163,26 @@ const handleSubmitEdit = async formData => {
 
 // 删除文章
 const handleDelete = () => {
-  confirmDialog.title = t("cms.article.confirmDelete");
-  confirmDialog.content = t("cms.article.confirmDeleteMessage", {
-    title: currentArticle.value?.title
-  });
-  confirmDialog.type = "warning";
+  const isArchived = currentArticle.value?.status === "archived";
+  if (isArchived) {
+    confirmDialog.title = "彻底删除确认";
+    confirmDialog.content = `文章【${currentArticle.value?.title}】当前已处于归档状态。再次删除将执行【物理彻底删除】，永久清除文章数据及关联的封面、图片等磁盘资源，此操作无法恢复！是否确认彻底删除？`;
+    confirmDialog.type = "danger";
+  } else {
+    confirmDialog.title = t("cms.article.confirmDelete");
+    confirmDialog.content = t("cms.article.confirmDeleteMessage", {
+      title: currentArticle.value?.title
+    });
+    confirmDialog.type = "warning";
+  }
   confirmDialog.confirmAction = async () => {
     try {
-      await cmsStore.deleteArticle(articleId.value);
-      ElMessage.success(t("cms.article.deleteSuccess"));
+      await cmsStore.deleteArticle(articleId.value, isArchived);
+      ElMessage.success(
+        isArchived
+          ? "文章及相关图片等资源已彻底物理删除"
+          : t("cms.article.deleteSuccess")
+      );
       router.push("/cms/article");
     } catch (error) {
       logger.error("删除文章失败", error);

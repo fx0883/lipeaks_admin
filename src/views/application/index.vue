@@ -121,8 +121,8 @@
         </el-table-column>
         
         <el-table-column
-          :label="t('application.actions.view')"
-          width="200"
+          label="操作"
+          width="320"
           fixed="right"
         >
           <template #default="{ row }">
@@ -143,6 +143,20 @@
               v-if="hasPermission('application:edit')"
             >
               {{ t('application.actions.edit') }}
+            </el-button>
+            <el-button
+              link
+              type="success"
+              @click="router.push(`/application/points-level?application_id=${row.id}`)"
+            >
+              积分等级
+            </el-button>
+            <el-button
+              link
+              type="warning"
+              @click="router.push(`/application/points-account?application_id=${row.id}`)"
+            >
+              积分管理
             </el-button>
             <el-button
               link

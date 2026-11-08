@@ -189,8 +189,23 @@ export class ValidationErrorHandler extends BaseErrorHandler {
   async handle(errorResponse: StandardErrorResponse): Promise<ErrorHandleResult> {
     this.logError(errorResponse, '验证错误');
 
-    // 验证错误通常需要组件级处理，这里只显示通用提示
-    ElMessage.error('请检查表单输入');
+    // 提取具体的字段错误信息
+    let detailMsg = errorResponse.message || '请检查表单输入';
+    if (errorResponse.data && typeof errorResponse.data === 'object') {
+      const fieldErrors: string[] = [];
+      for (const [field, errs] of Object.entries(errorResponse.data)) {
+        if (Array.isArray(errs)) {
+          fieldErrors.push(`${field}: ${errs.join(', ')}`);
+        } else if (typeof errs === 'string') {
+          fieldErrors.push(`${field}: ${errs}`);
+        }
+      }
+      if (fieldErrors.length > 0) {
+        detailMsg = fieldErrors.join('；');
+      }
+    }
+
+    ElMessage.error(detailMsg);
 
     // 验证错误不会在这里完全处理，需要组件级处理字段错误
     return { handled: false, shouldRetry: false };

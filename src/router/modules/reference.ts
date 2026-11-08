@@ -28,7 +28,8 @@ export default {
   meta: {
     icon: "ri/tools-line",
     title: $t("menus.pureDevReference") || "示例/开发参考",
-    rank: 999
+    rank: 999,
+    showLink: false
   },
   children: [
     componentRoutes,

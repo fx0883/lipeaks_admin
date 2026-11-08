@@ -41,7 +41,7 @@ function getDefaultActive(routePath) {
   const parentRoutes = getParentPaths(routePath, wholeMenus)[0];
   defaultActive.value = !isAllEmpty(route.meta?.activePath)
     ? route.meta.activePath
-    : findRouteByPath(parentRoutes, wholeMenus)?.children[0]?.path;
+    : findRouteByPath(parentRoutes, wholeMenus)?.children?.[0]?.path;
 }
 
 onMounted(() => {

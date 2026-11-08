@@ -1,5 +1,10 @@
 allowBuilds:
+  '@logicflow/core': true
   "@parcel/watcher": true
   "@tailwindcss/oxide": true
+  core-js: true
+  es5-ext: true
   esbuild: true
+  node-pty: true
+  typeit: true
   vue-demi: true

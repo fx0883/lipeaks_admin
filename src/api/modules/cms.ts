@@ -92,11 +92,14 @@ export function patchArticle(id: number, data: Partial<ArticleUpdateParams>) {
 /**
  * 删除文章
  * @param id 文章ID
+ * @param force 是否物理强制删除（若为true或文章已归档，将彻底物理删除并清理关联图片等资源）
  */
-export function deleteArticle(id: number) {
-  logger.debug("API请求: 删除文章", { id });
+export function deleteArticle(id: number, force = false) {
+  logger.debug("API请求: 删除文章", { id, force });
 
-  return http.request<ApiResponse<null>>("delete", `/cms/articles/${id}/`);
+  return http.request<ApiResponse<null>>("delete", `/cms/articles/${id}/`, {
+    params: force ? { force: "true" } : {}
+  });
 }
 
 /**

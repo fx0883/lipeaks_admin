@@ -67,6 +67,9 @@ export interface UserInfo {
   status?: string;
   last_login_ip?: string;
   tenant?: any;
+  tenant_id?: number;
+  tenant_name?: string;
+  admin_type?: string;
   parent?: any;
 }
 

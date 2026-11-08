@@ -8,7 +8,8 @@ export default {
   meta: {
     icon: "ep/reading",
     title: "微信聚合",
-    rank: 19
+    rank: 19,
+    showLink: false
   },
   children: [
     {

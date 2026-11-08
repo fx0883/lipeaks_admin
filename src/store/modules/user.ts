@@ -171,7 +171,8 @@ export const useUserStore = defineStore("pure-user", {
                 phone: user.phone || "",
                 status: user.status || "active",
                 last_login_ip: user.last_login_ip || "",
-                tenant: user.tenant,
+                tenant: user.tenant_id ?? user.tenant,
+                admin_type: user.admin_type || "tenant_owner",
                 parent: user.parent,
                 avatar: user.avatar || "",
                 roles: [
@@ -187,7 +188,11 @@ export const useUserStore = defineStore("pure-user", {
               // 存储用户信息
               setToken(userData);
 
-              // 存储原始用户信息到localStorage
+              // 存储原始用户信息与当前租户ID到localStorage
+              const tid = user.tenant_id ?? user.tenant;
+              if (tid) {
+                localStorage.setItem("current_tenant_id", String(tid));
+              }
               localStorage.setItem("user_info", JSON.stringify(user));
             }
             resolve(data);
@@ -278,7 +283,11 @@ export const useUserStore = defineStore("pure-user", {
           this.SET_IS_SUPER_ADMIN(user.is_super_admin);
           this.SET_IS_MEMBER(user.is_member || false);
           this.SET_STATUS(user.status || "active");
-          this.SET_TENANT(user.tenant);
+          const tid = user.tenant_id ?? user.tenant;
+          this.SET_TENANT(tid);
+          if (tid) {
+            localStorage.setItem("current_tenant_id", String(tid));
+          }
 
           // 更新localStorage中的用户信息
           localStorage.setItem("user_info", JSON.stringify(user));

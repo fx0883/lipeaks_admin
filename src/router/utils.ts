@@ -22,7 +22,6 @@ import { type menuType, routerArrays } from "@/layout/types";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { getConfig } from "@/config";
-import { findIndex } from "lodash-unified";
 import { remainingPaths } from "./index";
 import { openLink } from "@pureadmin/utils";
 import { transformI18n } from "@/plugins/i18n";
@@ -140,7 +139,10 @@ function getParentPaths(value: string, routes: RouteRecordRaw[], key = "path") {
 }
 
 /** 查找对应 `path` 的路由信息 */
-function findRouteByPath(path: string, routes: RouteRecordRaw[]) {
+function findRouteByPath(
+  path: string,
+  routes: RouteRecordRaw[] | readonly RouteRecordRaw[]
+) {
   let res = routes.find((item: { path: string }) => item.path == path);
   if (res) {
     return isProxy(res) ? toRaw(res) : res;
@@ -170,44 +172,101 @@ function addPathMatch() {
   }
 }
 
+/**
+ * 将多级嵌套的异步路由树转换为标准两级路由（顶级模块Layout + 二级页面View）
+ * 扁平化深层叶子页面，消除中间目录节点，防止多层Layout套娃，并确保keep-alive与页面正常渲染
+ * 针对中间目录自动生成重定向路由，确保直接访问中间目录 URL 时自动跳转到其首个有效叶子页面
+ */
+function formatTwoStageTree(routes: RouteRecordRaw[]): RouteRecordRaw[] {
+  return routes.map(route => {
+    if (route.children && route.children.length > 0) {
+      const leaves: RouteRecordRaw[] = [];
+      const intermediateRedirects: RouteRecordRaw[] = [];
+
+      function findFirstLeaf(children: RouteRecordRaw[]): RouteRecordRaw | undefined {
+        for (const child of children) {
+          if (child.children && child.children.length > 0) {
+            const found = findFirstLeaf(child.children);
+            if (found) return found;
+          } else {
+            return child;
+          }
+        }
+        return undefined;
+      }
+
+      function extractLeaves(children: RouteRecordRaw[]) {
+        children.forEach(child => {
+          if (child.children && child.children.length > 0) {
+            // 中间目录节点：创建重定向路由，指向该目录下的第一个叶子页面
+            const targetLeaf = findFirstLeaf(child.children);
+            if (targetLeaf && targetLeaf.path && targetLeaf.path !== child.path) {
+              intermediateRedirects.push({
+                path: child.path,
+                name: child.name ? `${String(child.name)}DirectoryRedirect` : undefined,
+                redirect: targetLeaf.path,
+                meta: { ...child.meta, showLink: false }
+              } as RouteRecordRaw);
+            }
+            extractLeaves(child.children);
+          } else {
+            leaves.push({ ...child });
+          }
+        });
+      }
+      extractLeaves(route.children);
+
+      const redirectChild =
+        leaves.find(l => l.meta?.showLink !== false) || leaves[0];
+      return {
+        ...route,
+        redirect: redirectChild ? redirectChild.path : route.redirect,
+        children: [...leaves, ...intermediateRedirects]
+      };
+    }
+    return { ...route };
+  });
+}
+
 /** 处理动态路由（后端返回的路由） */
 function handleAsyncRoutes(routeList) {
   logger.debug("[处理动态路由] 开始处理动态路由列表");
-  if (routeList.length === 0) {
+  if (!routeList || routeList.length === 0) {
     logger.debug("[处理动态路由] 路由列表为空");
-    usePermissionStoreHook().handleWholeMenus(routeList);
+    usePermissionStoreHook().handleWholeMenus(routeList || []);
   } else {
     logger.debug("[处理动态路由] 处理前的路由列表:", JSON.stringify(routeList));
-    const processedRoutes = formatFlatteningRoutes(addAsyncRoutes(routeList));
-    logger.debug("[处理动态路由] 处理后的扁平化路由:", processedRoutes);
+    // 1. 递归赋予实际组件（顶级模块使用Layout，叶子路由匹配modulesRoutes）
+    const withComponents = addAsyncRoutes(cloneDeep(routeList));
 
-    processedRoutes.map((v: RouteRecordRaw) => {
-      // 防止重复添加路由
-      if (
-        router.options.routes[0].children.findIndex(
-          value => value.path === v.path
-        ) !== -1
-      ) {
-        logger.debug(`[处理动态路由] 路由已存在，跳过添加: ${v.path}`);
-        return;
+    // 2. 将多级嵌套路由规范化为标准两级路由（Level 1: 模块Layout，Level 2: 拍平的叶子页面）
+    const twoStageRoutes = formatTwoStageTree(withComponents);
+    logger.debug("[处理动态路由] 规范化后的二级动态路由:", twoStageRoutes);
+
+    // 3. 动态添加为顶级独立模块路由，防止被推入根路由children导致多层Layout套娃
+    twoStageRoutes.forEach((v: RouteRecordRaw) => {
+      const existsIndex = router.options.routes.findIndex(
+        val => val.path === v.path
+      );
+      if (existsIndex === -1) {
+        logger.debug(
+          `[处理动态路由] 向router.options.routes添加新模块: ${v.path}`
+        );
+        (router.options.routes as RouteRecordRaw[]).push(v);
       } else {
-        logger.debug(`[处理动态路由] 添加新路由: ${v.path}`);
-        // 切记将路由push到routes后还需要使用addRoute，这样路由才能正常跳转
-        router.options.routes[0].children.push(v);
-        // 最终路由进行升序
-        ascending(router.options.routes[0].children);
-        if (!router.hasRoute(v?.name)) {
-          logger.debug(`[处理动态路由] 向Vue Router添加路由: ${String(v?.name)}`);
-          router.addRoute(v);
-        }
-        const flattenRouters: any = router
-          .getRoutes()
-          .find(n => n.path === "/");
-        // 保持router.options.routes[0].children与path为"/"的children一致，防止数据不一致导致异常
-        flattenRouters.children = router.options.routes[0].children;
-        router.addRoute(flattenRouters);
+        (router.options.routes as RouteRecordRaw[])[existsIndex] = v;
       }
+
+      if (router.hasRoute(v?.name)) {
+        router.removeRoute(v?.name);
+      }
+      logger.debug(
+        `[处理动态路由] 向Vue Router添加独立顶级路由: ${String(v?.name)}`
+      );
+      router.addRoute(v);
     });
+
+    // 4. 将原始完整层级树传递给权限Store，供侧边栏完整展示各级折叠菜单
     usePermissionStoreHook().handleWholeMenus(routeList);
   }
   if (!useMultiTagsStoreHook().getMultiTagsCache) {
@@ -515,7 +574,8 @@ function handleTopMenu(route) {
 /** 获取所有菜单中的第一个菜单（顶级菜单）*/
 function getTopMenu(tag = false): menuType {
   const topMenu = handleTopMenu(
-    usePermissionStoreHook().wholeMenus[0]?.children[0]
+    usePermissionStoreHook().wholeMenus[0]?.children?.[0] ||
+      usePermissionStoreHook().wholeMenus[0]
   );
   tag && useMultiTagsStoreHook().handleTags("push", topMenu);
   return topMenu;
